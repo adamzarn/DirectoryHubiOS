@@ -1,0 +1,539 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DB1EC3671EE6E00100998032 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3661EE6E00100998032 /* AppDelegate.swift */; };
+		DB1EC3691EE6E00100998032 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3681EE6E00100998032 /* ViewController.swift */; };
+		DB1EC36C1EE6E00100998032 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB1EC36A1EE6E00100998032 /* Main.storyboard */; };
+		DB1EC36E1EE6E00100998032 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB1EC36D1EE6E00100998032 /* Assets.xcassets */; };
+		DB1EC3711EE6E00100998032 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB1EC36F1EE6E00100998032 /* LaunchScreen.storyboard */; };
+		DB1EC37C1EE6E00100998032 /* ValleybrookCommunityChurchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC37B1EE6E00100998032 /* ValleybrookCommunityChurchTests.swift */; };
+		DB1EC3871EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3861EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DB1EC3781EE6E00100998032 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB1EC35B1EE6E00100998032 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB1EC3621EE6E00100998032;
+			remoteInfo = ValleybrookCommunityChurch;
+		};
+		DB1EC3831EE6E00100998032 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB1EC35B1EE6E00100998032 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB1EC3621EE6E00100998032;
+			remoteInfo = ValleybrookCommunityChurch;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		DB1EC3631EE6E00100998032 /* ValleybrookCommunityChurch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ValleybrookCommunityChurch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB1EC3661EE6E00100998032 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		DB1EC3681EE6E00100998032 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		DB1EC36B1EE6E00100998032 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		DB1EC36D1EE6E00100998032 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DB1EC3701EE6E00100998032 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		DB1EC3721EE6E00100998032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DB1EC3771EE6E00100998032 /* ValleybrookCommunityChurchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ValleybrookCommunityChurchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB1EC37B1EE6E00100998032 /* ValleybrookCommunityChurchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValleybrookCommunityChurchTests.swift; sourceTree = "<group>"; };
+		DB1EC37D1EE6E00100998032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DB1EC3821EE6E00100998032 /* ValleybrookCommunityChurchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ValleybrookCommunityChurchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB1EC3861EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValleybrookCommunityChurchUITests.swift; sourceTree = "<group>"; };
+		DB1EC3881EE6E00100998032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DB1EC3601EE6E00100998032 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB1EC3741EE6E00100998032 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB1EC37F1EE6E00100998032 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DB1EC35A1EE6E00100998032 = {
+			isa = PBXGroup;
+			children = (
+				DB1EC3651EE6E00100998032 /* ValleybrookCommunityChurch */,
+				DB1EC37A1EE6E00100998032 /* ValleybrookCommunityChurchTests */,
+				DB1EC3851EE6E00100998032 /* ValleybrookCommunityChurchUITests */,
+				DB1EC3641EE6E00100998032 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DB1EC3641EE6E00100998032 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DB1EC3631EE6E00100998032 /* ValleybrookCommunityChurch.app */,
+				DB1EC3771EE6E00100998032 /* ValleybrookCommunityChurchTests.xctest */,
+				DB1EC3821EE6E00100998032 /* ValleybrookCommunityChurchUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DB1EC3651EE6E00100998032 /* ValleybrookCommunityChurch */ = {
+			isa = PBXGroup;
+			children = (
+				DB1EC3661EE6E00100998032 /* AppDelegate.swift */,
+				DB1EC3681EE6E00100998032 /* ViewController.swift */,
+				DB1EC36A1EE6E00100998032 /* Main.storyboard */,
+				DB1EC36D1EE6E00100998032 /* Assets.xcassets */,
+				DB1EC36F1EE6E00100998032 /* LaunchScreen.storyboard */,
+				DB1EC3721EE6E00100998032 /* Info.plist */,
+			);
+			path = ValleybrookCommunityChurch;
+			sourceTree = "<group>";
+		};
+		DB1EC37A1EE6E00100998032 /* ValleybrookCommunityChurchTests */ = {
+			isa = PBXGroup;
+			children = (
+				DB1EC37B1EE6E00100998032 /* ValleybrookCommunityChurchTests.swift */,
+				DB1EC37D1EE6E00100998032 /* Info.plist */,
+			);
+			path = ValleybrookCommunityChurchTests;
+			sourceTree = "<group>";
+		};
+		DB1EC3851EE6E00100998032 /* ValleybrookCommunityChurchUITests */ = {
+			isa = PBXGroup;
+			children = (
+				DB1EC3861EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift */,
+				DB1EC3881EE6E00100998032 /* Info.plist */,
+			);
+			path = ValleybrookCommunityChurchUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DB1EC3621EE6E00100998032 /* ValleybrookCommunityChurch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB1EC38B1EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurch" */;
+			buildPhases = (
+				DB1EC35F1EE6E00100998032 /* Sources */,
+				DB1EC3601EE6E00100998032 /* Frameworks */,
+				DB1EC3611EE6E00100998032 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ValleybrookCommunityChurch;
+			productName = ValleybrookCommunityChurch;
+			productReference = DB1EC3631EE6E00100998032 /* ValleybrookCommunityChurch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DB1EC3761EE6E00100998032 /* ValleybrookCommunityChurchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB1EC38E1EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurchTests" */;
+			buildPhases = (
+				DB1EC3731EE6E00100998032 /* Sources */,
+				DB1EC3741EE6E00100998032 /* Frameworks */,
+				DB1EC3751EE6E00100998032 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DB1EC3791EE6E00100998032 /* PBXTargetDependency */,
+			);
+			name = ValleybrookCommunityChurchTests;
+			productName = ValleybrookCommunityChurchTests;
+			productReference = DB1EC3771EE6E00100998032 /* ValleybrookCommunityChurchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DB1EC3811EE6E00100998032 /* ValleybrookCommunityChurchUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB1EC3911EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurchUITests" */;
+			buildPhases = (
+				DB1EC37E1EE6E00100998032 /* Sources */,
+				DB1EC37F1EE6E00100998032 /* Frameworks */,
+				DB1EC3801EE6E00100998032 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DB1EC3841EE6E00100998032 /* PBXTargetDependency */,
+			);
+			name = ValleybrookCommunityChurchUITests;
+			productName = ValleybrookCommunityChurchUITests;
+			productReference = DB1EC3821EE6E00100998032 /* ValleybrookCommunityChurchUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DB1EC35B1EE6E00100998032 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = "Adam Zarn";
+				TargetAttributes = {
+					DB1EC3621EE6E00100998032 = {
+						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = QA67695N79;
+						ProvisioningStyle = Automatic;
+					};
+					DB1EC3761EE6E00100998032 = {
+						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = QA67695N79;
+						ProvisioningStyle = Automatic;
+						TestTargetID = DB1EC3621EE6E00100998032;
+					};
+					DB1EC3811EE6E00100998032 = {
+						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = QA67695N79;
+						ProvisioningStyle = Automatic;
+						TestTargetID = DB1EC3621EE6E00100998032;
+					};
+				};
+			};
+			buildConfigurationList = DB1EC35E1EE6E00100998032 /* Build configuration list for PBXProject "ValleybrookCommunityChurch" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DB1EC35A1EE6E00100998032;
+			productRefGroup = DB1EC3641EE6E00100998032 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DB1EC3621EE6E00100998032 /* ValleybrookCommunityChurch */,
+				DB1EC3761EE6E00100998032 /* ValleybrookCommunityChurchTests */,
+				DB1EC3811EE6E00100998032 /* ValleybrookCommunityChurchUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DB1EC3611EE6E00100998032 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB1EC3711EE6E00100998032 /* LaunchScreen.storyboard in Resources */,
+				DB1EC36E1EE6E00100998032 /* Assets.xcassets in Resources */,
+				DB1EC36C1EE6E00100998032 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB1EC3751EE6E00100998032 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB1EC3801EE6E00100998032 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DB1EC35F1EE6E00100998032 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB1EC3691EE6E00100998032 /* ViewController.swift in Sources */,
+				DB1EC3671EE6E00100998032 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB1EC3731EE6E00100998032 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB1EC37C1EE6E00100998032 /* ValleybrookCommunityChurchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB1EC37E1EE6E00100998032 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB1EC3871EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DB1EC3791EE6E00100998032 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB1EC3621EE6E00100998032 /* ValleybrookCommunityChurch */;
+			targetProxy = DB1EC3781EE6E00100998032 /* PBXContainerItemProxy */;
+		};
+		DB1EC3841EE6E00100998032 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB1EC3621EE6E00100998032 /* ValleybrookCommunityChurch */;
+			targetProxy = DB1EC3831EE6E00100998032 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		DB1EC36A1EE6E00100998032 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DB1EC36B1EE6E00100998032 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		DB1EC36F1EE6E00100998032 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DB1EC3701EE6E00100998032 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		DB1EC3891EE6E00100998032 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DB1EC38A1EE6E00100998032 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		DB1EC38C1EE6E00100998032 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = QA67695N79;
+				INFOPLIST_FILE = ValleybrookCommunityChurch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AJZ.ValleybrookCommunityChurch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		DB1EC38D1EE6E00100998032 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = QA67695N79;
+				INFOPLIST_FILE = ValleybrookCommunityChurch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AJZ.ValleybrookCommunityChurch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		DB1EC38F1EE6E00100998032 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = QA67695N79;
+				INFOPLIST_FILE = ValleybrookCommunityChurchTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AJZ.ValleybrookCommunityChurchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ValleybrookCommunityChurch.app/ValleybrookCommunityChurch";
+			};
+			name = Debug;
+		};
+		DB1EC3901EE6E00100998032 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = QA67695N79;
+				INFOPLIST_FILE = ValleybrookCommunityChurchTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AJZ.ValleybrookCommunityChurchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ValleybrookCommunityChurch.app/ValleybrookCommunityChurch";
+			};
+			name = Release;
+		};
+		DB1EC3921EE6E00100998032 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				DEVELOPMENT_TEAM = QA67695N79;
+				INFOPLIST_FILE = ValleybrookCommunityChurchUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AJZ.ValleybrookCommunityChurchUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = ValleybrookCommunityChurch;
+			};
+			name = Debug;
+		};
+		DB1EC3931EE6E00100998032 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				DEVELOPMENT_TEAM = QA67695N79;
+				INFOPLIST_FILE = ValleybrookCommunityChurchUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AJZ.ValleybrookCommunityChurchUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = ValleybrookCommunityChurch;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DB1EC35E1EE6E00100998032 /* Build configuration list for PBXProject "ValleybrookCommunityChurch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB1EC3891EE6E00100998032 /* Debug */,
+				DB1EC38A1EE6E00100998032 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DB1EC38B1EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB1EC38C1EE6E00100998032 /* Debug */,
+				DB1EC38D1EE6E00100998032 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		DB1EC38E1EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB1EC38F1EE6E00100998032 /* Debug */,
+				DB1EC3901EE6E00100998032 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		DB1EC3911EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurchUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB1EC3921EE6E00100998032 /* Debug */,
+				DB1EC3931EE6E00100998032 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DB1EC35B1EE6E00100998032 /* Project object */;
+}
