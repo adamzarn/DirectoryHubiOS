@@ -7,13 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0FD85160C1FD84ED20AC3953 /* Pods_ValleybrookCommunityChurch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC9264480BC22009F8742DC3 /* Pods_ValleybrookCommunityChurch.framework */; };
+		BEE679689FAE5C98500E07AD /* Pods_ValleybrookCommunityChurchUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD744E9AEAFA4E8CF154BCD0 /* Pods_ValleybrookCommunityChurchUITests.framework */; };
+		C4E7D5BF9422CB0C258E3357 /* Pods_ValleybrookCommunityChurchTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD517479C15A97B5E59D0CFE /* Pods_ValleybrookCommunityChurchTests.framework */; };
+		DB0943F61EE6E4CC002426AB /* FamilyObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0943F51EE6E4CC002426AB /* FamilyObjects.swift */; };
+		DB0EEADF1EE77475002AB793 /* FamilyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEADE1EE77475002AB793 /* FamilyViewController.swift */; };
+		DB0EEAE11EEB13CC002AB793 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE01EEB13CC002AB793 /* LoginViewController.swift */; };
+		DB0EEAE31EEB179A002AB793 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE21EEB179A002AB793 /* Reachability.swift */; };
+		DB0EEAE51EEB18BD002AB793 /* GlobalFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE41EEB18BD002AB793 /* GlobalFunctions.swift */; };
+		DB0EEAE81EEB27AC002AB793 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE61EEB27AC002AB793 /* Model.xcdatamodeld */; };
 		DB1EC3671EE6E00100998032 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3661EE6E00100998032 /* AppDelegate.swift */; };
-		DB1EC3691EE6E00100998032 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3681EE6E00100998032 /* ViewController.swift */; };
+		DB1EC3691EE6E00100998032 /* DirectoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3681EE6E00100998032 /* DirectoryViewController.swift */; };
 		DB1EC36C1EE6E00100998032 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB1EC36A1EE6E00100998032 /* Main.storyboard */; };
 		DB1EC36E1EE6E00100998032 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB1EC36D1EE6E00100998032 /* Assets.xcassets */; };
 		DB1EC3711EE6E00100998032 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB1EC36F1EE6E00100998032 /* LaunchScreen.storyboard */; };
 		DB1EC37C1EE6E00100998032 /* ValleybrookCommunityChurchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC37B1EE6E00100998032 /* ValleybrookCommunityChurchTests.swift */; };
 		DB1EC3871EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3861EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift */; };
+		DB1EC3951EE6E01600998032 /* FirebaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3941EE6E01600998032 /* FirebaseClient.swift */; };
+		DB1EC3971EE6E0E100998032 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,9 +45,23 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		67665914BB0678C272AE2435 /* Pods-ValleybrookCommunityChurch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValleybrookCommunityChurch.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ValleybrookCommunityChurch/Pods-ValleybrookCommunityChurch.debug.xcconfig"; sourceTree = "<group>"; };
+		681B6B11248D0291085BD380 /* Pods-ValleybrookCommunityChurchUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValleybrookCommunityChurchUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ValleybrookCommunityChurchUITests/Pods-ValleybrookCommunityChurchUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		8E7C374F11FE03F5AEB89D9C /* Pods-ValleybrookCommunityChurchUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValleybrookCommunityChurchUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ValleybrookCommunityChurchUITests/Pods-ValleybrookCommunityChurchUITests.release.xcconfig"; sourceTree = "<group>"; };
+		A9EE65A251E2AB0CA82BB4C0 /* Pods-ValleybrookCommunityChurchTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValleybrookCommunityChurchTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ValleybrookCommunityChurchTests/Pods-ValleybrookCommunityChurchTests.debug.xcconfig"; sourceTree = "<group>"; };
+		AD517479C15A97B5E59D0CFE /* Pods_ValleybrookCommunityChurchTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ValleybrookCommunityChurchTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD744E9AEAFA4E8CF154BCD0 /* Pods_ValleybrookCommunityChurchUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ValleybrookCommunityChurchUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB52B60C0597673E1628A2EC /* Pods-ValleybrookCommunityChurchTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValleybrookCommunityChurchTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ValleybrookCommunityChurchTests/Pods-ValleybrookCommunityChurchTests.release.xcconfig"; sourceTree = "<group>"; };
+		BC9264480BC22009F8742DC3 /* Pods_ValleybrookCommunityChurch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ValleybrookCommunityChurch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB0943F51EE6E4CC002426AB /* FamilyObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FamilyObjects.swift; sourceTree = "<group>"; };
+		DB0EEADE1EE77475002AB793 /* FamilyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FamilyViewController.swift; sourceTree = "<group>"; };
+		DB0EEAE01EEB13CC002AB793 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		DB0EEAE21EEB179A002AB793 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		DB0EEAE41EEB18BD002AB793 /* GlobalFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalFunctions.swift; sourceTree = "<group>"; };
+		DB0EEAE71EEB27AC002AB793 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		DB1EC3631EE6E00100998032 /* ValleybrookCommunityChurch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ValleybrookCommunityChurch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB1EC3661EE6E00100998032 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		DB1EC3681EE6E00100998032 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		DB1EC3681EE6E00100998032 /* DirectoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryViewController.swift; sourceTree = "<group>"; };
 		DB1EC36B1EE6E00100998032 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DB1EC36D1EE6E00100998032 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB1EC3701EE6E00100998032 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -47,6 +72,9 @@
 		DB1EC3821EE6E00100998032 /* ValleybrookCommunityChurchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ValleybrookCommunityChurchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB1EC3861EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValleybrookCommunityChurchUITests.swift; sourceTree = "<group>"; };
 		DB1EC3881EE6E00100998032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DB1EC3941EE6E01600998032 /* FirebaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseClient.swift; sourceTree = "<group>"; };
+		DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		DE29402686A967908E79B620 /* Pods-ValleybrookCommunityChurch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValleybrookCommunityChurch.release.xcconfig"; path = "Pods/Target Support Files/Pods-ValleybrookCommunityChurch/Pods-ValleybrookCommunityChurch.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0FD85160C1FD84ED20AC3953 /* Pods_ValleybrookCommunityChurch.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4E7D5BF9422CB0C258E3357 /* Pods_ValleybrookCommunityChurchTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,12 +98,36 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEE679689FAE5C98500E07AD /* Pods_ValleybrookCommunityChurchUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3D81F7781437E85B97A5E215 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				67665914BB0678C272AE2435 /* Pods-ValleybrookCommunityChurch.debug.xcconfig */,
+				DE29402686A967908E79B620 /* Pods-ValleybrookCommunityChurch.release.xcconfig */,
+				A9EE65A251E2AB0CA82BB4C0 /* Pods-ValleybrookCommunityChurchTests.debug.xcconfig */,
+				BB52B60C0597673E1628A2EC /* Pods-ValleybrookCommunityChurchTests.release.xcconfig */,
+				681B6B11248D0291085BD380 /* Pods-ValleybrookCommunityChurchUITests.debug.xcconfig */,
+				8E7C374F11FE03F5AEB89D9C /* Pods-ValleybrookCommunityChurchUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		92DE8915AE006CFA564B55DC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BC9264480BC22009F8742DC3 /* Pods_ValleybrookCommunityChurch.framework */,
+				AD517479C15A97B5E59D0CFE /* Pods_ValleybrookCommunityChurchTests.framework */,
+				AD744E9AEAFA4E8CF154BCD0 /* Pods_ValleybrookCommunityChurchUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		DB1EC35A1EE6E00100998032 = {
 			isa = PBXGroup;
 			children = (
@@ -81,6 +135,8 @@
 				DB1EC37A1EE6E00100998032 /* ValleybrookCommunityChurchTests */,
 				DB1EC3851EE6E00100998032 /* ValleybrookCommunityChurchUITests */,
 				DB1EC3641EE6E00100998032 /* Products */,
+				3D81F7781437E85B97A5E215 /* Pods */,
+				92DE8915AE006CFA564B55DC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -98,11 +154,19 @@
 			isa = PBXGroup;
 			children = (
 				DB1EC3661EE6E00100998032 /* AppDelegate.swift */,
-				DB1EC3681EE6E00100998032 /* ViewController.swift */,
+				DB1EC3681EE6E00100998032 /* DirectoryViewController.swift */,
+				DB0EEADE1EE77475002AB793 /* FamilyViewController.swift */,
+				DB0EEAE01EEB13CC002AB793 /* LoginViewController.swift */,
+				DB0EEAE21EEB179A002AB793 /* Reachability.swift */,
 				DB1EC36A1EE6E00100998032 /* Main.storyboard */,
 				DB1EC36D1EE6E00100998032 /* Assets.xcassets */,
 				DB1EC36F1EE6E00100998032 /* LaunchScreen.storyboard */,
 				DB1EC3721EE6E00100998032 /* Info.plist */,
+				DB1EC3941EE6E01600998032 /* FirebaseClient.swift */,
+				DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */,
+				DB0943F51EE6E4CC002426AB /* FamilyObjects.swift */,
+				DB0EEAE41EEB18BD002AB793 /* GlobalFunctions.swift */,
+				DB0EEAE61EEB27AC002AB793 /* Model.xcdatamodeld */,
 			);
 			path = ValleybrookCommunityChurch;
 			sourceTree = "<group>";
@@ -132,9 +196,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DB1EC38B1EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurch" */;
 			buildPhases = (
+				B9FA543DD47B5D4869749831 /* [CP] Check Pods Manifest.lock */,
 				DB1EC35F1EE6E00100998032 /* Sources */,
 				DB1EC3601EE6E00100998032 /* Frameworks */,
 				DB1EC3611EE6E00100998032 /* Resources */,
+				3E98490088DA7B3E046E7DA1 /* [CP] Embed Pods Frameworks */,
+				163939EF54F1163C787CC98D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -149,9 +216,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DB1EC38E1EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurchTests" */;
 			buildPhases = (
+				E92A916FE8B3107803AFFC5D /* [CP] Check Pods Manifest.lock */,
 				DB1EC3731EE6E00100998032 /* Sources */,
 				DB1EC3741EE6E00100998032 /* Frameworks */,
 				DB1EC3751EE6E00100998032 /* Resources */,
+				772086AF67ADBEDBF2030C72 /* [CP] Embed Pods Frameworks */,
+				A2A1D86B1CDB3357E02409FB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -167,9 +237,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DB1EC3911EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurchUITests" */;
 			buildPhases = (
+				89123AF8BCA98A87828E43CF /* [CP] Check Pods Manifest.lock */,
 				DB1EC37E1EE6E00100998032 /* Sources */,
 				DB1EC37F1EE6E00100998032 /* Frameworks */,
 				DB1EC3801EE6E00100998032 /* Resources */,
+				9EFE454C7B07C0B0F468ACA0 /* [CP] Embed Pods Frameworks */,
+				803954E438D620215CB8B5DF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -236,6 +309,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB1EC3711EE6E00100998032 /* LaunchScreen.storyboard in Resources */,
+				DB1EC3971EE6E0E100998032 /* GoogleService-Info.plist in Resources */,
 				DB1EC36E1EE6E00100998032 /* Assets.xcassets in Resources */,
 				DB1EC36C1EE6E00100998032 /* Main.storyboard in Resources */,
 			);
@@ -257,13 +331,158 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		163939EF54F1163C787CC98D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ValleybrookCommunityChurch/Pods-ValleybrookCommunityChurch-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3E98490088DA7B3E046E7DA1 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ValleybrookCommunityChurch/Pods-ValleybrookCommunityChurch-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		772086AF67ADBEDBF2030C72 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ValleybrookCommunityChurchTests/Pods-ValleybrookCommunityChurchTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		803954E438D620215CB8B5DF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ValleybrookCommunityChurchUITests/Pods-ValleybrookCommunityChurchUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		89123AF8BCA98A87828E43CF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		9EFE454C7B07C0B0F468ACA0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ValleybrookCommunityChurchUITests/Pods-ValleybrookCommunityChurchUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A2A1D86B1CDB3357E02409FB /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ValleybrookCommunityChurchTests/Pods-ValleybrookCommunityChurchTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B9FA543DD47B5D4869749831 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		E92A916FE8B3107803AFFC5D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		DB1EC35F1EE6E00100998032 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB1EC3691EE6E00100998032 /* ViewController.swift in Sources */,
+				DB0EEAE31EEB179A002AB793 /* Reachability.swift in Sources */,
+				DB0EEAE11EEB13CC002AB793 /* LoginViewController.swift in Sources */,
+				DB0EEAE51EEB18BD002AB793 /* GlobalFunctions.swift in Sources */,
+				DB1EC3691EE6E00100998032 /* DirectoryViewController.swift in Sources */,
 				DB1EC3671EE6E00100998032 /* AppDelegate.swift in Sources */,
+				DB0EEAE81EEB27AC002AB793 /* Model.xcdatamodeld in Sources */,
+				DB0943F61EE6E4CC002426AB /* FamilyObjects.swift in Sources */,
+				DB1EC3951EE6E01600998032 /* FirebaseClient.swift in Sources */,
+				DB0EEADF1EE77475002AB793 /* FamilyViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,6 +634,7 @@
 		};
 		DB1EC38C1EE6E00100998032 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 67665914BB0678C272AE2435 /* Pods-ValleybrookCommunityChurch.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = QA67695N79;
@@ -428,6 +648,7 @@
 		};
 		DB1EC38D1EE6E00100998032 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DE29402686A967908E79B620 /* Pods-ValleybrookCommunityChurch.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = QA67695N79;
@@ -441,6 +662,7 @@
 		};
 		DB1EC38F1EE6E00100998032 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A9EE65A251E2AB0CA82BB4C0 /* Pods-ValleybrookCommunityChurchTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -456,6 +678,7 @@
 		};
 		DB1EC3901EE6E00100998032 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BB52B60C0597673E1628A2EC /* Pods-ValleybrookCommunityChurchTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -471,6 +694,7 @@
 		};
 		DB1EC3921EE6E00100998032 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 681B6B11248D0291085BD380 /* Pods-ValleybrookCommunityChurchUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = QA67695N79;
@@ -485,6 +709,7 @@
 		};
 		DB1EC3931EE6E00100998032 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8E7C374F11FE03F5AEB89D9C /* Pods-ValleybrookCommunityChurchUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = QA67695N79;
@@ -516,6 +741,7 @@
 				DB1EC38D1EE6E00100998032 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DB1EC38E1EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurchTests" */ = {
 			isa = XCConfigurationList;
@@ -524,6 +750,7 @@
 				DB1EC3901EE6E00100998032 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DB1EC3911EE6E00100998032 /* Build configuration list for PBXNativeTarget "ValleybrookCommunityChurchUITests" */ = {
 			isa = XCConfigurationList;
@@ -532,8 +759,22 @@
 				DB1EC3931EE6E00100998032 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		DB0EEAE61EEB27AC002AB793 /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				DB0EEAE71EEB27AC002AB793 /* Model.xcdatamodel */,
+			);
+			currentVersion = DB0EEAE71EEB27AC002AB793 /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = DB1EC35B1EE6E00100998032 /* Project object */;
 }
