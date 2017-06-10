@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Contacts
 
 class DirectoryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
@@ -174,7 +175,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         let header = getHeader(family: family, people: people)
         let familyPhone = family.phone
         let familyEmail = family.email
-        let addressLine1 = address?.line1
+        let addressStreet = address?.street
         let addressLine2 = address?.line2
         let addressLine3 = address?.line3
         let cityStateZip = getCityStateZip(address: address!)
@@ -191,9 +192,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             lineCount += 1
             lines.append(familyEmail!)
         }
-        if addressLine1 != "" {
+        if addressStreet != "" {
             lineCount += 1
-            lines.append(addressLine1!)
+            lines.append(addressStreet!)
         }
         if addressLine2 != "" {
             lineCount += 1

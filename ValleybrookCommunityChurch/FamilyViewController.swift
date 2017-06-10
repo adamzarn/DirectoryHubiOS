@@ -8,12 +8,15 @@
 
 import UIKit
 import MessageUI
+import Contacts
 
 class FamilyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
     
     @IBOutlet weak var myTableView: UITableView!
     
     var family: Family?
+    var address: Address?
+    var people: [Person]?
     var info: [[[String]]] = []
     let sections = ["Home Number", "Family Email", "Address", "Contact Info", "Children"]
     var adults: [Person] = []
@@ -22,8 +25,8 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let address = family?.familyToAddress
-        let people = family?.familyToPerson?.allObjects as! [Person]
+        address = family?.familyToAddress
+        people = family?.familyToPerson?.allObjects as? [Person]
         
         if family?.phone == "" {
             info.append([])
@@ -44,7 +47,7 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
             info.append([getAddressLines(address: address!)])
         }
         
-        for person in people {
+        for person in people! {
             if person.type != "Child" {
                 adults.append(person)
             } else {
@@ -86,16 +89,10 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
         }
         info.append(allChildrenLines)
         
-        for item in info {
-            print(item)
-        }
-        
-        if getFamilyStatus(people: people) == "Single" {
+        if getFamilyStatus(people: people!) == "Single" {
             
             var firstName = ""
-            for person in people {
-                print(person.name!)
-                print(person.type!)
+            for person in people! {
                 if person.type == "Single" {
                     firstName = person.name!
                 }
@@ -271,16 +268,13 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
             var actionSheet: UIAlertController?
             var onlyEmail = false
             if phone! == "" && email! == "" {
-                print("1")
                 tableView.deselectRow(at: indexPath, animated: true)
                 break
             } else if phone! == "" && email! != "" {
-                print("2")
                 onlyEmail = true
-                actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+                actionSheet = UIAlertController(title: "\(name!) \((family?.name!)!)", message: "What would you like to do?", preferredStyle: UIAlertControllerStyle.actionSheet)
             } else {
-                print("3")
-                actionSheet = UIAlertController(title: "How would you like to contact \(name!)?", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+                actionSheet = UIAlertController(title: "\(name!) \((family?.name!)!)", message: "What would you like to do?", preferredStyle: UIAlertControllerStyle.actionSheet)
             }
             
             if phone != "" {
@@ -309,6 +303,65 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
                 }))
                 
             }
+            
+            if email != "" || phone != "" {
+                
+                actionSheet?.addAction(UIAlertAction(title: "Add to Contacts", style: UIAlertActionStyle.default, handler: { (action) in
+                    
+                    let contact = CNMutableContact()
+                    
+                    contact.givenName = name!
+                    contact.familyName = (self.family?.name!)!
+                    
+                    let email = CNLabeledValue(label: CNLabelHome, value: email! as NSString)
+                    contact.emailAddresses = [email]
+                    
+                    if self.family?.phone != "" {
+                        contact.phoneNumbers.append(
+                            CNLabeledValue(label:CNLabelPhoneNumberMain,
+                                           value:CNPhoneNumber(stringValue: (self.family?.phone)!)
+                            ))
+                    }
+                    contact.phoneNumbers.append(CNLabeledValue(label:CNLabelPhoneNumberMobile,value:CNPhoneNumber(stringValue:phone!)))
+                    
+                    if self.address?.street != "" {
+                        let homeAddress = CNMutablePostalAddress()
+                        homeAddress.street = (self.address?.street!)!
+                        homeAddress.city = (self.address?.city!)!
+                        homeAddress.state = (self.address?.state!)!
+                        homeAddress.postalCode = (self.address?.zip!)!
+                        contact.postalAddresses = [CNLabeledValue(label:CNLabelHome, value:homeAddress)]
+                    }
+                    
+                    
+                    // Saving the newly created contact
+                    let store = CNContactStore()
+                    let saveRequest = CNSaveRequest()
+                    
+                    if CNContactStore.authorizationStatus(for: .contacts) ==  .notDetermined || CNContactStore.authorizationStatus(for: .contacts) == .denied {
+                        store.requestAccess(for: .contacts, completionHandler: { (authorized: Bool, error: Error?) -> Void in
+                            if authorized {
+                                saveRequest.add(contact, toContainerWithIdentifier:nil)
+                                try! store.execute(saveRequest)
+                                
+                                self.presentNotification(title: "Success", firstName: name!, lastName: (self.family?.name)!, message: "was successfully added to Contacts.")
+                                
+                            } else {
+                                
+                                self.presentNotification(title: "Permission Denied", firstName: name!, lastName: (self.family?.name)!, message: "was not added to Contacts because you denied permission. You must go to Settings and allow access to Contacts to change this.")
+                            }
+                        })
+                    } else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
+                        saveRequest.add(contact, toContainerWithIdentifier:nil)
+                        try! store.execute(saveRequest)
+                        
+                        self.presentNotification(title: "Success", firstName: name!, lastName: (self.family?.name)!, message: "was successfully added to Contacts.")
+                    }
+                    
+                }))
+                
+                
+            }
 
             actionSheet?.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
             self.present(actionSheet!, animated: true, completion: nil)
@@ -321,6 +374,12 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
 
         tableView.deselectRow(at: indexPath, animated: false)
         
+    }
+    
+    func presentNotification(title: String, firstName: String, lastName: String, message: String) {
+        let notification = UIAlertController(title: title, message: "\(firstName) \(lastName) \(message)", preferredStyle: .alert)
+        notification.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(notification, animated: false, completion: nil)
     }
     
     func callNumber(phoneNumber: String) {
@@ -365,8 +424,8 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
 
     func getAddressLines(address: Address) -> [String] {
         var addressLines: [String] = []
-        if address.line1 != "" {
-            addressLines.append(address.line1!)
+        if address.street != "" {
+            addressLines.append(address.street!)
         }
         if address.line2 != "" {
             addressLines.append(address.line2!)

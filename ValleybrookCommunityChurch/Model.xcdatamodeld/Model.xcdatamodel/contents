@@ -2,10 +2,10 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Address" representedClassName="Address" syncable="YES" codeGenerationType="class">
         <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="line1" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="line2" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="line3" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="street" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="zip" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="addressToFamily" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Family" inverseName="familyToAddress" inverseEntity="Family" syncable="YES"/>
     </entity>
@@ -25,8 +25,8 @@
         <relationship name="personToFamily" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Family" inverseName="familyToPerson" inverseEntity="Family" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Family" positionX="-63" positionY="-18" width="128" height="120"/>
         <element name="Address" positionX="-54" positionY="9" width="128" height="150"/>
+        <element name="Family" positionX="-63" positionY="-18" width="128" height="120"/>
         <element name="Person" positionX="-36" positionY="63" width="128" height="135"/>
     </elements>
 </model>

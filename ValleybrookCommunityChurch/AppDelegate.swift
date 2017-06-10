@@ -9,10 +9,11 @@
 import UIKit
 import Firebase
 import CoreData
+import Contacts
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     var window: UIWindow?
     let defaults = UserDefaults.standard
 
@@ -33,6 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         autoSave(delayInSeconds: 5)
         FirebaseApp.configure()
+    
         return true
     }
 
@@ -150,7 +152,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         for family in families! {
-            print("\(family.name!) deleted")
             managedObjectContext.delete(family)
         }
     }

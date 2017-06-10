@@ -8,69 +8,67 @@
 
 import Foundation
 import CoreData
-//
-//class FamilyMO: NSManagedObject {
-//    
-//    var name: String?
-//    var phone: String?
-//    var email: String?
-//    var address: Address?
-//    var people: [Person]?
-//    
-//    init(name: String, phone: String, email: String, address: Address, people: [Person]) {
-//        self.name = name
-//        self.phone = phone
-//        self.email = email
-//        self.address = address
-//        self.people = people
-//    }
-//    
-//}
-//
-//class Address: NSManagedObject {
-//    
-//    var line1: String?
-//    var line2: String?
-//    var line3: String?
-//    var city: String?
-//    var state: String?
-//    var zip: String?
-//    
-//    override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?) {
-//        super(entity: entity, insertInto: context)
-////}
-//////        self.line1 = line1
-//////        self.line2 = line2
-//////        self.line3 = line3
-//////        self.city = city
-//////        self.state = state
-//////        self.zip = zip
-//////    }
-////
-////    func toAnyObject() -> AnyObject {
-////        return ["line1": line1, "line2": line2, "line3": line3, "city": city, "state": state, "zip": zip] as AnyObject
-////    }
-////    
-//}
-//
-//struct Person {
-//    
-//    var type: String?
-//    var name: String?
-//    var phone: String?
-//    var email: String?
-//    var birthOrder: Int?
-//    
-//    init(type: String, name: String, phone: String, email: String, birthOrder: Int) {
-//        self.type = type
-//        self.name = name
-//        self.phone = phone
-//        self.email = email
-//        self.birthOrder = birthOrder
-//    }
-//    
-//    func toAnyObject() -> AnyObject {
-//        return ["type": type, "name": name, "phone": phone, "email": email, "birthOrder": birthOrder] as AnyObject
-//    }
-//    
-//}
+
+class FamilyMO {
+    
+    var name: String?
+    var phone: String?
+    var email: String?
+    var address: AddressMO?
+    var people: [PersonMO]?
+    
+    init(name: String, phone: String, email: String, address: AddressMO, people: [PersonMO]) {
+        self.name = name
+        self.phone = phone
+        self.email = email
+        self.address = address
+        self.people = people
+    }
+    
+}
+
+struct AddressMO {
+   
+    var street: String?
+    var line2: String?
+    var line3: String?
+    var city: String?
+    var state: String?
+    var zip: String?
+    
+    init(street: String, line2: String, line3: String, city: String, state: String, zip: String) {
+        self.street = street
+        self.line2 = line2
+        self.line3 = line3
+        self.city = city
+        self.state = state
+        self.zip = zip
+    }
+
+    func toAnyObject() -> AnyObject {
+        return ["street": street, "line2": line2, "line3": line3, "city": city, "state": state, "zip": zip] as AnyObject
+    }
+    
+}
+
+struct PersonMO {
+    
+    var type: String?
+    var name: String?
+    var phone: String?
+    var email: String?
+    var birthOrder: Int?
+    
+    init(type: String, name: String, phone: String, email: String, birthOrder: Int) {
+        self.type = type
+        self.name = name
+        self.phone = phone
+        self.email = email
+        self.birthOrder = birthOrder
+    }
+    
+    func toAnyObject() -> AnyObject {
+        return ["type": type!, "name": name!, "phone": phone!, "email": email!, "birthOrder": birthOrder!] as AnyObject
+    }
+    
+}
