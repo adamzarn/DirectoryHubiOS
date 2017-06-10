@@ -267,15 +267,12 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
 
             var actionSheet: UIAlertController?
             var onlyEmail = false
-            if phone! == "" && email! == "" {
-                tableView.deselectRow(at: indexPath, animated: true)
-                break
-            } else if phone! == "" && email! != "" {
+
+            if phone! == "" && email! != "" {
                 onlyEmail = true
-                actionSheet = UIAlertController(title: "\(name!) \((family?.name!)!)", message: "What would you like to do?", preferredStyle: UIAlertControllerStyle.actionSheet)
-            } else {
-                actionSheet = UIAlertController(title: "\(name!) \((family?.name!)!)", message: "What would you like to do?", preferredStyle: UIAlertControllerStyle.actionSheet)
             }
+            
+            actionSheet = UIAlertController(title: "\(name!) \((family?.name!)!)", message: "What would you like to do?", preferredStyle: UIAlertControllerStyle.actionSheet)
             
             if phone != "" {
                 
@@ -303,65 +300,60 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
                 }))
                 
             }
-            
-            if email != "" || phone != "" {
                 
-                actionSheet?.addAction(UIAlertAction(title: "Add to Contacts", style: UIAlertActionStyle.default, handler: { (action) in
-                    
-                    let contact = CNMutableContact()
-                    
-                    contact.givenName = name!
-                    contact.familyName = (self.family?.name!)!
-                    
-                    let email = CNLabeledValue(label: CNLabelHome, value: email! as NSString)
-                    contact.emailAddresses = [email]
-                    
-                    if self.family?.phone != "" {
-                        contact.phoneNumbers.append(
-                            CNLabeledValue(label:CNLabelPhoneNumberMain,
-                                           value:CNPhoneNumber(stringValue: (self.family?.phone)!)
-                            ))
-                    }
-                    contact.phoneNumbers.append(CNLabeledValue(label:CNLabelPhoneNumberMobile,value:CNPhoneNumber(stringValue:phone!)))
-                    
-                    if self.address?.street != "" {
-                        let homeAddress = CNMutablePostalAddress()
-                        homeAddress.street = (self.address?.street!)!
-                        homeAddress.city = (self.address?.city!)!
-                        homeAddress.state = (self.address?.state!)!
-                        homeAddress.postalCode = (self.address?.zip!)!
-                        contact.postalAddresses = [CNLabeledValue(label:CNLabelHome, value:homeAddress)]
-                    }
-                    
-                    
-                    // Saving the newly created contact
-                    let store = CNContactStore()
-                    let saveRequest = CNSaveRequest()
-                    
-                    if CNContactStore.authorizationStatus(for: .contacts) ==  .notDetermined || CNContactStore.authorizationStatus(for: .contacts) == .denied {
-                        store.requestAccess(for: .contacts, completionHandler: { (authorized: Bool, error: Error?) -> Void in
-                            if authorized {
-                                saveRequest.add(contact, toContainerWithIdentifier:nil)
-                                try! store.execute(saveRequest)
-                                
-                                self.presentNotification(title: "Success", firstName: name!, lastName: (self.family?.name)!, message: "was successfully added to Contacts.")
-                                
-                            } else {
-                                
-                                self.presentNotification(title: "Permission Denied", firstName: name!, lastName: (self.family?.name)!, message: "was not added to Contacts because you denied permission. You must go to Settings and allow access to Contacts to change this.")
-                            }
-                        })
-                    } else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
-                        saveRequest.add(contact, toContainerWithIdentifier:nil)
-                        try! store.execute(saveRequest)
-                        
-                        self.presentNotification(title: "Success", firstName: name!, lastName: (self.family?.name)!, message: "was successfully added to Contacts.")
-                    }
-                    
-                }))
+            actionSheet?.addAction(UIAlertAction(title: "Add to Contacts", style: UIAlertActionStyle.default, handler: { (action) in
+                
+                let contact = CNMutableContact()
+                
+                contact.givenName = name!
+                contact.familyName = (self.family?.name!)!
+                
+                let email = CNLabeledValue(label: CNLabelHome, value: email! as NSString)
+                contact.emailAddresses = [email]
+                
+                if self.family?.phone != "" {
+                    contact.phoneNumbers.append(
+                        CNLabeledValue(label:CNLabelPhoneNumberMain,
+                                       value:CNPhoneNumber(stringValue: (self.family?.phone)!)
+                        ))
+                }
+                contact.phoneNumbers.append(CNLabeledValue(label:CNLabelPhoneNumberMobile,value:CNPhoneNumber(stringValue:phone!)))
+                
+                if self.address?.street != "" {
+                    let homeAddress = CNMutablePostalAddress()
+                    homeAddress.street = (self.address?.street!)!
+                    homeAddress.city = (self.address?.city!)!
+                    homeAddress.state = (self.address?.state!)!
+                    homeAddress.postalCode = (self.address?.zip!)!
+                    contact.postalAddresses = [CNLabeledValue(label:CNLabelHome, value:homeAddress)]
+                }
                 
                 
-            }
+                // Saving the newly created contact
+                let store = CNContactStore()
+                let saveRequest = CNSaveRequest()
+                
+                if CNContactStore.authorizationStatus(for: .contacts) ==  .notDetermined || CNContactStore.authorizationStatus(for: .contacts) == .denied {
+                    store.requestAccess(for: .contacts, completionHandler: { (authorized: Bool, error: Error?) -> Void in
+                        if authorized {
+                            saveRequest.add(contact, toContainerWithIdentifier:nil)
+                            try! store.execute(saveRequest)
+                            
+                            self.presentNotification(title: "Success", firstName: name!, lastName: (self.family?.name)!, message: "was successfully added to Contacts.")
+                            
+                        } else {
+                            
+                            self.presentNotification(title: "Permission Denied", firstName: name!, lastName: (self.family?.name)!, message: "was not added to Contacts because you denied permission. You must go to Settings and allow access to Contacts to change this.")
+                        }
+                    })
+                } else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
+                    saveRequest.add(contact, toContainerWithIdentifier:nil)
+                    try! store.execute(saveRequest)
+                    
+                    self.presentNotification(title: "Success", firstName: name!, lastName: (self.family?.name)!, message: "was successfully added to Contacts.")
+                }
+                
+            }))
 
             actionSheet?.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
             self.present(actionSheet!, animated: true, completion: nil)
