@@ -12,6 +12,7 @@ import Contacts
 
 class DirectoryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
+    @IBOutlet weak var addFamilyButton: UIBarButtonItem!
     @IBOutlet weak var myTableView: UITableView!
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -20,8 +21,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     var sections = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
     var familiesWithSections: [[Family]] = []
     let screenSize = UIScreen.main.bounds
-    let defaults = UserDefaults.standard
     
+    var comingFromUpdate = false
+
     @IBOutlet weak var lastUpdatedItem: UIBarButtonItem!
     @IBOutlet weak var loadingLabel: UILabel!
     @IBOutlet weak var aiv: UIActivityIndicatorView!
@@ -29,11 +31,12 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let lastUpdateTime = defaults.value(forKey: "lastUpdated") {
+        if let lastUpdateTime = appDelegate.defaults.value(forKey: "lastUpdated") {
             lastUpdatedItem.title = "Last Updated: \(lastUpdateTime)"
         } else {
             lastUpdatedItem.title = ""
         }
+        
         lastUpdatedItem.isEnabled = false
         loadingLabel.text = "Loading..."
         let w = screenSize.width
@@ -52,37 +55,47 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         
         myTableView.isHidden = true
         aiv.startAnimating()
+        updateData()
+    }
+    
+    func updateData() {
         
         if GlobalFunctions.sharedInstance.hasConnectivity() {
-            
             appDelegate.removeData()
-        
             FirebaseClient.sharedInstance.updateData { (success, error) -> () in
                 if success.boolValue {
                     
                     self.displayData()
                     
-                    let lastUpdateTime = self.getCurrentDateTime()
+                    let lastUpdateTime = GlobalFunctions.sharedInstance.getCurrentDateTime()
                     self.lastUpdatedItem.title = "Last Updated: \(lastUpdateTime)"
-                    self.defaults.setValue(lastUpdateTime, forKey: "lastUpdated")
-                    
+                    self.appDelegate.defaults.setValue(lastUpdateTime, forKey: "lastUpdated")
+                
                 } else {
                     print(error!)
                 }
-                
             }
-            
         } else {
             displayData()
         }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(false)
+        if comingFromUpdate {
+            updateData()
+        }
+        comingFromUpdate = false
+    }
+
     func displayData() {
+        
+        familiesWithSections = []
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Family")
         
         do {
-            families = try self.appDelegate.managedObjectContext.fetch(fetchRequest) as? [Family]
+            self.families = try self.appDelegate.managedObjectContext.fetch(fetchRequest) as? [Family]
         } catch let e as NSError {
             print("Failed to retrieve record: \(e.localizedDescription)")
             return
@@ -103,40 +116,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         myTableView.reloadData()
         myTableView.isHidden = false
         aiv.stopAnimating()
+        
+        print(familiesWithSections)
 
-    }
-    
-    func getCurrentDateTime() -> String {
-        let date = Date()
-        let calendar = Calendar.current
-        let month = calendar.component(.month, from: date)
-        let day = calendar.component(.day, from: date)
-        let year = calendar.component(.year, from: date)
-        var hour = calendar.component(.hour, from: date)
-        let minutes = calendar.component(.minute, from: date)
-        
-        let yearString = String(year)
-        var minutesString = String(minutes)
-        var suffix = ""
-        
-        if hour == 0 {
-            hour = 12
-            suffix = "AM"
-        } else if hour < 12 {
-            suffix = "AM"
-        } else if hour == 12 {
-            suffix = "PM"
-        } else if hour > 12 {
-            hour = hour - 12
-            suffix = "PM"
-        }
-        
-        if minutes < 10 {
-            minutesString = "0\(minutesString)"
-        }
-        
-        return "\(month)/\(day)/\(yearString.substring(from: 2)) \(hour):\(minutesString) \(suffix)"
-    
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -173,6 +155,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         let people = family.familyToPerson?.allObjects as! [Person]
         
         let header = getHeader(family: family, people: people)
+        
         let familyPhone = family.phone
         let familyEmail = family.email
         let addressStreet = address?.street
@@ -192,10 +175,6 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             lineCount += 1
             lines.append(familyEmail!)
         }
-        if addressStreet != "" {
-            lineCount += 1
-            lines.append(addressStreet!)
-        }
         if addressLine2 != "" {
             lineCount += 1
             lines.append(addressLine2!)
@@ -203,6 +182,10 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         if addressLine3 != "" {
             lineCount += 1
             lines.append(addressLine3!)
+        }
+        if addressStreet != "" {
+            lineCount += 1
+            lines.append(addressStreet!)
         }
         if cityStateZip != "" {
             lineCount += 1
@@ -236,6 +219,10 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             return cell
         case 6:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SixLine") as! SixLineCell
+            cell.setUpCell(lines: lines)
+            return cell
+        case 7:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SevenLine") as! SevenLineCell
             cell.setUpCell(lines: lines)
             return cell
         default:
@@ -323,12 +310,16 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let fvc = storyboard?.instantiateViewController(withIdentifier: "FamilyViewController") as! FamilyViewController
-        
         fvc.family = familiesWithSections[indexPath.section][indexPath.row]
-        
         self.navigationController?.pushViewController(fvc, animated: true)
-        
         tableView.deselectRow(at: indexPath, animated: false)
+    }
+    
+    
+    @IBAction func addFamilyButtonPressed(_ sender: Any) {
+        let addFamilyVC = storyboard?.instantiateViewController(withIdentifier: "AddFamilyViewController") as! AddFamilyViewController
+        addFamilyVC.pvc = self
+        self.present(addFamilyVC, animated: true)
     }
 
 }
@@ -420,6 +411,28 @@ class SixLineCell: UITableViewCell {
         line4.text = lines[3]
         line5.text = lines[4]
         line6.text = lines[5]
+    }
+    
+}
+
+class SevenLineCell: UITableViewCell {
+    
+    @IBOutlet weak var header: UILabel!
+    @IBOutlet weak var line2: UILabel!
+    @IBOutlet weak var line3: UILabel!
+    @IBOutlet weak var line4: UILabel!
+    @IBOutlet weak var line5: UILabel!
+    @IBOutlet weak var line6: UILabel!
+    @IBOutlet weak var line7: UILabel!
+    
+    func setUpCell(lines: [String]) {
+        header.text = lines[0]
+        line2.text = lines[1]
+        line3.text = lines[2]
+        line4.text = lines[3]
+        line5.text = lines[4]
+        line6.text = lines[5]
+        line7.text = lines[6]
     }
     
 }

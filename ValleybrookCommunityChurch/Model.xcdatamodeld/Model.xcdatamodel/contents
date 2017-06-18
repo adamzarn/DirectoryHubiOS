@@ -13,6 +13,7 @@
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uid" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="familyToAddress" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Address" inverseName="addressToFamily" inverseEntity="Address" syncable="YES"/>
         <relationship name="familyToPerson" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Person" inverseName="personToFamily" inverseEntity="Person" syncable="YES"/>
     </entity>
@@ -22,11 +23,12 @@
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uid" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="personToFamily" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Family" inverseName="familyToPerson" inverseEntity="Family" syncable="YES"/>
     </entity>
     <elements>
         <element name="Address" positionX="-54" positionY="9" width="128" height="150"/>
-        <element name="Family" positionX="-63" positionY="-18" width="128" height="120"/>
-        <element name="Person" positionX="-36" positionY="63" width="128" height="135"/>
+        <element name="Family" positionX="-63" positionY="-18" width="128" height="135"/>
+        <element name="Person" positionX="-36" positionY="63" width="128" height="150"/>
     </elements>
 </model>

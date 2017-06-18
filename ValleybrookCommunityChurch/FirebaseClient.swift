@@ -16,7 +16,7 @@ class FirebaseClient: NSObject {
     let ref = Database.database().reference()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
-    func addFamily(family: FamilyMO) {
+    func addFamily(family: FamilyMO, completion: (Bool) -> ()) {
         let directoryRef = self.ref.child("Directory")
         
         let name = family.name!
@@ -40,13 +40,14 @@ class FirebaseClient: NSObject {
             let newPerson = PersonMO(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: person.birthOrder!)
             newPersonRef.setValue(newPerson.toAnyObject())
         }
+        completion(true)
     }
     
     func updateData(completion: @escaping (_ success: DarwinBoolean, _ error: NSString?) -> ()) {
         self.ref.observeSingleEvent(of: .value, with: { snapshot in
             if let familiesData = (snapshot.value! as! NSDictionary)["Directory"] {
 
-                for (_, value) in familiesData as! NSDictionary {
+                for (key, value) in familiesData as! NSDictionary {
                     
                     let info = value as! NSDictionary
                     
@@ -57,6 +58,7 @@ class FirebaseClient: NSObject {
                     family.name = info.value(forKey: "name") as? String
                     family.phone = info.value(forKey: "phone") as? String
                     family.email = info.value(forKey: "email") as? String
+                    family.uid = key as? String
                     
                     let a = info.value(forKey: "Address") as! NSDictionary
                     
@@ -72,7 +74,7 @@ class FirebaseClient: NSObject {
                     
                     let p = info.value(forKey: "People") as! NSDictionary
 
-                    for (_, value) in p {
+                    for (key, value) in p {
                         
                         let person = NSEntityDescription.insertNewObject(forEntityName: "Person", into: managedObjectContext) as! Person
                         let source = value as AnyObject
@@ -81,10 +83,11 @@ class FirebaseClient: NSObject {
                         person.phone = source.value(forKey: "phone") as? String
                         person.email = source.value(forKey: "email") as? String
                         person.birthOrder = String(describing: source.value(forKey: "birthOrder"))
+                        person.uid = key as? String
                         person.personToFamily = family
                         
                     }
-                    
+
                 }
                 
                 self.appDelegate.saveContext()

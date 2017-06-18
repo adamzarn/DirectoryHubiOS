@@ -25,6 +25,7 @@
 		DB1EC3871EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3861EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift */; };
 		DB1EC3951EE6E01600998032 /* FirebaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3941EE6E01600998032 /* FirebaseClient.swift */; };
 		DB1EC3971EE6E0E100998032 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */; };
+		DB6C807A1EF4784300AE7AA6 /* AddFamilyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6C80791EF4784300AE7AA6 /* AddFamilyViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +75,7 @@
 		DB1EC3881EE6E00100998032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB1EC3941EE6E01600998032 /* FirebaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseClient.swift; sourceTree = "<group>"; };
 		DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		DB6C80791EF4784300AE7AA6 /* AddFamilyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFamilyViewController.swift; sourceTree = "<group>"; };
 		DE29402686A967908E79B620 /* Pods-ValleybrookCommunityChurch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValleybrookCommunityChurch.release.xcconfig"; path = "Pods/Target Support Files/Pods-ValleybrookCommunityChurch/Pods-ValleybrookCommunityChurch.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -156,6 +158,7 @@
 				DB1EC3661EE6E00100998032 /* AppDelegate.swift */,
 				DB1EC3681EE6E00100998032 /* DirectoryViewController.swift */,
 				DB0EEADE1EE77475002AB793 /* FamilyViewController.swift */,
+				DB6C80791EF4784300AE7AA6 /* AddFamilyViewController.swift */,
 				DB0EEAE01EEB13CC002AB793 /* LoginViewController.swift */,
 				DB0EEAE21EEB179A002AB793 /* Reachability.swift */,
 				DB1EC36A1EE6E00100998032 /* Main.storyboard */,
@@ -476,6 +479,7 @@
 			files = (
 				DB0EEAE31EEB179A002AB793 /* Reachability.swift in Sources */,
 				DB0EEAE11EEB13CC002AB793 /* LoginViewController.swift in Sources */,
+				DB6C807A1EF4784300AE7AA6 /* AddFamilyViewController.swift in Sources */,
 				DB0EEAE51EEB18BD002AB793 /* GlobalFunctions.swift in Sources */,
 				DB1EC3691EE6E00100998032 /* DirectoryViewController.swift in Sources */,
 				DB1EC3671EE6E00100998032 /* AppDelegate.swift in Sources */,
