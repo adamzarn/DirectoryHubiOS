@@ -174,6 +174,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             updateData()
         }
         appDelegate.comingFromUpdate = false
+        searchController.searchBar.isHidden = false
     }
 
     func displayData() {
@@ -415,16 +416,19 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if searchController.isActive {
+            searchController.searchBar.isHidden = true
             searchController.searchBar.resignFirstResponder()
-            searchController.searchBar.text = ""
+            let fvc = storyboard?.instantiateViewController(withIdentifier: "FamilyViewController") as! FamilyViewController
+            fvc.family = filteredFamiliesWithSections[indexPath.section][indexPath.row]
+            self.navigationController?.pushViewController(fvc, animated: true)
             searchController.isActive = false
+            searchController.searchBar.text = ""
+        } else {
+            let fvc = storyboard?.instantiateViewController(withIdentifier: "FamilyViewController") as! FamilyViewController
+            fvc.family = familiesWithSections[indexPath.section][indexPath.row]
+            self.navigationController?.pushViewController(fvc, animated: true)
+            tableView.deselectRow(at: indexPath, animated: false)
         }
-        
-        let fvc = storyboard?.instantiateViewController(withIdentifier: "FamilyViewController") as! FamilyViewController
-        fvc.family = familiesWithSections[indexPath.section][indexPath.row]
-        self.navigationController?.pushViewController(fvc, animated: true)
-        tableView.deselectRow(at: indexPath, animated: false)
-        
     }
     
     @IBAction func addFamilyButtonPressed(_ sender: Any) {
@@ -556,6 +560,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         filteredFamilies = families.filter { family in
             return (family.name?.lowercased().contains(searchText.lowercased()))!
         }
+        print(searchText.lowercased())
         filteredFamiliesWithSections = []
         for i in 0...25 {
             var tempArray: [Family] = []
@@ -566,6 +571,8 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             }
             filteredFamiliesWithSections.append(tempArray)
         }
+        print(filteredFamiliesWithSections)
+        print("Why is this being called here?\n\n\n\n\n\n")
 
         myTableView.reloadData()
     }
