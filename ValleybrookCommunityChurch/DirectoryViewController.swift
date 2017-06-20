@@ -571,8 +571,6 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             }
             filteredFamiliesWithSections.append(tempArray)
         }
-        print(filteredFamiliesWithSections)
-        print("Why is this being called here?\n\n\n\n\n\n")
 
         myTableView.reloadData()
     }

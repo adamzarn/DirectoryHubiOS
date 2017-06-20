@@ -15,7 +15,9 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     
     @IBOutlet weak var peopleTableView: UITableView!
     @IBOutlet weak var addressTableView: UITableView!
-    var pickerView: UIPickerView!
+    var typePicker: UIPickerView!
+    var birthOrderPicker: UIPickerView!
+    var statePicker: UIPickerView!
     var dimView: UIView?
     @IBOutlet weak var topStackView: UIStackView!
     @IBOutlet weak var bottomStackView: UIStackView!
@@ -96,19 +98,43 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         
         toolBar.items = [flex, done]
         
-        pickerView = UIPickerView(frame: CGRect(x: 0, y: toolBar.frame.size.height, width: screenWidth, height: 150))
-        pickerView.delegate = self
-        pickerView.dataSource = self
-        pickerView.showsSelectionIndicator = true
+        typePicker = UIPickerView(frame: CGRect(x: 0, y: toolBar.frame.size.height, width: screenWidth, height: 150))
+        typePicker.delegate = self
+        typePicker.dataSource = self
+        typePicker.showsSelectionIndicator = true
         
-        let inputView = UIView(frame:CGRect(x: 0, y: 0, width: screenWidth, height: toolBar.frame.size.height + pickerView.frame.size.height))
-        inputView.backgroundColor = .clear
-        inputView.addSubview(pickerView)
+        let typeInputView = UIView(frame:CGRect(x: 0, y: 0, width: screenWidth, height: toolBar.frame.size.height + typePicker.frame.size.height))
+        typeInputView.backgroundColor = .clear
+        typeInputView.addSubview(typePicker)
         
+        birthOrderPicker = UIPickerView(frame: CGRect(x: 0, y: toolBar.frame.size.height, width: screenWidth, height: 150))
+        birthOrderPicker.delegate = self
+        birthOrderPicker.dataSource = self
+        birthOrderPicker.showsSelectionIndicator = true
+        
+        let birthOrderInputView = UIView(frame:CGRect(x: 0, y: 0, width: screenWidth, height: toolBar.frame.size.height + birthOrderPicker.frame.size.height))
+        birthOrderInputView.backgroundColor = .clear
+        birthOrderInputView.addSubview(birthOrderPicker)
+        
+        statePicker = UIPickerView(frame: CGRect(x: 0, y: toolBar.frame.size.height, width: screenWidth, height: 150))
+        statePicker.delegate = self
+        statePicker.dataSource = self
+        statePicker.showsSelectionIndicator = true
+        
+        let stateInputView = UIView(frame:CGRect(x: 0, y: 0, width: screenWidth, height: toolBar.frame.size.height + statePicker.frame.size.height))
+        stateInputView.backgroundColor = .clear
+        stateInputView.addSubview(statePicker)
+
         let allTextFields = getTextFields(view: self.view)
         for textField in allTextFields {
-            if [personTypeTextField, birthOrderTextField, stateTextField].contains(textField) {
-                textField.inputView = inputView
+            if textField == personTypeTextField {
+                textField.inputView = typeInputView
+            }
+            if textField == birthOrderTextField {
+                textField.inputView = birthOrderInputView
+            }
+            if textField == stateTextField {
+                textField.inputView = stateInputView
             }
             textField.autocorrectionType = .no
             textField.inputAccessoryView = toolBar
@@ -325,6 +351,8 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         
         editingPerson = false
         dismissAddPersonView()
+        people[0].sort { $0.type! < $1.type! }
+        people[1].sort { $0.birthOrder! < $1.birthOrder! }
         peopleTableView.reloadData()
     }
     
@@ -383,25 +411,26 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
+
         if textField == stateTextField {
             if textField.text != "" {
-                pickerView.selectRow(stateOptions.index(of: textField.text!)!, inComponent: 0, animated: false)
+                statePicker.selectRow(stateOptions.index(of: textField.text!)!, inComponent: 0, animated: false)
             } else {
-                pickerView.selectRow(0, inComponent: 0, animated: false)
+                statePicker.selectRow(0, inComponent: 0, animated: false)
             }
         }
         if textField == personTypeTextField {
             if textField.text != "" {
-                pickerView.selectRow(typeOptions.index(of: textField.text!)!, inComponent: 0, animated: false)
+                typePicker.selectRow(typeOptions.index(of: textField.text!)!, inComponent: 0, animated: false)
             } else {
-                pickerView.selectRow(0, inComponent: 0, animated: false)
+                typePicker.selectRow(0, inComponent: 0, animated: false)
             }
         }
         if textField == birthOrderTextField {
             if textField.text != "" {
-                pickerView.selectRow(birthOrderOptions.index(of: Int(textField.text!)!)!, inComponent: 0, animated: false)
+                birthOrderPicker.selectRow(birthOrderOptions.index(of: Int(textField.text!)!)!, inComponent: 0, animated: false)
             } else {
-                pickerView.selectRow(0, inComponent: 0, animated: false)
+                birthOrderPicker.selectRow(0, inComponent: 0, animated: false)
             }
         }
         currentTextField = textField
@@ -418,9 +447,9 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        if currentTextField == stateTextField {
+        if pickerView == statePicker {
             return stateOptions.count
-        } else if currentTextField == personTypeTextField {
+        } else if pickerView == typePicker {
             return typeOptions.count
         } else {
             return birthOrderOptions.count
@@ -428,9 +457,9 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        if currentTextField == stateTextField {
+        if pickerView == statePicker {
             return stateOptions[row]
-        } else if currentTextField == personTypeTextField {
+        } else if pickerView == typePicker {
             return typeOptions[row]
         } else {
             return String(describing: birthOrderOptions[row])
@@ -438,9 +467,9 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        if currentTextField == stateTextField {
+        if pickerView == statePicker {
             stateTextField.text = stateOptions[row]
-        } else if currentTextField == personTypeTextField {
+        } else if pickerView == typePicker {
             personTypeTextField.text = typeOptions[row]
         } else {
             birthOrderTextField.text = String(describing: birthOrderOptions[row])
@@ -464,10 +493,11 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
             addPersonLabel.text = "Edit Person"
             if person.type == "Child" {
                 birthOrderTextField.isEnabled = true
-                birthOrderTextField.text = String(describing: person.birthOrder)
+                birthOrderTextField.text = String(describing: person.birthOrder!)
                 for i in birthOrders {
                     if birthOrders[i] == person.birthOrder {
                         birthOrders.remove(at: i)
+                        break
                     }
                 }
             }
