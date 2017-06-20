@@ -16,7 +16,7 @@ class FirebaseClient: NSObject {
     let ref = Database.database().reference()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
-    func addFamily(family: FamilyMO, completion: (Bool) -> ()) {
+    func addFamily(family: FamilyMO, uid: String, completion: (Bool) -> ()) {
         let directoryRef = self.ref.child("Directory")
         
         let name = family.name!
@@ -25,7 +25,13 @@ class FirebaseClient: NSObject {
         let address = family.address!
         let people = family.people!
         
-        let newFamilyRef = directoryRef.childByAutoId()
+        var newFamilyRef: DatabaseReference!
+        if uid == "" {
+            newFamilyRef = directoryRef.childByAutoId()
+        } else {
+            newFamilyRef = directoryRef.child(uid)
+        }
+        
         newFamilyRef.child("name").setValue(name)
         newFamilyRef.child("phone").setValue(phone)
         newFamilyRef.child("email").setValue(email)
@@ -35,15 +41,16 @@ class FirebaseClient: NSObject {
         addressRef.setValue(newAddress.toAnyObject())
         
         let peopleRef = newFamilyRef.child("People")
+        peopleRef.removeValue()
         for person in people {
             let newPersonRef = peopleRef.childByAutoId()
-            let newPerson = PersonMO(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: person.birthOrder!)
+            let newPerson = PersonMO(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: person.birthOrder!, uid: "")
             newPersonRef.setValue(newPerson.toAnyObject())
         }
         completion(true)
     }
     
-    func updateData(completion: @escaping (_ success: DarwinBoolean, _ error: NSString?) -> ()) {
+    func updateData(completion: @escaping (_ success: Bool, _ error: NSString?) -> ()) {
         self.ref.observeSingleEvent(of: .value, with: { snapshot in
             if let familiesData = (snapshot.value! as! NSDictionary)["Directory"] {
 
@@ -82,7 +89,7 @@ class FirebaseClient: NSObject {
                         person.name = source.value(forKey: "name") as? String
                         person.phone = source.value(forKey: "phone") as? String
                         person.email = source.value(forKey: "email") as? String
-                        person.birthOrder = String(describing: source.value(forKey: "birthOrder"))
+                        person.birthOrder = String(describing: source.value(forKey: "birthOrder")!)
                         person.uid = key as? String
                         person.personToFamily = family
                         
@@ -112,6 +119,23 @@ class FirebaseClient: NSObject {
             }
         })
     }
+    
+    func getAdminPassword(completion: @escaping (_ password: String?, _ error: NSString?) -> ()) {
+        self.ref.observeSingleEvent(of: .value, with: { snapshot in
+            if let password = (snapshot.value! as! NSDictionary)["AdminPassword"] {
+                completion(password as? String, nil)
+            } else {
+                completion(nil, "Could not retrieve passwor")
+            }
+        })
+    }
+    
+    func deleteFamily(uid: String, completion: (Bool) -> ()) {
+        let directoryRef = self.ref.child("Directory")
+        directoryRef.child(uid).removeValue()
+        completion(true)
+    }
+
     
     static let sharedInstance = FirebaseClient()
     private override init() {

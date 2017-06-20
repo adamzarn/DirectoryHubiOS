@@ -17,7 +17,6 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     @IBOutlet weak var addressTableView: UITableView!
     var pickerView: UIPickerView!
     var dimView: UIView?
-    @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var topStackView: UIStackView!
     @IBOutlet weak var bottomStackView: UIStackView!
     
@@ -36,24 +35,29 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     
     @IBOutlet weak var addPersonView: UIView!
     //Add Person View
+    @IBOutlet weak var addPersonLabel: UILabel!
     @IBOutlet weak var firstNameTextField: UITextField!
     @IBOutlet weak var personTypeTextField: UITextField!
     @IBOutlet weak var birthOrderTextField: UITextField!
     @IBOutlet weak var phoneTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
     
+    @IBOutlet weak var submitButton: UIBarButtonItem!
+    
+    var uid = ""
     var people: [[PersonMO]] = [[],[]]
     var personTypes: [String] = []
     var editingPerson = false
     var indexPathBeingEdited: IndexPath?
     var address: AddressMO = AddressMO(street: "", line2: "", line3: "", city: "", state: "", zip: "")
-    var typeOptions = ["", "Husband", "Wife", "Single", "Child"]
+    var typeOptions = ["Husband", "Wife", "Single", "Child"]
     let birthOrderOptions = [1,2,3,4,5,6,7,8,9,10]
     var birthOrders: [Int] = []
-    let stateOptions = ["", "IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
+    let stateOptions = ["IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
                         "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT",
                         "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI",
                         "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+    var textFieldValues: [String] = []
 
     var currentTextField: UITextField?
     
@@ -62,6 +66,8 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationController?.navigationItem.backBarButtonItem?.title = "Back"
         
         addPersonView.isHidden = true
         addPersonView.isUserInteractionEnabled = false
@@ -86,28 +92,50 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         let toolBar = UIToolbar(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 44))
         toolBar.barStyle = .default
         let flex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-        let done = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissPickerView))
+        let done = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissKeyboard))
         
         toolBar.items = [flex, done]
         
-        pickerView = UIPickerView(frame: CGRect(x: 0, y: toolBar.frame.size.height, width: screenWidth, height: 200))
+        pickerView = UIPickerView(frame: CGRect(x: 0, y: toolBar.frame.size.height, width: screenWidth, height: 150))
         pickerView.delegate = self
         pickerView.dataSource = self
         pickerView.showsSelectionIndicator = true
         
         let inputView = UIView(frame:CGRect(x: 0, y: 0, width: screenWidth, height: toolBar.frame.size.height + pickerView.frame.size.height))
         inputView.backgroundColor = .clear
-        inputView.addSubview(toolBar)
         inputView.addSubview(pickerView)
-        
-        personTypeTextField.inputView = inputView
-        birthOrderTextField.inputView = inputView
-        stateTextField.inputView = inputView
         
         let allTextFields = getTextFields(view: self.view)
         for textField in allTextFields {
+            if [personTypeTextField, birthOrderTextField, stateTextField].contains(textField) {
+                textField.inputView = inputView
+            }
             textField.autocorrectionType = .no
+            textField.inputAccessoryView = toolBar
         }
+        
+        if uid != "" {
+        
+            lastNameTextField.text = textFieldValues[0]
+            homePhoneTextField.text = textFieldValues[1]
+            emailTextField.text = textFieldValues[2]
+            
+            streetTextField.text = textFieldValues[3]
+            line2TextField.text = textFieldValues[4]
+            line3TextField.text = textFieldValues[5]
+            cityTextField.text = textFieldValues[6]
+            stateTextField.text = textFieldValues[7]
+            zipTextField.text = textFieldValues[8]
+            
+            self.title = "Edit Family"
+            submitButton.title = "SUBMIT CHANGES"
+            
+        } else {
+            self.title = "Add Family"
+        }
+        
+        people[0].sort { $0.type! < $1.type! }
+        people[1].sort { $0.birthOrder! < $1.birthOrder! }
         
     }
     
@@ -167,15 +195,15 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         }
     }
     
-    @IBAction func cancelButtonPressed(_ sender: Any) {
-        self.dismiss(animated: false, completion: nil)
-    }
-    
     @IBAction func addPersonButtonPressed(_ sender: Any) {
         addPersonButtonActions()
     }
     
     @IBAction func editAddressButtonPressed(_ sender: Any) {
+        editAddressActions()
+    }
+    
+    func editAddressActions() {
         addAddressView.isHidden = false
         
         self.view.addSubview(dimView!)
@@ -283,10 +311,11 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         if editingPerson {
             
             let ip = indexPathBeingEdited!
-            people[ip.section][ip.row] = PersonMO(type: type, name: name, phone: phone, email: email, birthOrder: birthOrder)
+            let uid = people[ip.section][ip.row].uid
+            people[ip.section][ip.row] = PersonMO(type: type, name: name, phone: phone, email: email, birthOrder: birthOrder, uid: uid!)
         
         } else {
-            let newPerson = PersonMO(type: type, name: name, phone: phone, email: email, birthOrder: birthOrder)
+            let newPerson = PersonMO(type: type, name: name, phone: phone, email: email, birthOrder: birthOrder, uid: "")
             if type != "Child" {
                 people[0].insert(newPerson, at: people[0].count)
             } else {
@@ -348,7 +377,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     func displayAlertAndDismiss(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
-            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popToRootViewController(animated: true)
         }))
         self.present(alert, animated: false, completion: nil)
     }
@@ -418,7 +447,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         }
     }
     
-    func dismissPickerView() {
+    func dismissKeyboard() {
         currentTextField?.resignFirstResponder()
     }
     
@@ -432,6 +461,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         if tableView == peopleTableView {
             let person = people[indexPath.section][indexPath.row]
             addPersonButtonActions()
+            addPersonLabel.text = "Edit Person"
             if person.type == "Child" {
                 birthOrderTextField.isEnabled = true
                 birthOrderTextField.text = String(describing: person.birthOrder)
@@ -446,18 +476,26 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
             emailTextField.text = person.email
             phoneTextField.text = person.phone
             
-            var i = 0
-            for type in personTypes {
-                if type == person.type {
-                    personTypes.remove(at: i)
-                }
-                i = i + 1
-            }
+            removeFromPersonTypes(text: person.type!)
+            
             editingPerson = true
             indexPathBeingEdited = indexPath
+        } else if tableView == addressTableView {
+            editAddressActions()
         }
         
         tableView.deselectRow(at: indexPath, animated: false)
+    }
+    
+    func removeFromPersonTypes(text: String) {
+        var i = 0
+        for string in personTypes {
+            if string == text {
+                personTypes.remove(at: i)
+                return
+            }
+            i = i + 1
+        }
     }
     
     @IBAction func submitButtonPressed(_ sender: Any) {
@@ -475,10 +513,11 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         if people[0].count == 1 {
             if people[0][0].type == "Husband" {
                 displayAlert(title: "Missing Spouse", message: "A husband must have a wife.")
+                return
             } else if people[0][0].type == "Wife" {
                 displayAlert(title: "Missing Spouse", message: "A wife must have a husband.")
+                return
             }
-            return
         }
         
         let alert = UIAlertController(title: "Submit", message: "Are you sure you want to continue?", preferredStyle: .alert)
@@ -488,13 +527,13 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
             
             if GlobalFunctions.sharedInstance.hasConnectivity() {
                 
-                FirebaseClient.sharedInstance.addFamily(family: newFamily) { success in
+                FirebaseClient.sharedInstance.addFamily(family: newFamily, uid: self.uid) { success in
                     if success {
                         self.pvc?.familiesWithSections = []
-                        self.pvc?.comingFromUpdate = true
-                        self.displayAlertAndDismiss(title: "Success", message: "The new family was added to the database.")
+                        self.appDelegate.comingFromUpdate = true
+                        self.displayAlertAndDismiss(title: "Success", message: "The new family information was added to the database.")
                     } else {
-                        self.displayAlert(title: "Failure", message: "The new family was not added to the database.")
+                        self.displayAlert(title: "Failure", message: "The new family information was not added to the database.")
                     }
                 }
                 
@@ -566,6 +605,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     }
     
     func addPersonButtonActions() {
+        addPersonLabel.text = "Add Person"
         addPersonView.isHidden = false
         
         if personTypeTextField.text != "Child" {
@@ -580,6 +620,22 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         self.view.bringSubview(toFront: addPersonView)
         
         firstNameTextField.becomeFirstResponder()
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        if tableView == peopleTableView {
+            return true
+        }
+        return false
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let person = people[indexPath.section][indexPath.row]
+            removeFromPersonTypes(text: person.type!)
+            people[indexPath.section].remove(at: indexPath.row)
+            peopleTableView.reloadData()
+        }
     }
     
 }

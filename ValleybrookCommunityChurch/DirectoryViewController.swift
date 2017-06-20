@@ -10,35 +10,68 @@ import UIKit
 import CoreData
 import Contacts
 
-class DirectoryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class DirectoryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UISearchBarDelegate, UISearchControllerDelegate {
     
     @IBOutlet weak var addFamilyButton: UIBarButtonItem!
     @IBOutlet weak var myTableView: UITableView!
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    var families: [Family]? = nil
-    var keys: [String]? = nil
+    var families: [Family] = []
+    var filteredFamilies: [Family] = []
     var sections = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
     var familiesWithSections: [[Family]] = []
+    var filteredFamiliesWithSections: [[Family]] = []
     let screenSize = UIScreen.main.bounds
-    
-    var comingFromUpdate = false
 
     @IBOutlet weak var lastUpdatedItem: UIBarButtonItem!
-    @IBOutlet weak var loadingLabel: UILabel!
+    var loadingLabel: UILabel!
     @IBOutlet weak var aiv: UIActivityIndicatorView!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var accessAiv: UIActivityIndicatorView!
+    @IBOutlet weak var accessToDirectoryButton: UIButton!
+    
+    let searchController = UISearchController(searchResultsController: nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        searchController.delegate = self
+        searchController.searchBar.delegate = self
+        searchController.searchBar.placeholder = "Search by Last Name"
+        searchController.searchResultsUpdater = self
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.definesPresentationContext = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        myTableView.tableHeaderView = searchController.searchBar
+        
+        loadingLabel = UILabel()
+        view.addSubview(loadingLabel)
+        
+        self.navigationController?.navigationBar.isTranslucent = false
+        passwordTextField.autocorrectionType = .no
+        passwordTextField.isSecureTextEntry = true
+        
         if let lastUpdateTime = appDelegate.defaults.value(forKey: "lastUpdated") {
             lastUpdatedItem.title = "Last Updated: \(lastUpdateTime)"
+            allowAccessToDirectory()
         } else {
             lastUpdatedItem.title = ""
+            accessAiv.isHidden = true
+            myTableView.isHidden = true
+            aiv.isHidden = true
+            loadingLabel.isHidden = true
         }
+        
+    }
+    
+    func allowAccessToDirectory() {
+        accessAiv.isHidden = true
+        passwordTextField.isHidden = true
+        accessToDirectoryButton.isHidden = true
         
         lastUpdatedItem.isEnabled = false
         loadingLabel.text = "Loading..."
+        
         let w = screenSize.width
         let h = screenSize.height
         
@@ -46,24 +79,75 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         let statusBarHeight = UIApplication.shared.statusBarFrame.height
         
         let centerY = h/2 - navBarHeight! - statusBarHeight
+        print(screenSize.height)
+        print(centerY)
         
+        aiv.isHidden = false
         aiv.frame = CGRect(x: w/2 - 10, y: centerY - 10, width: 20, height: 20)
+        loadingLabel.isHidden = false
         loadingLabel.frame = CGRect(x: 0, y: centerY + 20, width: w, height: 20)
         loadingLabel.textAlignment = .center
-        
-        self.navigationController?.navigationBar.isTranslucent = false
         
         myTableView.isHidden = true
         aiv.startAnimating()
         updateData()
     }
     
+    @IBAction func accessDirectoryButtonPressed(_ sender: Any) {
+        
+        accessAiv.isHidden = false
+        accessAiv.startAnimating()
+        accessToDirectoryButton.isHidden = true
+        
+        if GlobalFunctions.sharedInstance.hasConnectivity() {
+            
+            FirebaseClient.sharedInstance.getPassword { (password, error) -> () in
+                
+                self.accessAiv.stopAnimating()
+                self.accessAiv.isHidden = true
+                
+                if let password = password {
+                    
+                    if password == self.passwordTextField.text {
+                        self.allowAccessToDirectory()
+                        self.passwordTextField.resignFirstResponder()
+                    } else {
+                        let alert = UIAlertController(title: "Incorrect Password", message: "Please try again.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                        self.present(alert, animated: false, completion: nil)
+                        self.accessToDirectoryButton.isHidden = false
+                    }
+                    
+                } else {
+                    print(error!)
+                }
+                
+            }
+            
+        } else {
+            
+            self.accessAiv.stopAnimating()
+            self.accessAiv.isHidden = true
+            
+            let alert = UIAlertController(title: "No Internet Connection", message: "Please establish an internet connection and try again.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: false, completion: nil)
+            
+        }
+        
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        return true
+    }
+    
+    
     func updateData() {
         
         if GlobalFunctions.sharedInstance.hasConnectivity() {
             appDelegate.removeData()
             FirebaseClient.sharedInstance.updateData { (success, error) -> () in
-                if success.boolValue {
+                if success {
                     
                     self.displayData()
                     
@@ -80,12 +164,16 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(false)
-        if comingFromUpdate {
+    override func viewWillAppear(_ animated: Bool) {
+        if appDelegate.comingFromUpdate {
+            loadingLabel.text = "Updating Directory..."
+            loadingLabel.isHidden = false
+            aiv.startAnimating()
+            aiv.isHidden = false
+            myTableView.isHidden = true
             updateData()
         }
-        comingFromUpdate = false
+        appDelegate.comingFromUpdate = false
     }
 
     func displayData() {
@@ -95,17 +183,17 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Family")
         
         do {
-            self.families = try self.appDelegate.managedObjectContext.fetch(fetchRequest) as? [Family]
+            self.families = try self.appDelegate.managedObjectContext.fetch(fetchRequest) as! [Family]
         } catch let e as NSError {
             print("Failed to retrieve record: \(e.localizedDescription)")
             return
         }
         
-        families?.sort { $0.name! < $1.name! }
+        families.sort { $0.name! < $1.name! }
         
         for i in 0...25 {
             var tempArray: [Family] = []
-            for family in self.families! {
+            for family in self.families {
                 if family.name?[0] == self.sections[i] {
                     tempArray.append(family)
                 }
@@ -116,17 +204,26 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         myTableView.reloadData()
         myTableView.isHidden = false
         aiv.stopAnimating()
-        
-        print(familiesWithSections)
+        aiv.isHidden = true
+        loadingLabel.isHidden = true
+        loadingLabel.text = "Loading..."
 
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if familiesWithSections.count > 0 {
-            return familiesWithSections[section].count
+
+        if searchController.isActive && searchController.searchBar.text != "" {
+            if filteredFamiliesWithSections.count > 0 {
+                return filteredFamiliesWithSections[section].count
+            }
+            return 0
+        } else {
+            if familiesWithSections.count > 0 {
+                return familiesWithSections[section].count
+            }
+            return 0
         }
-        return 0
-    
+
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -138,19 +235,27 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if familiesWithSections.count > 0 {
-            if familiesWithSections[section].count == 0 {
+        var families = familiesWithSections
+        if searchController.isActive && searchController.searchBar.text != "" {
+            families = filteredFamiliesWithSections
+        }
+
+        if families.count > 0 {
+            if families[section].count == 0 {
                 return nil
             }
             return sections[section]
         }
         return nil
-
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let family = familiesWithSections[indexPath.section][indexPath.row]
+        var family = familiesWithSections[indexPath.section][indexPath.row]
+        if searchController.isActive && searchController.searchBar.text != "" {
+            family = filteredFamiliesWithSections[indexPath.section][indexPath.row]
+        }
+        
         let address = family.familyToAddress
         let people = family.familyToPerson?.allObjects as! [Person]
         
@@ -309,17 +414,160 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        if searchController.isActive {
+            searchController.searchBar.resignFirstResponder()
+            searchController.searchBar.text = ""
+            searchController.isActive = false
+        }
+        
         let fvc = storyboard?.instantiateViewController(withIdentifier: "FamilyViewController") as! FamilyViewController
         fvc.family = familiesWithSections[indexPath.section][indexPath.row]
         self.navigationController?.pushViewController(fvc, animated: true)
         tableView.deselectRow(at: indexPath, animated: false)
+        
     }
     
-    
     @IBAction func addFamilyButtonPressed(_ sender: Any) {
-        let addFamilyVC = storyboard?.instantiateViewController(withIdentifier: "AddFamilyViewController") as! AddFamilyViewController
-        addFamilyVC.pvc = self
-        self.present(addFamilyVC, animated: true)
+
+        let alertController = UIAlertController(title: "Password Required", message: "Enter the administrator password to add a family to the Directory.", preferredStyle: .alert)
+        
+        let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
+            if let field = alertController.textFields?[0] {
+                if GlobalFunctions.sharedInstance.hasConnectivity() {
+                    
+                    FirebaseClient.sharedInstance.getAdminPassword { (password, error) -> () in
+                        
+                        if let password = password {
+                            
+                            if password == field.text {
+                                let addFamilyVC = self.storyboard?.instantiateViewController(withIdentifier: "AddFamilyViewController") as! AddFamilyViewController
+                                addFamilyVC.pvc = self
+                                self.navigationController?.pushViewController(addFamilyVC, animated: true)
+                            } else {
+                                let alert = UIAlertController(title: "Incorrect Password", message: "Please try again.", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                                self.present(alert, animated: false, completion: nil)
+                            }
+                            
+                        } else {
+                            print(error!)
+                        }
+                        
+                    }
+                    
+                } else {
+                    
+                    let alert = UIAlertController(title: "No Internet Connection", message: "Please establish an internet connection and try again.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self.present(alert, animated: false, completion: nil)
+                    
+                }
+
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        
+        alertController.addTextField { (textField) in
+            textField.placeholder = "Administrator Password"
+            textField.isSecureTextEntry = true
+        }
+        
+        alertController.addAction(submitAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        let familyToDelete = familiesWithSections[indexPath.section][indexPath.row]
+        let name = familyToDelete.name!
+        
+        if editingStyle == .delete {
+            
+            let alertController = UIAlertController(title: "Password Required", message: "Enter the administrator password to remove a family from the Directory.", preferredStyle: .alert)
+            
+            let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
+                if let field = alertController.textFields?[0] {
+                    
+                    if GlobalFunctions.sharedInstance.hasConnectivity() {
+                        
+                        FirebaseClient.sharedInstance.getAdminPassword { (password, error) -> () in
+                            
+                            if let password = password {
+                                
+                                if field.text == password {
+                
+                                    FirebaseClient.sharedInstance.deleteFamily(uid: familyToDelete.uid!) { success in
+                    
+                                        if success {
+                        
+                                            self.displayAlert(title: "Family Deleted", message: "The \(name) family was successfully removed from the database.")
+                                            
+                                            self.familiesWithSections[indexPath.section].remove(at: indexPath.row)
+                                            self.myTableView.reloadData()
+                                
+                                        } else {
+                                            self.displayAlert(title:"Failed to Delete Family", message: "The delete operation failed to complete.")
+                                        }
+                    
+                                    }
+                                    
+                                } else {
+                                    self.displayAlert(title: "Incorrect Password", message: "Please try again.")
+                                }
+                
+                            } else {
+                                print("Password not retrieved")
+                            }
+                        }
+                    } else {
+                        self.displayAlert(title: "No Internet Connection", message: "Please establish an internet connection and try again.")
+                    }
+                }
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+            
+            alertController.addTextField { (textField) in
+                textField.placeholder = "Administrator Password"
+                textField.isSecureTextEntry = true
+            }
+            
+            alertController.addAction(submitAction)
+            alertController.addAction(cancelAction)
+            
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    func displayAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: false, completion: nil)
+    }
+    
+    func filterContentForSearchText(searchText: String, scope: String = "All") {
+        filteredFamilies = families.filter { family in
+            return (family.name?.lowercased().contains(searchText.lowercased()))!
+        }
+        filteredFamiliesWithSections = []
+        for i in 0...25 {
+            var tempArray: [Family] = []
+            for family in self.filteredFamilies {
+                if family.name?[0] == self.sections[i] {
+                    tempArray.append(family)
+                }
+            }
+            filteredFamiliesWithSections.append(tempArray)
+        }
+
+        myTableView.reloadData()
     }
 
 }
@@ -463,5 +711,11 @@ extension String {
         return self[Range(start ..< end)]
     }
     
+}
+
+extension DirectoryViewController: UISearchResultsUpdating {
+    func updateSearchResults(for: UISearchController) {
+        filterContentForSearchText(searchText: searchController.searchBar.text!)
+    }
 }
 

@@ -21,6 +21,7 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
     let sections = ["Home Number", "Family Email", "Address", "Contact Info", "Children"]
     var adults: [Person] = []
     var children: [Person] = []
+    var pvc: DirectoryViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +51,7 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
         for person in people! {
             if person.type != "Child" {
                 adults.append(person)
+                print(person)
             } else {
                 children.append(person)
             }
@@ -221,8 +223,10 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
             self.present(actionSheet, animated: true, completion: nil)
             
         case 2:
+
+            let addressArray = info[2][0]
+            let addressString = addressArray[0] + ", " + addressArray.last!
             
-            let addressString = info[2][0].joined(separator: ", ")
             let formattedAddressString = addressString.replacingOccurrences(of: " ", with: "+")
             
             let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
@@ -444,6 +448,89 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
         return city! + ", " + state! + " " + zip!
         
     }
+    
+    @IBAction func editButtonPressed(_ sender: Any) {
+        
+        let alertController = UIAlertController(title: "Password Required", message: "Enter the administrator password to add a family to the Directory.", preferredStyle: .alert)
+        
+        let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
+            if let field = alertController.textFields?[0] {
+                if GlobalFunctions.sharedInstance.hasConnectivity() {
+                    
+                    FirebaseClient.sharedInstance.getAdminPassword { (password, error) -> () in
+                        
+                        if let password = password {
+                            
+                            if password == field.text {
+                                let addFamilyVC = self.storyboard?.instantiateViewController(withIdentifier: "AddFamilyViewController") as! AddFamilyViewController
+                                addFamilyVC.pvc = self.pvc
+                                
+                                var newPeople: [[PersonMO]] = [[],[]]
+                                var newPersonTypes: [String] = []
+                                var newBirthOrders: [Int] = []
+                                for person in self.people! {
+                                    print(person)
+                                    print(Int(person.birthOrder!)!)
+                                    let newPerson = PersonMO(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: Int(person.birthOrder!)!, uid: person.uid!)
+                                    if newPerson.type! != "Child" {
+                                        newPeople[0].append(newPerson)
+                                    } else {
+                                        newPeople[1].append(newPerson)
+                                    }
+                                    if !newPersonTypes.contains(newPerson.type!) {
+                                        newPersonTypes.append(newPerson.type!)
+                                    }
+                                    if !newBirthOrders.contains(newPerson.birthOrder!) {
+                                        newBirthOrders.append(newPerson.birthOrder!)
+                                    }
+                                }
+                                
+                                addFamilyVC.people = newPeople
+                                addFamilyVC.personTypes = newPersonTypes
+                                addFamilyVC.birthOrders = newBirthOrders
+                                addFamilyVC.uid = (self.family?.uid)!
+                                
+                                addFamilyVC.textFieldValues = [(self.family?.name)!, (self.family?.phone)!, (self.family?.email)!, (self.address?.street)!, (self.address?.line2)!, (self.address?.line3)!, (self.address?.city)!, (self.address?.state)!, (self.address?.zip)!]
+                                
+                                self.navigationController?.pushViewController(addFamilyVC, animated: true)
+                            } else {
+                                let alert = UIAlertController(title: "Incorrect Password", message: "Please try again.", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                                self.present(alert, animated: false, completion: nil)
+                            }
+                            
+                        } else {
+                            print(error!)
+                        }
+                        
+                    }
+                    
+                } else {
+                    
+                    let alert = UIAlertController(title: "No Internet Connection", message: "Please establish an internet connection and try again.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self.present(alert, animated: false, completion: nil)
+                    
+                }
+                
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        
+        alertController.addTextField { (textField) in
+            textField.placeholder = "Administrator Password"
+            textField.isSecureTextEntry = true
+        }
+        
+        alertController.addAction(submitAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        
+    }
+
+    
     
 }
 

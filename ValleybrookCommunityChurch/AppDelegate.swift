@@ -16,21 +16,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     let defaults = UserDefaults.standard
-
+    var comingFromUpdate = false
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        var initialViewController: UIViewController?
-        if !defaults.bool(forKey: "alreadyAuthenticated") {
-            initialViewController = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-        } else {
-            initialViewController = storyboard.instantiateViewController(withIdentifier: "DirectoryNavigationController") as! UINavigationController
-        }
-        self.window?.rootViewController = initialViewController
-        self.window?.makeKeyAndVisible()
         
         autoSave(delayInSeconds: 5)
         FirebaseApp.configure()

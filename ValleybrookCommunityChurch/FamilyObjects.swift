@@ -58,13 +58,15 @@ struct PersonMO {
     var phone: String?
     var email: String?
     var birthOrder: Int?
+    var uid: String?
     
-    init(type: String, name: String, phone: String, email: String, birthOrder: Int) {
+    init(type: String, name: String, phone: String, email: String, birthOrder: Int, uid: String) {
         self.type = type
         self.name = name
         self.phone = phone
         self.email = email
         self.birthOrder = birthOrder
+        self.uid = uid
     }
     
     func toAnyObject() -> AnyObject {

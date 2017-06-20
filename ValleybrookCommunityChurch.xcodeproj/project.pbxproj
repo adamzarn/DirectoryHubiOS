@@ -12,7 +12,6 @@
 		C4E7D5BF9422CB0C258E3357 /* Pods_ValleybrookCommunityChurchTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD517479C15A97B5E59D0CFE /* Pods_ValleybrookCommunityChurchTests.framework */; };
 		DB0943F61EE6E4CC002426AB /* FamilyObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0943F51EE6E4CC002426AB /* FamilyObjects.swift */; };
 		DB0EEADF1EE77475002AB793 /* FamilyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEADE1EE77475002AB793 /* FamilyViewController.swift */; };
-		DB0EEAE11EEB13CC002AB793 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE01EEB13CC002AB793 /* LoginViewController.swift */; };
 		DB0EEAE31EEB179A002AB793 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE21EEB179A002AB793 /* Reachability.swift */; };
 		DB0EEAE51EEB18BD002AB793 /* GlobalFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE41EEB18BD002AB793 /* GlobalFunctions.swift */; };
 		DB0EEAE81EEB27AC002AB793 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE61EEB27AC002AB793 /* Model.xcdatamodeld */; };
@@ -56,7 +55,6 @@
 		BC9264480BC22009F8742DC3 /* Pods_ValleybrookCommunityChurch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ValleybrookCommunityChurch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0943F51EE6E4CC002426AB /* FamilyObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FamilyObjects.swift; sourceTree = "<group>"; };
 		DB0EEADE1EE77475002AB793 /* FamilyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FamilyViewController.swift; sourceTree = "<group>"; };
-		DB0EEAE01EEB13CC002AB793 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		DB0EEAE21EEB179A002AB793 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		DB0EEAE41EEB18BD002AB793 /* GlobalFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalFunctions.swift; sourceTree = "<group>"; };
 		DB0EEAE71EEB27AC002AB793 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -159,7 +157,6 @@
 				DB1EC3681EE6E00100998032 /* DirectoryViewController.swift */,
 				DB0EEADE1EE77475002AB793 /* FamilyViewController.swift */,
 				DB6C80791EF4784300AE7AA6 /* AddFamilyViewController.swift */,
-				DB0EEAE01EEB13CC002AB793 /* LoginViewController.swift */,
 				DB0EEAE21EEB179A002AB793 /* Reachability.swift */,
 				DB1EC36A1EE6E00100998032 /* Main.storyboard */,
 				DB1EC36D1EE6E00100998032 /* Assets.xcassets */,
@@ -478,7 +475,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB0EEAE31EEB179A002AB793 /* Reachability.swift in Sources */,
-				DB0EEAE11EEB13CC002AB793 /* LoginViewController.swift in Sources */,
 				DB6C807A1EF4784300AE7AA6 /* AddFamilyViewController.swift in Sources */,
 				DB0EEAE51EEB18BD002AB793 /* GlobalFunctions.swift in Sources */,
 				DB1EC3691EE6E00100998032 /* DirectoryViewController.swift in Sources */,
