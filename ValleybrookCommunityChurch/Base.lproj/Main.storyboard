@@ -497,7 +497,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Directory" id="dJV-SK-J1S">
-                        <barButtonItem key="backBarButtonItem" title="Directory" id="dBE-Ss-xmW"/>
+                        <barButtonItem key="backBarButtonItem" title=" " id="1JX-Ms-06Y"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="d83-FE-vXB">
                             <connections>
                                 <action selector="addFamilyButtonPressed:" destination="BYZ-38-t0r" id="nYQ-Ch-p96"/>
@@ -1253,7 +1253,7 @@
                     </view>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Title" id="hKs-Lk-pcw">
-                        <barButtonItem key="backBarButtonItem" title="Back" id="hIX-Ts-gys"/>
+                        <barButtonItem key="backBarButtonItem" title=" " id="M3N-fh-UWs"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="edit" id="AOS-GU-aYF">
                             <connections>
                                 <action selector="editButtonPressed:" destination="tMR-Ri-Zzx" id="LfV-JA-lZC"/>

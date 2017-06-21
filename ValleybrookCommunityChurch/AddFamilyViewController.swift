@@ -420,6 +420,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
                 statePicker.selectRow(stateOptions.index(of: textField.text!)!, inComponent: 0, animated: false)
             } else {
                 statePicker.selectRow(0, inComponent: 0, animated: false)
+                textField.text = stateOptions[0]
             }
         }
         if textField == personTypeTextField {
@@ -427,6 +428,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
                 typePicker.selectRow(typeOptions.index(of: textField.text!)!, inComponent: 0, animated: false)
             } else {
                 typePicker.selectRow(0, inComponent: 0, animated: false)
+                textField.text = typeOptions[0]
             }
         }
         if textField == birthOrderTextField {
@@ -434,6 +436,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
                 birthOrderPicker.selectRow(birthOrderOptions.index(of: Int(textField.text!)!)!, inComponent: 0, animated: false)
             } else {
                 birthOrderPicker.selectRow(0, inComponent: 0, animated: false)
+                textField.text = String(describing: birthOrderOptions[0])
             }
         }
         currentTextField = textField

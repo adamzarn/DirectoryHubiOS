@@ -51,7 +51,6 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
         for person in people! {
             if person.type != "Child" {
                 adults.append(person)
-                print(person)
             } else {
                 children.append(person)
             }
@@ -469,8 +468,6 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
                                 var newPersonTypes: [String] = []
                                 var newBirthOrders: [Int] = []
                                 for person in self.people! {
-                                    print(person)
-                                    print(Int(person.birthOrder!)!)
                                     let newPerson = PersonMO(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: Int(person.birthOrder!)!, uid: person.uid!)
                                     if newPerson.type! != "Child" {
                                         newPeople[0].append(newPerson)

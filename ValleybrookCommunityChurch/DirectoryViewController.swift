@@ -85,8 +85,6 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         let statusBarHeight = UIApplication.shared.statusBarFrame.height
         
         let centerY = h/2 - navBarHeight! - statusBarHeight
-        print(screenSize.height)
-        print(centerY)
         
         aiv.isHidden = false
         aiv.frame = CGRect(x: w/2 - 10, y: centerY - 10, width: 20, height: 20)
@@ -566,7 +564,6 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         filteredFamilies = families.filter { family in
             return (family.name?.lowercased().contains(searchText.lowercased()))!
         }
-        print(searchText.lowercased())
         filteredFamiliesWithSections = []
         for i in 0...25 {
             var tempArray: [Family] = []
