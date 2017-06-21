@@ -22,6 +22,11 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     @IBOutlet weak var topStackView: UIStackView!
     @IBOutlet weak var bottomStackView: UIStackView!
     
+    @IBOutlet weak var addressLabel: UILabel!
+    @IBOutlet weak var peopleLabel: UILabel!
+    @IBOutlet weak var editAddressButton: UIButton!
+    @IBOutlet weak var addPersonButton: UIButton!
+    
     @IBOutlet weak var lastNameTextField: UITextField!
     @IBOutlet weak var homePhoneTextField: UITextField!
     @IBOutlet weak var familyEmailTextField: UITextField!
@@ -69,7 +74,13 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationController?.navigationItem.backBarButtonItem?.title = "Back"
+        editAddressButton.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
+        addPersonButton.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
+        submitButton.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
+        
+        addressLabel.attributedText = GlobalFunctions.shared.bold(string: "Address")
+        peopleLabel.attributedText = GlobalFunctions.shared.bold(string: "People")
+        self.navigationController?.navigationItem.backBarButtonItem?.title = ""
         
         addPersonView.isHidden = true
         addPersonView.isUserInteractionEnabled = false
@@ -240,14 +251,6 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         self.view.bringSubview(toFront: addAddressView)
         
         streetTextField.becomeFirstResponder()
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        if personTypeTextField.text == "Child" {
-            birthOrderTextField.isEnabled = true
-        } else {
-            birthOrderTextField.isEnabled = false
-        }
     }
     
     func dismissAddPersonView() {
@@ -474,6 +477,12 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         } else {
             birthOrderTextField.text = String(describing: birthOrderOptions[row])
         }
+        if personTypeTextField.text == "Child" {
+            birthOrderTextField.isEnabled = true
+        } else {
+            birthOrderTextField.isEnabled = false
+            birthOrderTextField.text = ""
+        }
     }
     
     func dismissKeyboard() {
@@ -555,9 +564,9 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
             let allPeople = self.people[0] + self.people[1]
             let newFamily = FamilyMO(name: self.lastNameTextField.text!, phone: self.homePhoneTextField.text!, email: self.familyEmailTextField.text!, address: self.address, people: allPeople)
             
-            if GlobalFunctions.sharedInstance.hasConnectivity() {
+            if GlobalFunctions.shared.hasConnectivity() {
                 
-                FirebaseClient.sharedInstance.addFamily(family: newFamily, uid: self.uid) { success in
+                FirebaseClient.shared.addFamily(family: newFamily, uid: self.uid) { success in
                     if success {
                         self.pvc?.familiesWithSections = []
                         self.appDelegate.comingFromUpdate = true
@@ -667,7 +676,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
             peopleTableView.reloadData()
         }
     }
-    
+
 }
 
 class PersonCell: UITableViewCell {
@@ -690,8 +699,8 @@ class PersonCell: UITableViewCell {
             }
             self.line1.text = name + ", " + String(describing: birthOrder) + birthOrderString
         }
-        self.line2.attributedText = GlobalFunctions.sharedInstance.getFormattedString(string1: "Phone: ", string2: phone)
-        self.line3.attributedText = GlobalFunctions.sharedInstance.getFormattedString(string1: "Email: ", string2: email)
+        self.line2.attributedText = GlobalFunctions.shared.getFormattedString(string1: "Phone: ", string2: phone)
+        self.line3.attributedText = GlobalFunctions.shared.getFormattedString(string1: "Email: ", string2: email)
     }
 }
 
@@ -704,14 +713,14 @@ class AddressCell: UITableViewCell {
     
     func setUpCell(address: AddressMO) {
         
-        self.line1.attributedText = GlobalFunctions.sharedInstance.getFormattedString(string1: "Street: ", string2: address.street!)
-        self.line2.attributedText = GlobalFunctions.sharedInstance.getFormattedString(string1:"Line 2: ", string2: address.line2!)
-        self.line3.attributedText = GlobalFunctions.sharedInstance.getFormattedString(string1:"Line 3: ", string2: address.line3!)
+        self.line1.attributedText = GlobalFunctions.shared.getFormattedString(string1: "Street: ", string2: address.street!)
+        self.line2.attributedText = GlobalFunctions.shared.getFormattedString(string1:"Line 2: ", string2: address.line2!)
+        self.line3.attributedText = GlobalFunctions.shared.getFormattedString(string1:"Line 3: ", string2: address.line3!)
         let cityStateZip = address.city! + ", " + address.state! + " " + address.zip!
         if address.city! != "" && address.state! != "" && address.zip! != "" {
-            self.line4.attributedText = GlobalFunctions.sharedInstance.getFormattedString(string1:"City, State, Zip: ", string2: cityStateZip)
+            self.line4.attributedText = GlobalFunctions.shared.getFormattedString(string1:"City, State, Zip: ", string2: cityStateZip)
         } else {
-            self.line4.attributedText = GlobalFunctions.sharedInstance.getFormattedString(string1:"City, State, Zip: ", string2: "")
+            self.line4.attributedText = GlobalFunctions.shared.getFormattedString(string1:"City, State, Zip: ", string2: "")
         }
     }
     

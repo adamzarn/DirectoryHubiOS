@@ -455,9 +455,9 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
         
         let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
-                if GlobalFunctions.sharedInstance.hasConnectivity() {
+                if GlobalFunctions.shared.hasConnectivity() {
                     
-                    FirebaseClient.sharedInstance.getAdminPassword { (password, error) -> () in
+                    FirebaseClient.shared.getAdminPassword { (password, error) -> () in
                         
                         if let password = password {
                             

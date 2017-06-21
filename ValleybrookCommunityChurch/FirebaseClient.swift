@@ -137,7 +137,7 @@ class FirebaseClient: NSObject {
     }
 
     
-    static let sharedInstance = FirebaseClient()
+    static let shared = FirebaseClient()
     private override init() {
         super.init()
     }

@@ -28,6 +28,12 @@ class GlobalFunctions: NSObject {
         return attributedString1
     }
     
+    func bold(string: String) -> NSMutableAttributedString {
+        let attrs = [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 17)]
+        let attributedString = NSMutableAttributedString(string: string, attributes:attrs)
+        return attributedString
+    }
+    
     func getCurrentDateTime() -> String {
         let date = Date()
         let calendar = Calendar.current
@@ -60,8 +66,14 @@ class GlobalFunctions: NSObject {
         return "\(month)/\(day)/\(yearString.substring(from: 2)) \(hour):\(minutesString) \(suffix)"
         
     }
+    
+    func color(r: CGFloat, g: CGFloat, b: CGFloat) -> UIColor {
+        let color = UIColor(red: r/255.0, green: g/255.0, blue: b/255.0, alpha: 1.0)
+        return color
+    }
 
-    static let sharedInstance = GlobalFunctions()
+
+    static let shared = GlobalFunctions()
     private override init() {
         super.init()
     }

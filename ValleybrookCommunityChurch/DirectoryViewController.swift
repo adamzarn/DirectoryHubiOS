@@ -22,6 +22,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     var familiesWithSections: [[Family]] = []
     var filteredFamiliesWithSections: [[Family]] = []
     let screenSize = UIScreen.main.bounds
+    @IBOutlet weak var toolbar: UIToolbar!
 
     @IBOutlet weak var lastUpdatedItem: UIBarButtonItem!
     var loadingLabel: UILabel!
@@ -34,6 +35,10 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationController?.navigationBar.tintColor = UIColor.white
+        self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
+        myTableView.sectionIndexColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
         
         searchController.delegate = self
         searchController.searchBar.delegate = self
@@ -68,8 +73,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         accessAiv.isHidden = true
         passwordTextField.isHidden = true
         accessToDirectoryButton.isHidden = true
-        
-        lastUpdatedItem.isEnabled = false
+    
+        lastUpdatedItem.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
+        toolbar.isUserInteractionEnabled = false
         loadingLabel.text = "Loading..."
         
         let w = screenSize.width
@@ -99,9 +105,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         accessAiv.startAnimating()
         accessToDirectoryButton.isHidden = true
         
-        if GlobalFunctions.sharedInstance.hasConnectivity() {
+        if GlobalFunctions.shared.hasConnectivity() {
             
-            FirebaseClient.sharedInstance.getPassword { (password, error) -> () in
+            FirebaseClient.shared.getPassword { (password, error) -> () in
                 
                 self.accessAiv.stopAnimating()
                 self.accessAiv.isHidden = true
@@ -144,14 +150,14 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     func updateData() {
         
-        if GlobalFunctions.sharedInstance.hasConnectivity() {
+        if GlobalFunctions.shared.hasConnectivity() {
             appDelegate.removeData()
-            FirebaseClient.sharedInstance.updateData { (success, error) -> () in
+            FirebaseClient.shared.updateData { (success, error) -> () in
                 if success {
                     
                     self.displayData()
                     
-                    let lastUpdateTime = GlobalFunctions.sharedInstance.getCurrentDateTime()
+                    let lastUpdateTime = GlobalFunctions.shared.getCurrentDateTime()
                     self.lastUpdatedItem.title = "Last Updated: \(lastUpdateTime)"
                     self.appDelegate.defaults.setValue(lastUpdateTime, forKey: "lastUpdated")
                 
@@ -437,9 +443,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         
         let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
-                if GlobalFunctions.sharedInstance.hasConnectivity() {
+                if GlobalFunctions.shared.hasConnectivity() {
                     
-                    FirebaseClient.sharedInstance.getAdminPassword { (password, error) -> () in
+                    FirebaseClient.shared.getAdminPassword { (password, error) -> () in
                         
                         if let password = password {
                             
@@ -500,15 +506,15 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
                 if let field = alertController.textFields?[0] {
                     
-                    if GlobalFunctions.sharedInstance.hasConnectivity() {
+                    if GlobalFunctions.shared.hasConnectivity() {
                         
-                        FirebaseClient.sharedInstance.getAdminPassword { (password, error) -> () in
+                        FirebaseClient.shared.getAdminPassword { (password, error) -> () in
                             
                             if let password = password {
                                 
                                 if field.text == password {
                 
-                                    FirebaseClient.sharedInstance.deleteFamily(uid: familyToDelete.uid!) { success in
+                                    FirebaseClient.shared.deleteFamily(uid: familyToDelete.uid!) { success in
                     
                                         if success {
                         
@@ -582,7 +588,7 @@ class OneLineCell: UITableViewCell {
     @IBOutlet weak var header: UILabel!
     
     func setUpCell(lines: [String]) {
-        header.text = lines[0]
+        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
     }
     
 }
@@ -593,7 +599,7 @@ class TwoLineCell: UITableViewCell {
     @IBOutlet weak var line2: UILabel!
     
     func setUpCell(lines: [String]) {
-        header.text = lines[0]
+        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
         line2.text = lines[1]
     }
     
@@ -606,7 +612,7 @@ class ThreeLineCell: UITableViewCell {
     @IBOutlet weak var line3: UILabel!
     
     func setUpCell(lines: [String]) {
-        header.text = lines[0]
+        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
         line2.text = lines[1]
         line3.text = lines[2]
     }
@@ -621,7 +627,7 @@ class FourLineCell: UITableViewCell {
     @IBOutlet weak var line4: UILabel!
     
     func setUpCell(lines: [String]) {
-        header.text = lines[0]
+        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
         line2.text = lines[1]
         line3.text = lines[2]
         line4.text = lines[3]
@@ -638,7 +644,7 @@ class FiveLineCell: UITableViewCell {
     @IBOutlet weak var line5: UILabel!
     
     func setUpCell(lines: [String]) {
-        header.text = lines[0]
+        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
         line2.text = lines[1]
         line3.text = lines[2]
         line4.text = lines[3]
@@ -658,7 +664,7 @@ class SixLineCell: UITableViewCell {
     @IBOutlet weak var line6: UILabel!
     
     func setUpCell(lines: [String]) {
-        header.text = lines[0]
+        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
         line2.text = lines[1]
         line3.text = lines[2]
         line4.text = lines[3]
@@ -679,7 +685,7 @@ class SevenLineCell: UITableViewCell {
     @IBOutlet weak var line7: UILabel!
     
     func setUpCell(lines: [String]) {
-        header.text = lines[0]
+        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
         line2.text = lines[1]
         line3.text = lines[2]
         line4.text = lines[3]

@@ -46,11 +46,11 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="956"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="OneLine" rowHeight="44" id="e1F-12-PsU" customClass="OneLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="OneLine" rowHeight="40" id="e1F-12-PsU" customClass="OneLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="40"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="e1F-12-PsU" id="Tzh-MJ-fLy">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="39.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="cEx-le-OsO">
@@ -70,11 +70,11 @@
                                             <outlet property="header" destination="cEx-le-OsO" id="ZJV-7a-XNO"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TwoLine" rowHeight="70" id="f8v-JC-24S" customClass="TwoLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="72" width="375" height="70"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TwoLine" rowHeight="76" id="f8v-JC-24S" customClass="TwoLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="68" width="375" height="76"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="f8v-JC-24S" id="0bh-LS-PCn">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="70"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="75.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Nog-mg-3XA">
@@ -107,11 +107,11 @@
                                             <outlet property="line2" destination="Jhq-Q3-WU9" id="hBB-gU-Z5l"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ThreeLine" rowHeight="92" id="s4m-cF-Usd" customClass="ThreeLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="142" width="375" height="92"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ThreeLine" rowHeight="98" id="s4m-cF-Usd" customClass="ThreeLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="144" width="375" height="98"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="s4m-cF-Usd" id="VJY-jO-1tg">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="92"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="97.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="lO5-Uw-nyN">
@@ -156,11 +156,11 @@
                                             <outlet property="line3" destination="jRO-J2-EgK" id="900-rn-hay"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FourLine" rowHeight="114" id="9CY-0P-zH2" customClass="FourLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="234" width="375" height="114"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FourLine" rowHeight="120" id="9CY-0P-zH2" customClass="FourLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="242" width="375" height="120"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9CY-0P-zH2" id="GT2-ZL-VSy">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="114"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="119.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="RUB-GZ-L7S">
@@ -215,11 +215,11 @@
                                             <outlet property="line4" destination="Qyj-Dq-jPe" id="YRn-x7-gIH"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FiveLine" rowHeight="136" id="sMQ-bx-GMW" customClass="FiveLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="348" width="375" height="136"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FiveLine" rowHeight="142" id="sMQ-bx-GMW" customClass="FiveLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="362" width="375" height="142"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sMQ-bx-GMW" id="Gbf-5Z-uPk">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="136"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="141.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ovl-0n-NCU">
@@ -286,11 +286,11 @@
                                             <outlet property="line5" destination="0u8-kf-MsM" id="UdS-EZ-8yB"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SixLine" rowHeight="158" id="D4f-Je-Smn" customClass="SixLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="484" width="375" height="158"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SixLine" rowHeight="164" id="D4f-Je-Smn" customClass="SixLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="504" width="375" height="164"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="D4f-Je-Smn" id="ey0-bc-aCy">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="158"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="163.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="u6B-zO-VqQ">
@@ -368,11 +368,11 @@
                                             <outlet property="line6" destination="1jj-We-a9v" id="5IC-2C-3hx"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SevenLine" rowHeight="180" id="6g6-db-leI" customClass="SevenLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="642" width="375" height="180"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SevenLine" rowHeight="186" id="6g6-db-leI" customClass="SevenLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="668" width="375" height="186"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="6g6-db-leI" id="K0S-I4-eNU">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="180"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="185.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="utp-GV-5cY">
@@ -514,6 +514,7 @@
                         <outlet property="lastUpdatedItem" destination="Ve7-qi-3aP" id="Qg0-La-Dff"/>
                         <outlet property="myTableView" destination="fHs-vc-9Fp" id="d71-e6-EtC"/>
                         <outlet property="passwordTextField" destination="pZ3-Il-1tD" id="J4P-e0-1vD"/>
+                        <outlet property="toolbar" destination="Nin-tf-4FU" id="zuA-vS-Gv5"/>
                         <segue destination="tMR-Ri-Zzx" kind="show" id="SuU-eq-lsc"/>
                     </connections>
                 </viewController>
@@ -1034,12 +1035,15 @@
                     <size key="freeformSize" width="375" height="1000"/>
                     <connections>
                         <outlet property="addAddressView" destination="EoL-UF-tj4" id="DxH-zd-5ZG"/>
+                        <outlet property="addPersonButton" destination="LGu-Jz-VRB" id="voF-v1-tbs"/>
                         <outlet property="addPersonLabel" destination="Yuj-k2-IGz" id="xkX-nK-yQP"/>
                         <outlet property="addPersonView" destination="dGn-7o-AxL" id="cix-RP-hii"/>
+                        <outlet property="addressLabel" destination="WZF-RN-nvL" id="bZg-3N-Axx"/>
                         <outlet property="addressTableView" destination="TT1-OQ-98B" id="Mjh-ht-sLn"/>
                         <outlet property="birthOrderTextField" destination="gh6-B3-Sqa" id="LSG-1K-60n"/>
                         <outlet property="bottomStackView" destination="egp-QD-8Ts" id="N2Z-YL-gnd"/>
                         <outlet property="cityTextField" destination="pXV-nh-sEg" id="M8O-mZ-qW3"/>
+                        <outlet property="editAddressButton" destination="dMf-Ar-WjQ" id="PHJ-6w-d8A"/>
                         <outlet property="emailTextField" destination="c6p-Ib-sXq" id="MXJ-Kz-Gyf"/>
                         <outlet property="familyEmailTextField" destination="6hR-eS-rYB" id="W7Q-mq-bil"/>
                         <outlet property="firstNameTextField" destination="OOW-KB-aAw" id="hlm-9Z-T71"/>
@@ -1047,6 +1051,7 @@
                         <outlet property="lastNameTextField" destination="n2e-ik-sPD" id="Clu-p4-gtZ"/>
                         <outlet property="line2TextField" destination="8pW-Cp-VOF" id="7Dq-dO-chW"/>
                         <outlet property="line3TextField" destination="uZk-4i-Os1" id="raN-1U-DPY"/>
+                        <outlet property="peopleLabel" destination="8O0-Qk-HWP" id="DCa-Ne-v3X"/>
                         <outlet property="peopleTableView" destination="9i6-iV-ohi" id="0i7-D1-MHt"/>
                         <outlet property="personTypeTextField" destination="Xtu-4f-x1q" id="51p-si-24P"/>
                         <outlet property="phoneTextField" destination="RUz-O3-Xda" id="AOn-hn-KST"/>
