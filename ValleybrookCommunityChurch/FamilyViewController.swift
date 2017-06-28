@@ -13,6 +13,7 @@ import Contacts
 class FamilyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
     
     @IBOutlet weak var myTableView: UITableView!
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
     var family: Family?
     var address: Address?
@@ -22,9 +23,16 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
     var adults: [Person] = []
     var children: [Person] = []
     var pvc: DirectoryViewController?
+    var church = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let church = appDelegate.defaults.value(forKey: "church") {
+            if church as! String != "" {
+                self.church = church as! String
+            }
+        }
         
         address = family?.familyToAddress
         people = family?.familyToPerson?.allObjects as? [Person]
@@ -456,7 +464,7 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
             if let field = alertController.textFields?[0] {
                 if GlobalFunctions.shared.hasConnectivity() {
                     
-                    FirebaseClient.shared.getAdminPassword { (password, error) -> () in
+                    FirebaseClient.shared.getAdminPassword(church: self.church) { (password, error) -> () in
                         
                         if let password = password {
                             

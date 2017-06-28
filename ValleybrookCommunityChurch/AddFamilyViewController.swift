@@ -65,6 +65,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
                         "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI",
                         "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
     var textFieldValues: [String] = []
+    var church = ""
 
     var currentTextField: UITextField?
     
@@ -73,6 +74,12 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let church = appDelegate.defaults.value(forKey: "church") {
+            if church as! String != "" {
+                self.church = church as! String
+            }
+        }
         
         editAddressButton.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
         addPersonButton.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
@@ -569,7 +576,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
             
             if GlobalFunctions.shared.hasConnectivity() {
                 
-                FirebaseClient.shared.addFamily(family: newFamily, uid: self.uid) { success in
+                FirebaseClient.shared.addFamily(church: self.church, family: newFamily, uid: self.uid) { success in
                     if success {
                         self.pvc?.familiesWithSections = []
                         self.appDelegate.comingFromUpdate = true
