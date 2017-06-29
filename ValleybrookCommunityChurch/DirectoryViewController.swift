@@ -9,6 +9,9 @@
 import UIKit
 import CoreData
 import Contacts
+import Alamofire
+import AlamofireImage
+import Firebase
 
 class DirectoryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UISearchBarDelegate, UISearchControllerDelegate {
     
@@ -32,10 +35,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     var loadingLabel: UILabel!
     @IBOutlet weak var aiv: UIActivityIndicatorView!
     
+    var tableViewShrunk = false
     var churchesTable = false
-    
     let searchController = UISearchController(searchResultsController: nil)
-    
     let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     
     override func viewDidLoad() {
@@ -71,6 +73,10 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
                     lastUpdatedItem.title = "Last Updated: \(lastUpdateTime)"
                 }
                 allowAccessToDirectory()
+            } else {
+                churchesTable = true
+                setUpChurchesView()
+                loadChurches()
             }
         } else {
             churchesTable = true
@@ -103,7 +109,6 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         return true
     }
     
-    
     func updateData() {
         
         if GlobalFunctions.shared.hasConnectivity() {
@@ -129,6 +134,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        subscribeToKeyboardNotifications()
         if appDelegate.comingFromUpdate {
             loadingLabel.text = "Updating Directory..."
             loadingLabel.isHidden = false
@@ -139,6 +145,10 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         }
         appDelegate.comingFromUpdate = false
         searchController.searchBar.isHidden = false
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        unsubscribeFromKeyboardNotifications()
     }
 
     func displayData() {
@@ -234,13 +244,35 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if churchesTable {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLine") as! TwoLineCell
+            var church: (name: String, location: String, password: String)!
             if searchController.isActive && searchController.searchBar.text != "" {
-                cell.setUpCell(church: filteredChurches[indexPath.row])
+                let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLine") as! TwoLineCell
+                church = filteredChurches[indexPath.row]
+                cell.setUpCell(church: church)
+                return cell
             } else {
-                cell.setUpCell(church: churches[indexPath.row])
+                let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLineWithImage") as! TwoLineWithImageCell
+                church = churches[indexPath.row]
+                cell.setUpCell(church: church)
+                let imageRef = Storage.storage().reference(withPath: "/\(church.name).jpg")
+                imageRef.getMetadata { (metadata, error) -> () in
+                    if let metadata = metadata {
+                        let downloadUrl = metadata.downloadURL()
+                        Alamofire.request(downloadUrl!, method: .get).responseImage { response in
+                            guard let image = response.result.value else {
+                                return
+                            }
+                            cell.myImageView.image = image
+                            cell.aiv.stopAnimating()
+                            cell.aiv.isHidden = true
+                        }
+                    }
+                }
+                cell.aiv.startAnimating()
+                cell.aiv.isHidden = false
+                return cell
             }
-            return cell
+            
         }
         
         var family = familiesWithSections[indexPath.section][indexPath.row]
@@ -608,6 +640,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             }
             
             filteredChurches.sort { $0.name < $1.name }
+            
             myTableView.reloadData()
             
         } else {
@@ -711,6 +744,37 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
+    func subscribeToKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(DirectoryViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow,object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(DirectoryViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide,object: nil)
+    }
+    
+    func unsubscribeFromKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self,name: NSNotification.Name.UIKeyboardWillShow,object: nil)
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        if !tableViewShrunk {
+            let height = screenSize.height - getKeyboardHeight(notification: notification) - toolbar.frame.size.height - UIApplication.shared.statusBarFrame.height
+            myTableView.frame = CGRect(x: 0.0, y: 0.0, width: screenSize.width, height: height)
+            tableViewShrunk = true
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        if tableViewShrunk {
+            let height = screenSize.height - toolbar.frame.size.height - (navigationController?.navigationBar.frame.size.height)! - UIApplication.shared.statusBarFrame.height
+            myTableView.frame = CGRect(x: 0.0, y: 0.0, width: screenSize.width, height: height)
+            tableViewShrunk = false
+        }
+    }
+    
+    func getKeyboardHeight(notification: NSNotification) -> CGFloat {
+        let userInfo = notification.userInfo!
+        let keyboardSize = userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue
+        return keyboardSize.cgRectValue.height
+    }
+    
 
 }
 
@@ -737,6 +801,25 @@ class TwoLineCell: UITableViewCell {
     func setUpCell(church: (name: String, location: String, password: String)) {
         header.attributedText = GlobalFunctions.shared.bold(string: church.0)
         line2.text = church.1
+    }
+    
+}
+
+class TwoLineWithImageCell: UITableViewCell {
+
+    @IBOutlet weak var header: UILabel!
+    @IBOutlet weak var line2: UILabel!
+    @IBOutlet weak var myImageView: UIImageView!
+    @IBOutlet weak var aiv: UIActivityIndicatorView!
+    
+    func setUpCell(church: (name: String, location: String, password: String)) {
+        header.attributedText = GlobalFunctions.shared.bold(string: church.0)
+        line2.text = church.1
+        let w = myImageView.frame.size.width
+        myImageView.layer.cornerRadius = w/2
+        myImageView.layer.masksToBounds = true
+        myImageView.layer.borderWidth = 1
+        myImageView.layer.borderColor = UIColor.lightGray.cgColor
     }
     
 }

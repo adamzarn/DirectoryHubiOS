@@ -52,12 +52,8 @@ class FirebaseClient: NSObject {
     
     func updateData(church: String, completion: @escaping (_ success: Bool, _ error: NSString?) -> ()) {
         self.ref.observeSingleEvent(of: .value, with: { snapshot in
-            print("1")
-            print("Church: \(church)")
             if let churchData = (snapshot.value! as! NSDictionary)[church] {
-                print("2")
                 if let familiesData = (churchData as! NSDictionary)["Directory"] {
-                    print("3")
                     for (key, value) in familiesData as! NSDictionary {
                         
                         let info = value as! NSDictionary

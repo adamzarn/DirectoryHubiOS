@@ -34,7 +34,7 @@
                                         <rect key="frame" x="0.0" y="28" width="375" height="40"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="e1F-12-PsU" id="Tzh-MJ-fLy">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="39.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="cEx-le-OsO">
@@ -54,15 +54,15 @@
                                             <outlet property="header" destination="cEx-le-OsO" id="ZJV-7a-XNO"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TwoLine" rowHeight="76" id="f8v-JC-24S" customClass="TwoLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TwoLineWithImage" rowHeight="76" id="f8v-JC-24S" customClass="TwoLineWithImageCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="68" width="375" height="76"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="f8v-JC-24S" id="0bh-LS-PCn">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="75.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Nog-mg-3XA">
-                                                    <rect key="frame" x="20" y="8" width="335" height="28"/>
+                                                    <rect key="frame" x="100" y="8" width="255" height="28"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="28" id="b9a-J8-gmq"/>
                                                     </constraints>
@@ -71,31 +71,87 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Jhq-Q3-WU9">
+                                                    <rect key="frame" x="100" y="42" width="255" height="20"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="AUu-rE-BI0">
+                                                    <rect key="frame" x="20" y="8" width="60" height="60"/>
+                                                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="60" id="5yb-XO-4YP"/>
+                                                        <constraint firstAttribute="height" constant="60" id="dhd-7T-bOd"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="YaF-gl-whn">
+                                                    <rect key="frame" x="40" y="28" width="20" height="20"/>
+                                                    <color key="color" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </activityIndicatorView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="AUu-rE-BI0" firstAttribute="leading" secondItem="0bh-LS-PCn" secondAttribute="leading" constant="20" id="1PA-u4-fkl"/>
+                                                <constraint firstItem="AUu-rE-BI0" firstAttribute="top" secondItem="0bh-LS-PCn" secondAttribute="top" constant="8" id="K6q-mI-ZvL"/>
+                                                <constraint firstItem="Nog-mg-3XA" firstAttribute="leading" secondItem="AUu-rE-BI0" secondAttribute="trailing" constant="20" id="S6x-CY-Zq2"/>
+                                                <constraint firstItem="Jhq-Q3-WU9" firstAttribute="leading" secondItem="AUu-rE-BI0" secondAttribute="trailing" constant="20" id="XWT-K7-pwX"/>
+                                                <constraint firstAttribute="trailing" secondItem="Jhq-Q3-WU9" secondAttribute="trailing" constant="20" id="akJ-gl-mpJ"/>
+                                                <constraint firstItem="YaF-gl-whn" firstAttribute="centerX" secondItem="AUu-rE-BI0" secondAttribute="centerX" id="fe2-v8-P0T"/>
+                                                <constraint firstItem="Nog-mg-3XA" firstAttribute="top" secondItem="0bh-LS-PCn" secondAttribute="topMargin" id="gwZ-xb-DNY"/>
+                                                <constraint firstAttribute="bottom" secondItem="AUu-rE-BI0" secondAttribute="bottom" constant="8" id="mg3-E0-3uL"/>
+                                                <constraint firstItem="YaF-gl-whn" firstAttribute="centerY" secondItem="AUu-rE-BI0" secondAttribute="centerY" id="n3d-vz-3vc"/>
+                                                <constraint firstAttribute="trailing" secondItem="Nog-mg-3XA" secondAttribute="trailing" constant="20" id="nAC-Hf-f0o"/>
+                                                <constraint firstItem="Jhq-Q3-WU9" firstAttribute="top" secondItem="Nog-mg-3XA" secondAttribute="bottom" constant="6" id="pvs-kI-ufu"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="aiv" destination="YaF-gl-whn" id="59d-eZ-Y3m"/>
+                                            <outlet property="header" destination="Nog-mg-3XA" id="vsx-To-Eg8"/>
+                                            <outlet property="line2" destination="Jhq-Q3-WU9" id="Ig6-cS-68Q"/>
+                                            <outlet property="myImageView" destination="AUu-rE-BI0" id="sg4-hJ-ZsL"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TwoLine" rowHeight="76" id="aGP-ts-Nez" userLabel="TwoLine" customClass="TwoLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="144" width="375" height="76"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aGP-ts-Nez" id="kVb-Nf-tji">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="sd8-hn-lgR">
                                                     <rect key="frame" x="20" y="42" width="335" height="20"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="J1B-ar-8MQ">
+                                                    <rect key="frame" x="20" y="8" width="335" height="28"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="28" id="Lv3-tT-rgT"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="Nog-mg-3XA" firstAttribute="leading" secondItem="0bh-LS-PCn" secondAttribute="leading" constant="20" id="Kh9-Ri-RG5"/>
-                                                <constraint firstAttribute="trailing" secondItem="Jhq-Q3-WU9" secondAttribute="trailing" constant="20" id="akJ-gl-mpJ"/>
-                                                <constraint firstItem="Nog-mg-3XA" firstAttribute="top" secondItem="0bh-LS-PCn" secondAttribute="topMargin" id="gwZ-xb-DNY"/>
-                                                <constraint firstAttribute="trailing" secondItem="Nog-mg-3XA" secondAttribute="trailing" constant="20" id="nAC-Hf-f0o"/>
-                                                <constraint firstItem="Jhq-Q3-WU9" firstAttribute="top" secondItem="Nog-mg-3XA" secondAttribute="bottom" constant="6" id="pvs-kI-ufu"/>
-                                                <constraint firstItem="Jhq-Q3-WU9" firstAttribute="leading" secondItem="0bh-LS-PCn" secondAttribute="leading" constant="20" id="u2j-LD-ibH"/>
+                                                <constraint firstAttribute="trailing" secondItem="sd8-hn-lgR" secondAttribute="trailing" constant="20" id="Ipo-Np-ppM"/>
+                                                <constraint firstAttribute="trailing" secondItem="J1B-ar-8MQ" secondAttribute="trailing" constant="20" id="XV4-YO-wpu"/>
+                                                <constraint firstItem="J1B-ar-8MQ" firstAttribute="leading" secondItem="kVb-Nf-tji" secondAttribute="leading" constant="20" id="fSl-fM-5ct"/>
+                                                <constraint firstItem="sd8-hn-lgR" firstAttribute="leading" secondItem="kVb-Nf-tji" secondAttribute="leading" constant="20" id="hng-iv-0xW"/>
+                                                <constraint firstItem="J1B-ar-8MQ" firstAttribute="top" secondItem="kVb-Nf-tji" secondAttribute="topMargin" id="sRc-vF-c3F"/>
+                                                <constraint firstItem="sd8-hn-lgR" firstAttribute="top" secondItem="J1B-ar-8MQ" secondAttribute="bottom" constant="6" id="xv0-qB-ex3"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="header" destination="Nog-mg-3XA" id="tmA-gu-V5o"/>
-                                            <outlet property="line2" destination="Jhq-Q3-WU9" id="hBB-gU-Z5l"/>
+                                            <outlet property="header" destination="J1B-ar-8MQ" id="pdj-NL-fNL"/>
+                                            <outlet property="line2" destination="sd8-hn-lgR" id="780-lH-xfr"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ThreeLine" rowHeight="98" id="s4m-cF-Usd" customClass="ThreeLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="144" width="375" height="98"/>
+                                        <rect key="frame" x="0.0" y="220" width="375" height="98"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="s4m-cF-Usd" id="VJY-jO-1tg">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="98"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="97.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="lO5-Uw-nyN">
@@ -141,10 +197,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FourLine" rowHeight="120" id="9CY-0P-zH2" customClass="FourLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="242" width="375" height="120"/>
+                                        <rect key="frame" x="0.0" y="318" width="375" height="120"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9CY-0P-zH2" id="GT2-ZL-VSy">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="120"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="119.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="RUB-GZ-L7S">
@@ -200,10 +256,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FiveLine" rowHeight="142" id="sMQ-bx-GMW" customClass="FiveLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="362" width="375" height="142"/>
+                                        <rect key="frame" x="0.0" y="438" width="375" height="142"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sMQ-bx-GMW" id="Gbf-5Z-uPk">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="142"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="141.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ovl-0n-NCU">
@@ -271,10 +327,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SixLine" rowHeight="164" id="D4f-Je-Smn" customClass="SixLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="504" width="375" height="164"/>
+                                        <rect key="frame" x="0.0" y="580" width="375" height="164"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="D4f-Je-Smn" id="ey0-bc-aCy">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="164"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="163.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="u6B-zO-VqQ">
@@ -353,10 +409,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SevenLine" rowHeight="186" id="6g6-db-leI" customClass="SevenLineCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="668" width="375" height="186"/>
+                                        <rect key="frame" x="0.0" y="744" width="375" height="186"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="6g6-db-leI" id="K0S-I4-eNU">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="186"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="185.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="utp-GV-5cY">

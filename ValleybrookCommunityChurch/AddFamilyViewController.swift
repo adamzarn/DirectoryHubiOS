@@ -59,7 +59,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     var indexPathBeingEdited: IndexPath?
     var address: AddressMO = AddressMO(street: "", line2: "", line3: "", city: "", state: "", zip: "")
     var typeOptions = ["Husband", "Wife", "Single", "Child"]
-    let birthOrderOptions = [1,2,3,4,5,6,7,8,9,10]
+    let birthOrderOptions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
     var birthOrders: [Int] = []
     let stateOptions = ["IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
                         "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT",
