@@ -26,9 +26,6 @@
                                 <rect key="frame" x="177" y="490" width="20" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </activityIndicatorView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="5eH-Ga-0Kw">
-                                <rect key="frame" x="177" y="124" width="20" height="20"/>
-                            </activityIndicatorView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="fHs-vc-9Fp">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="956"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -474,7 +471,6 @@
                             <constraint firstItem="fHs-vc-9Fp" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="PCA-mu-xIT"/>
                             <constraint firstItem="fHs-vc-9Fp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="jPl-TJ-Bru"/>
                             <constraint firstItem="Nin-tf-4FU" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="pnV-wH-xox"/>
-                            <constraint firstItem="5eH-Ga-0Kw" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="qfu-Vf-j7T"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Directory" id="dJV-SK-J1S">
@@ -493,11 +489,11 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="375" height="1000"/>
                     <connections>
-                        <outlet property="accessAiv" destination="5eH-Ga-0Kw" id="qEF-ch-9Xg"/>
-                        <outlet property="addFamilyButton" destination="d83-FE-vXB" id="0uh-y7-ZQh"/>
+                        <outlet property="addFamilyButton" destination="d83-FE-vXB" id="9M0-4K-JeT"/>
                         <outlet property="aiv" destination="dAh-lp-ZqV" id="fcu-5b-Ha5"/>
                         <outlet property="lastUpdatedItem" destination="Ve7-qi-3aP" id="Qg0-La-Dff"/>
                         <outlet property="myTableView" destination="fHs-vc-9Fp" id="d71-e6-EtC"/>
+                        <outlet property="switchChurchesButton" destination="GQ9-bJ-EaK" id="YEx-cE-o6Q"/>
                         <outlet property="toolbar" destination="Nin-tf-4FU" id="zuA-vS-Gv5"/>
                         <segue destination="tMR-Ri-Zzx" kind="show" id="SuU-eq-lsc"/>
                     </connections>
@@ -1042,6 +1038,7 @@
                         <outlet property="stateTextField" destination="HOd-UN-Ffd" id="8So-7C-V5P"/>
                         <outlet property="streetTextField" destination="PUd-mA-LvD" id="Osf-Vz-XBG"/>
                         <outlet property="submitButton" destination="cSn-XK-3kc" id="kgU-2m-vdg"/>
+                        <outlet property="toolbar" destination="fIL-8S-Fse" id="ndN-Vx-mwJ"/>
                         <outlet property="topStackView" destination="QJ7-KH-HCo" id="K5e-n9-bzK"/>
                         <outlet property="zipTextField" destination="43Z-xL-MaP" id="iB6-R5-fW3"/>
                     </connections>

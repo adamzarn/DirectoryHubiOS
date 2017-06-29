@@ -458,13 +458,14 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
     
     @IBAction func editButtonPressed(_ sender: Any) {
         
-        let alertController = UIAlertController(title: "Password Required", message: "Enter the administrator password to add a family to the Directory.", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Password Required", message: "Enter the administrator password to edit a family.", preferredStyle: .alert)
         
         let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
                 if GlobalFunctions.shared.hasConnectivity() {
                     
-                    FirebaseClient.shared.getAdminPassword(church: self.church) { (password, error) -> () in
+                    let church = self.appDelegate.defaults.value(forKey: "church") as! String
+                    FirebaseClient.shared.getAdminPassword(church: church) { (password, error) -> () in
                         
                         if let password = password {
                             

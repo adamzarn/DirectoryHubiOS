@@ -13,6 +13,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var pvc: DirectoryViewController?
     
+    @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var peopleTableView: UITableView!
     @IBOutlet weak var addressTableView: UITableView!
     var typePicker: UIPickerView!
@@ -65,7 +66,6 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
                         "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI",
                         "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
     var textFieldValues: [String] = []
-    var church = ""
 
     var currentTextField: UITextField?
     
@@ -75,11 +75,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let church = appDelegate.defaults.value(forKey: "church") {
-            if church as! String != "" {
-                self.church = church as! String
-            }
-        }
+        self.toolbar.isTranslucent = false
         
         editAddressButton.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
         addPersonButton.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
@@ -576,7 +572,8 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
             
             if GlobalFunctions.shared.hasConnectivity() {
                 
-                FirebaseClient.shared.addFamily(church: self.church, family: newFamily, uid: self.uid) { success in
+                let church = self.appDelegate.defaults.value(forKey: "church") as! String
+                FirebaseClient.shared.addFamily(church: church, family: newFamily, uid: self.uid) { success in
                     if success {
                         self.pvc?.familiesWithSections = []
                         self.appDelegate.comingFromUpdate = true

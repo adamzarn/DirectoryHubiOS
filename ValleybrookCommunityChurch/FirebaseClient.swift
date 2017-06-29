@@ -52,10 +52,12 @@ class FirebaseClient: NSObject {
     
     func updateData(church: String, completion: @escaping (_ success: Bool, _ error: NSString?) -> ()) {
         self.ref.observeSingleEvent(of: .value, with: { snapshot in
+            print("1")
+            print("Church: \(church)")
             if let churchData = (snapshot.value! as! NSDictionary)[church] {
-                
+                print("2")
                 if let familiesData = (churchData as! NSDictionary)["Directory"] {
-
+                    print("3")
                     for (key, value) in familiesData as! NSDictionary {
                         
                         let info = value as! NSDictionary
@@ -100,7 +102,6 @@ class FirebaseClient: NSObject {
                     }
                     
                     self.appDelegate.saveContext()
-                    
                     completion(true, nil)
                     
                 } else {
@@ -114,11 +115,13 @@ class FirebaseClient: NSObject {
     
     func getPassword(church: String, completion: @escaping (_ password: String?, _ error: NSString?) -> ()) {
         self.ref.observeSingleEvent(of: .value, with: { snapshot in
-            if let churchData = (snapshot.value! as! NSDictionary)[church] {
-                if let password = (churchData as! NSDictionary)["Password"] {
-                    completion(password as? String, nil)
-                } else {
-                    completion(nil, "Could not retrieve password")
+            if let churchesData = (snapshot.value! as! NSDictionary)["Churches"] {
+                if let churchData = (churchesData as! NSDictionary)[church] {
+                    if let password = (churchData as! NSDictionary)["password"] {
+                        completion(password as? String, nil)
+                    } else {
+                        completion(nil, "Could not retrieve password")
+                    }
                 }
             }
         })
@@ -126,13 +129,16 @@ class FirebaseClient: NSObject {
     
     func getAdminPassword(church: String, completion: @escaping (_ password: String?, _ error: NSString?) -> ()) {
         self.ref.observeSingleEvent(of: .value, with: { snapshot in
-            if let churchData = (snapshot.value! as! NSDictionary)[church] {
-                if let password = (churchData as! NSDictionary)["AdminPassword"] {
-                    completion(password as? String, nil)
-                } else {
-                    completion(nil, "Could not retrieve password")
+            if let churchesData = (snapshot.value! as! NSDictionary)["Churches"] {
+                if let churchData = (churchesData as! NSDictionary)[church] {
+                    if let password = (churchData as! NSDictionary)["adminPassword"] {
+                        completion(password as? String, nil)
+                    } else {
+                        completion(nil, "Could not retrieve password")
+                    }
                 }
-            }        })
+            }
+        })
     }
     
     func deleteFamily(church: String, uid: String, completion: (Bool) -> ()) {
