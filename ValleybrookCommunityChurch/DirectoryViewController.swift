@@ -266,6 +266,10 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
                             cell.aiv.stopAnimating()
                             cell.aiv.isHidden = true
                         }
+                    } else {
+                        cell.myImageView.image = nil
+                        cell.aiv.stopAnimating()
+                        cell.aiv.isHidden = true
                     }
                 }
                 cell.aiv.startAnimating()
@@ -689,7 +693,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     func setUpChurchesView() {
         self.title = "Select a Church"
         
-        lastUpdatedItem.title = ""
+        lastUpdatedItem.title = "Directory App Version \(versionNumber)"
         switchChurchesButton.tintColor = .clear
         switchChurchesButton.isEnabled = false
         addFamilyButton.tintColor = .clear
