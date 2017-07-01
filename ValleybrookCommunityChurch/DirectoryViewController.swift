@@ -21,13 +21,17 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
+    var sections = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+    
     var families: [Family] = []
     var filteredFamilies: [Family] = []
-    var sections = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
     var familiesWithSections: [[Family]] = []
     var filteredFamiliesWithSections: [[Family]] = []
+    
     var churches: [(name: String, location: String, password: String)] = []
     var filteredChurches: [(name: String, location: String, password: String)] = []
+    var churchesWithSections: [[(name: String, location: String, password: String)]] = []
+    var filteredChurchesWithSections: [[(name: String, location: String, password: String)]] = []
     let screenSize = UIScreen.main.bounds
     @IBOutlet weak var toolbar: UIToolbar!
 
@@ -189,10 +193,17 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if churchesTable {
-            if searchController.isActive && searchController.searchBar.text != "" {
-                return filteredChurches.count
+            if searchController.isActive {
+                if filteredChurchesWithSections.count > 0 {
+                    return filteredChurchesWithSections[section].count
+                }
+                return 0
+            } else {
+                if churchesWithSections.count > 0 {
+                    return churchesWithSections[section].count
+                }
+                return 0
             }
-            return churches.count
         }
 
         if searchController.isActive && searchController.searchBar.text != "" {
@@ -210,23 +221,30 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        if churchesTable {
-            return 1
-        }
         return sections.count
     }
     
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        if churchesTable {
-            return nil
-        }
         return sections
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
         if churchesTable {
+            var churches = churchesWithSections
+            if searchController.isActive {
+                churches = filteredChurchesWithSections
+            }
+            
+            if churches.count > 0 {
+                if churches[section].count == 0 {
+                    return nil
+                }
+                return sections[section]
+            }
             return nil
         }
+        
         var families = familiesWithSections
         if searchController.isActive && searchController.searchBar.text != "" {
             families = filteredFamiliesWithSections
@@ -241,18 +259,22 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         return nil
     }
     
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        filteredChurchesWithSections = []
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if churchesTable {
             var church: (name: String, location: String, password: String)!
-            if searchController.isActive && searchController.searchBar.text != "" {
+            if searchController.isActive {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLine") as! TwoLineCell
-                church = filteredChurches[indexPath.row]
+                church = filteredChurchesWithSections[indexPath.section][indexPath.row]
                 cell.setUpCell(church: church)
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLineWithImage") as! TwoLineWithImageCell
-                church = churches[indexPath.row]
+                church = churchesWithSections[indexPath.section][indexPath.row]
                 cell.setUpCell(church: church)
                 let imageRef = Storage.storage().reference(withPath: "/\(church.name).jpg")
                 imageRef.getMetadata { (metadata, error) -> () in
@@ -272,8 +294,10 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
                         cell.aiv.isHidden = true
                     }
                 }
-                cell.aiv.startAnimating()
-                cell.aiv.isHidden = false
+                if cell.myImageView.image == nil {
+                    cell.aiv.startAnimating()
+                    cell.aiv.isHidden = false
+                }
                 return cell
             }
             
@@ -367,6 +391,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if churchesTable {
+            return 76.0
+        }
         let cell = self.tableView(tableView, cellForRowAt: indexPath)
         return cell.frame.size.height
     }
@@ -443,7 +470,6 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if churchesTable {
-            
             var churchName = ""
             var password = ""
             if searchController.isActive && searchController.searchBar.text != "" {
@@ -453,8 +479,8 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
                 searchController.isActive = false
                 searchController.dismiss(animated: false, completion: nil)
             } else {
-                churchName = churches[indexPath.row].name
-                password = churches[indexPath.row].password
+                churchName = churchesWithSections[indexPath.section][indexPath.row].name
+                password = churchesWithSections[indexPath.section][indexPath.row].password
             }
             
             let alertController = UIAlertController(title: "Password Required", message: "Enter the password to access the Directory for \(churchName).", preferredStyle: .alert)
@@ -642,8 +668,17 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             filteredChurches = churches.filter { church in
                 return (church.name.lowercased().contains(searchText.lowercased()))
             }
-            
-            filteredChurches.sort { $0.name < $1.name }
+
+            filteredChurchesWithSections = []
+            for i in 0...25 {
+                var tempArray: [(name: String, location: String, password: String)] = []
+                for church in self.filteredChurches {
+                    if church.name[0] == self.sections[i] {
+                        tempArray.append(church)
+                    }
+                }
+                filteredChurchesWithSections.append(tempArray)
+            }
             
             myTableView.reloadData()
             
@@ -698,6 +733,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         switchChurchesButton.isEnabled = false
         addFamilyButton.tintColor = .clear
         addFamilyButton.isEnabled = false
+        myTableView.rowHeight = 76.0
         
         churchesTable = true
         searchController.searchBar.placeholder = "Search for a Church"
@@ -733,9 +769,23 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         
         FirebaseClient.shared.getChurches { (churches, error) -> () in
             if let churches = churches {
+                self.churches = churches
+                
                 var sortedChurches = churches
                 sortedChurches.sort { $0.name < $1.name }
-                self.churches = sortedChurches
+                
+                self.churchesWithSections = []
+                for i in 0...25 {
+                    var tempArray: [(name: String, location: String, password: String)] = []
+                    for church in sortedChurches {
+                        if church.name[0] == self.sections[i] {
+                            tempArray.append(church)
+                        }
+                    }
+                    self.churchesWithSections.append(tempArray)
+                }
+
+                
                 self.myTableView.reloadData()
                 self.myTableView.setContentOffset(CGPoint(x:0,y:self.searchController.searchBar.frame.size.height), animated: false)
                 self.myTableView.isHidden = false
@@ -804,7 +854,7 @@ class TwoLineCell: UITableViewCell {
     
     func setUpCell(church: (name: String, location: String, password: String)) {
         header.attributedText = GlobalFunctions.shared.bold(string: church.0)
-        line2.text = church.1
+        line2.attributedText = GlobalFunctions.shared.italics(string: church.1)
     }
     
 }
@@ -818,7 +868,7 @@ class TwoLineWithImageCell: UITableViewCell {
     
     func setUpCell(church: (name: String, location: String, password: String)) {
         header.attributedText = GlobalFunctions.shared.bold(string: church.0)
-        line2.text = church.1
+        line2.attributedText = GlobalFunctions.shared.italics(string: church.1)
         let w = myImageView.frame.size.width
         myImageView.layer.cornerRadius = w/2
         myImageView.layer.masksToBounds = true

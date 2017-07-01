@@ -34,6 +34,12 @@ class GlobalFunctions: NSObject {
         return attributedString
     }
     
+    func italics(string: String) -> NSMutableAttributedString {
+        let attrs = [NSFontAttributeName : UIFont.italicSystemFont(ofSize: 17)]
+        let attributedString = NSMutableAttributedString(string: string, attributes:attrs)
+        return attributedString
+    }
+    
     func getCurrentDateTime() -> String {
         let date = Date()
         let calendar = Calendar.current

@@ -149,10 +149,14 @@ class FirebaseClient: NSObject {
                 var churches: [(name: String, location: String, password: String)] = []
                 for (key, value) in churchList as! NSDictionary {
                     let info = value as! NSDictionary
-                    let church = (name: key as! String,
+                    let activated = info["activated"] as! Bool
+                    print(activated)
+                    if activated {
+                        let church = (name: key as! String,
                                         location: info["location"] as! String,
                                         password: info["password"] as! String)
-                    churches.append(church)
+                        churches.append(church)
+                    }
                 }
                 completion(churches, nil)
             } else {
