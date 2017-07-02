@@ -103,6 +103,8 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         toolbar.isUserInteractionEnabled = false
         loadingLabel.text = "Loading Directory..."
         searchController.searchBar.placeholder = "Search by Last Name"
+        loadingLabel.isHidden = false
+        aiv.isHidden = false
         
         myTableView.isHidden = true
         aiv.startAnimating()
@@ -589,6 +591,16 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        var families = 0
+        for section in familiesWithSections {
+            families += section.count
+            if families > 1 {
+                break
+            }
+        }
+        if searchController.isActive || churchesTable || families < 2 {
+            return false
+        }
         return true
     }
     
@@ -623,7 +635,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
                                             self.myTableView.reloadData()
                                 
                                         } else {
+                                            
                                             self.displayAlert(title:"Failed to Delete Family", message: "The delete operation failed to complete.")
+                                            
                                         }
                     
                                     }
@@ -641,6 +655,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
                     }
                 }
             }
+            
             let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
             
             alertController.addTextField { (textField) in
@@ -652,6 +667,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             alertController.addAction(cancelAction)
             
             self.present(alertController, animated: true, completion: nil)
+            
         }
     }
     
@@ -726,7 +742,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func setUpChurchesView() {
-        self.title = "Select a Church"
+        self.title = "Find Your Church"
         
         lastUpdatedItem.title = "Directory App Version \(versionNumber)"
         switchChurchesButton.tintColor = .clear
