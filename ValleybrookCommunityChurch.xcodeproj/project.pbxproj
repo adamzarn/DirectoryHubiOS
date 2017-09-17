@@ -10,8 +10,8 @@
 		0FD85160C1FD84ED20AC3953 /* Pods_ValleybrookCommunityChurch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC9264480BC22009F8742DC3 /* Pods_ValleybrookCommunityChurch.framework */; };
 		BEE679689FAE5C98500E07AD /* Pods_ValleybrookCommunityChurchUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD744E9AEAFA4E8CF154BCD0 /* Pods_ValleybrookCommunityChurchUITests.framework */; };
 		C4E7D5BF9422CB0C258E3357 /* Pods_ValleybrookCommunityChurchTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD517479C15A97B5E59D0CFE /* Pods_ValleybrookCommunityChurchTests.framework */; };
-		DB0943F61EE6E4CC002426AB /* FamilyObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0943F51EE6E4CC002426AB /* FamilyObjects.swift */; };
-		DB0EEADF1EE77475002AB793 /* FamilyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEADE1EE77475002AB793 /* FamilyViewController.swift */; };
+		DB0943F61EE6E4CC002426AB /* CustomObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0943F51EE6E4CC002426AB /* CustomObjects.swift */; };
+		DB0EEADF1EE77475002AB793 /* EntryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEADE1EE77475002AB793 /* EntryViewController.swift */; };
 		DB0EEAE31EEB179A002AB793 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE21EEB179A002AB793 /* Reachability.swift */; };
 		DB0EEAE51EEB18BD002AB793 /* GlobalFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE41EEB18BD002AB793 /* GlobalFunctions.swift */; };
 		DB0EEAE81EEB27AC002AB793 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DB0EEAE61EEB27AC002AB793 /* Model.xcdatamodeld */; };
@@ -24,7 +24,12 @@
 		DB1EC3871EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3861EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift */; };
 		DB1EC3951EE6E01600998032 /* FirebaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3941EE6E01600998032 /* FirebaseClient.swift */; };
 		DB1EC3971EE6E0E100998032 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */; };
-		DB6C807A1EF4784300AE7AA6 /* AddFamilyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6C80791EF4784300AE7AA6 /* AddFamilyViewController.swift */; };
+		DB6C807A1EF4784300AE7AA6 /* AddEntryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6C80791EF4784300AE7AA6 /* AddEntryViewController.swift */; };
+		DBEC819A1F68D31800F10CF8 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEC81991F68D31800F10CF8 /* LoginViewController.swift */; };
+		DBEC819C1F68D40700F10CF8 /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEC819B1F68D40700F10CF8 /* CreateAccountViewController.swift */; };
+		DBEC819E1F69C74000F10CF8 /* GroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEC819D1F69C74000F10CF8 /* GroupsViewController.swift */; };
+		DBEC81A01F69DF2600F10CF8 /* CreateGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEC819F1F69DF2600F10CF8 /* CreateGroupViewController.swift */; };
+		DBFBC4511F6E16DE00503392 /* ImageThumbnail.png in Resources */ = {isa = PBXBuildFile; fileRef = DBFBC4501F6E16DE00503392 /* ImageThumbnail.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,8 +58,8 @@
 		AD744E9AEAFA4E8CF154BCD0 /* Pods_ValleybrookCommunityChurchUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ValleybrookCommunityChurchUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB52B60C0597673E1628A2EC /* Pods-ValleybrookCommunityChurchTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValleybrookCommunityChurchTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ValleybrookCommunityChurchTests/Pods-ValleybrookCommunityChurchTests.release.xcconfig"; sourceTree = "<group>"; };
 		BC9264480BC22009F8742DC3 /* Pods_ValleybrookCommunityChurch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ValleybrookCommunityChurch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DB0943F51EE6E4CC002426AB /* FamilyObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FamilyObjects.swift; sourceTree = "<group>"; };
-		DB0EEADE1EE77475002AB793 /* FamilyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FamilyViewController.swift; sourceTree = "<group>"; };
+		DB0943F51EE6E4CC002426AB /* CustomObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomObjects.swift; sourceTree = "<group>"; };
+		DB0EEADE1EE77475002AB793 /* EntryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntryViewController.swift; sourceTree = "<group>"; };
 		DB0EEAE21EEB179A002AB793 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		DB0EEAE41EEB18BD002AB793 /* GlobalFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalFunctions.swift; sourceTree = "<group>"; };
 		DB0EEAE71EEB27AC002AB793 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -73,7 +78,12 @@
 		DB1EC3881EE6E00100998032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB1EC3941EE6E01600998032 /* FirebaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseClient.swift; sourceTree = "<group>"; };
 		DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		DB6C80791EF4784300AE7AA6 /* AddFamilyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFamilyViewController.swift; sourceTree = "<group>"; };
+		DB6C80791EF4784300AE7AA6 /* AddEntryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEntryViewController.swift; sourceTree = "<group>"; };
+		DBEC81991F68D31800F10CF8 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		DBEC819B1F68D40700F10CF8 /* CreateAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
+		DBEC819D1F69C74000F10CF8 /* GroupsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupsViewController.swift; sourceTree = "<group>"; };
+		DBEC819F1F69DF2600F10CF8 /* CreateGroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateGroupViewController.swift; sourceTree = "<group>"; };
+		DBFBC4501F6E16DE00503392 /* ImageThumbnail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ImageThumbnail.png; sourceTree = "<group>"; };
 		DE29402686A967908E79B620 /* Pods-ValleybrookCommunityChurch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ValleybrookCommunityChurch.release.xcconfig"; path = "Pods/Target Support Files/Pods-ValleybrookCommunityChurch/Pods-ValleybrookCommunityChurch.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -153,10 +163,15 @@
 		DB1EC3651EE6E00100998032 /* ValleybrookCommunityChurch */ = {
 			isa = PBXGroup;
 			children = (
+				DBFBC4501F6E16DE00503392 /* ImageThumbnail.png */,
 				DB1EC3661EE6E00100998032 /* AppDelegate.swift */,
+				DBEC81991F68D31800F10CF8 /* LoginViewController.swift */,
+				DBEC819B1F68D40700F10CF8 /* CreateAccountViewController.swift */,
+				DBEC819D1F69C74000F10CF8 /* GroupsViewController.swift */,
+				DBEC819F1F69DF2600F10CF8 /* CreateGroupViewController.swift */,
 				DB1EC3681EE6E00100998032 /* DirectoryViewController.swift */,
-				DB0EEADE1EE77475002AB793 /* FamilyViewController.swift */,
-				DB6C80791EF4784300AE7AA6 /* AddFamilyViewController.swift */,
+				DB0EEADE1EE77475002AB793 /* EntryViewController.swift */,
+				DB6C80791EF4784300AE7AA6 /* AddEntryViewController.swift */,
 				DB0EEAE21EEB179A002AB793 /* Reachability.swift */,
 				DB1EC36A1EE6E00100998032 /* Main.storyboard */,
 				DB1EC36D1EE6E00100998032 /* Assets.xcassets */,
@@ -164,7 +179,7 @@
 				DB1EC3721EE6E00100998032 /* Info.plist */,
 				DB1EC3941EE6E01600998032 /* FirebaseClient.swift */,
 				DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */,
-				DB0943F51EE6E4CC002426AB /* FamilyObjects.swift */,
+				DB0943F51EE6E4CC002426AB /* CustomObjects.swift */,
 				DB0EEAE41EEB18BD002AB793 /* GlobalFunctions.swift */,
 				DB0EEAE61EEB27AC002AB793 /* Model.xcdatamodeld */,
 			);
@@ -310,6 +325,7 @@
 			files = (
 				DB1EC3711EE6E00100998032 /* LaunchScreen.storyboard in Resources */,
 				DB1EC3971EE6E0E100998032 /* GoogleService-Info.plist in Resources */,
+				DBFBC4511F6E16DE00503392 /* ImageThumbnail.png in Resources */,
 				DB1EC36E1EE6E00100998032 /* Assets.xcassets in Resources */,
 				DB1EC36C1EE6E00100998032 /* Main.storyboard in Resources */,
 			);
@@ -474,15 +490,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBEC819E1F69C74000F10CF8 /* GroupsViewController.swift in Sources */,
 				DB0EEAE31EEB179A002AB793 /* Reachability.swift in Sources */,
-				DB6C807A1EF4784300AE7AA6 /* AddFamilyViewController.swift in Sources */,
+				DB6C807A1EF4784300AE7AA6 /* AddEntryViewController.swift in Sources */,
 				DB0EEAE51EEB18BD002AB793 /* GlobalFunctions.swift in Sources */,
+				DBEC819C1F68D40700F10CF8 /* CreateAccountViewController.swift in Sources */,
 				DB1EC3691EE6E00100998032 /* DirectoryViewController.swift in Sources */,
 				DB1EC3671EE6E00100998032 /* AppDelegate.swift in Sources */,
 				DB0EEAE81EEB27AC002AB793 /* Model.xcdatamodeld in Sources */,
-				DB0943F61EE6E4CC002426AB /* FamilyObjects.swift in Sources */,
+				DBEC81A01F69DF2600F10CF8 /* CreateGroupViewController.swift in Sources */,
+				DB0943F61EE6E4CC002426AB /* CustomObjects.swift in Sources */,
 				DB1EC3951EE6E01600998032 /* FirebaseClient.swift in Sources */,
-				DB0EEADF1EE77475002AB793 /* FamilyViewController.swift in Sources */,
+				DBEC819A1F68D31800F10CF8 /* LoginViewController.swift in Sources */,
+				DB0EEADF1EE77475002AB793 /* EntryViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

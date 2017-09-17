@@ -1,5 +1,5 @@
 //
-//  FamilyViewController.swift
+//  EntryViewController.swift
 //  ValleybrookCommunityChurch
 //
 //  Created by Adam Zarn on 6/6/17.
@@ -9,44 +9,56 @@
 import UIKit
 import MessageUI
 import Contacts
+import Firebase
 
-class FamilyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
+class EntryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
     
     @IBOutlet weak var myTableView: UITableView!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    @IBOutlet weak var editEntryBarButtonItem: UIBarButtonItem!
     
-    var family: Family?
+    var group: Group!
+    var entry: Entry?
     var address: Address?
     var people: [Person]?
     var info: [[[String]]] = []
-    let sections = ["Home Number", "Family Email", "Address", "Contact Info", "Children"]
+    let sections = ["Home Number", "Email", "Address", "Contact Info", "Children"]
     var adults: [Person] = []
     var children: [Person] = []
-    var pvc: DirectoryViewController?
-    var church = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        info = []
+        adults = []
+        children = []
+        populateTableView()
         
-        if let church = appDelegate.defaults.value(forKey: "church") {
-            if church as! String != "" {
-                self.church = church as! String
-            }
+        if !group.admins.contains((Auth.auth().currentUser?.uid)!) {
+            editEntryBarButtonItem.isEnabled = false
+            editEntryBarButtonItem.tintColor = UIColor.clear
         }
         
-        address = family?.familyToAddress
-        people = family?.familyToPerson?.allObjects as? [Person]
+    }
+    
+    func populateTableView() {
         
-        if family?.phone == "" {
+        address = entry?.entryToAddress
+        people = entry?.entryToPerson?.allObjects as? [Person]
+        
+        if entry?.phone == "" {
             info.append([])
         } else {
-           info.append([[(family?.phone!)!]])
+            info.append([[(entry?.phone!)!]])
         }
         
-        if family?.email == "" {
+        if entry?.email == "" {
             info.append([])
         } else {
-            info.append([[(family?.email!)!]])
+            info.append([[(entry?.email!)!]])
         }
         
         let addressLines = getAddressLines(address: address!)
@@ -98,7 +110,7 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
         }
         info.append(allChildrenLines)
         
-        if getFamilyStatus(people: people!) == "Single" {
+        if getEntryStatus(people: people!) == "Single" {
             
             var firstName = ""
             for person in people! {
@@ -107,20 +119,20 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
                 }
             }
             
-            title = firstName + " " + (family?.name)!
+            title = firstName + " " + (entry?.name)!
             
         } else {
             
-            let name = (family?.name!)!
-            title = "The " + name + " Family"
-
+            let name = (entry?.name!)!
+            title = "The " + name + " Entry"
+            
         }
         
         myTableView.reloadData()
         
     }
 
-    func getFamilyStatus(people: [Person]) -> String {
+    func getEntryStatus(people: [Person]) -> String {
         for person in people {
             if person.type == "Single" {
                 return "Single"
@@ -283,7 +295,7 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
                 onlyEmail = true
             }
             
-            actionSheet = UIAlertController(title: "\(name!) \((family?.name!)!)", message: "What would you like to do?", preferredStyle: UIAlertControllerStyle.actionSheet)
+            actionSheet = UIAlertController(title: "\(name!) \((entry?.name!)!)", message: "What would you like to do?", preferredStyle: UIAlertControllerStyle.actionSheet)
             
             if phone != "" {
                 
@@ -317,15 +329,15 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
                 let contact = CNMutableContact()
                 
                 contact.givenName = name!
-                contact.familyName = (self.family?.name!)!
+                contact.familyName = (self.entry?.name!)!
                 
                 let email = CNLabeledValue(label: CNLabelHome, value: email! as NSString)
                 contact.emailAddresses = [email]
                 
-                if self.family?.phone != "" {
+                if self.entry?.phone != "" {
                     contact.phoneNumbers.append(
                         CNLabeledValue(label:CNLabelPhoneNumberMain,
-                                       value:CNPhoneNumber(stringValue: (self.family?.phone)!)
+                                       value:CNPhoneNumber(stringValue: (self.entry?.phone)!)
                         ))
                 }
                 contact.phoneNumbers.append(CNLabeledValue(label:CNLabelPhoneNumberMobile,value:CNPhoneNumber(stringValue:phone!)))
@@ -350,18 +362,18 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
                             saveRequest.add(contact, toContainerWithIdentifier:nil)
                             try! store.execute(saveRequest)
                             
-                            self.presentNotification(title: "Success", firstName: name!, lastName: (self.family?.name)!, message: "was successfully added to Contacts.")
+                            self.presentNotification(title: "Success", firstName: name!, lastName: (self.entry?.name)!, message: "was successfully added to Contacts.")
                             
                         } else {
                             
-                            self.presentNotification(title: "Permission Denied", firstName: name!, lastName: (self.family?.name)!, message: "was not added to Contacts because you denied permission. You must go to Settings and allow access to Contacts to change this.")
+                            self.presentNotification(title: "Permission Denied", firstName: name!, lastName: (self.entry?.name)!, message: "was not added to Contacts because you denied permission. You must go to Settings and allow access to Contacts to change this.")
                         }
                     })
                 } else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
                     saveRequest.add(contact, toContainerWithIdentifier:nil)
                     try! store.execute(saveRequest)
                     
-                    self.presentNotification(title: "Success", firstName: name!, lastName: (self.family?.name)!, message: "was successfully added to Contacts.")
+                    self.presentNotification(title: "Success", firstName: name!, lastName: (self.entry?.name)!, message: "was successfully added to Contacts.")
                 }
                 
             }))
@@ -458,86 +470,39 @@ class FamilyViewController: UIViewController, UITableViewDataSource, UITableView
     
     @IBAction func editButtonPressed(_ sender: Any) {
         
-        let alertController = UIAlertController(title: "Password Required", message: "Enter the administrator password to edit a family.", preferredStyle: .alert)
+        let addEntryVC = self.storyboard?.instantiateViewController(withIdentifier: "AddEntryViewController") as! AddEntryViewController
         
-        let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
-            if let field = alertController.textFields?[0] {
-                if GlobalFunctions.shared.hasConnectivity() {
-                    
-                    let church = self.appDelegate.defaults.value(forKey: "church") as! String
-                    FirebaseClient.shared.getAdminPassword(church: church) { (password, error) -> () in
-                        
-                        if let password = password {
-                            
-                            if password == field.text {
-                                let addFamilyVC = self.storyboard?.instantiateViewController(withIdentifier: "AddFamilyViewController") as! AddFamilyViewController
-                                addFamilyVC.pvc = self.pvc
-                                
-                                var newPeople: [[PersonMO]] = [[],[]]
-                                var newPersonTypes: [String] = []
-                                var newBirthOrders: [Int] = []
-                                for person in self.people! {
-                                    let newPerson = PersonMO(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: Int(person.birthOrder!)!, uid: person.uid!)
-                                    if newPerson.type! != "Child" {
-                                        newPeople[0].append(newPerson)
-                                    } else {
-                                        newPeople[1].append(newPerson)
-                                    }
-                                    if !newPersonTypes.contains(newPerson.type!) {
-                                        newPersonTypes.append(newPerson.type!)
-                                    }
-                                    if !newBirthOrders.contains(newPerson.birthOrder!) {
-                                        newBirthOrders.append(newPerson.birthOrder!)
-                                    }
-                                }
-                                
-                                addFamilyVC.people = newPeople
-                                addFamilyVC.personTypes = newPersonTypes
-                                addFamilyVC.birthOrders = newBirthOrders
-                                addFamilyVC.uid = (self.family?.uid)!
-                                
-                                addFamilyVC.textFieldValues = [(self.family?.name)!, (self.family?.phone)!, (self.family?.email)!, (self.address?.street)!, (self.address?.line2)!, (self.address?.line3)!, (self.address?.city)!, (self.address?.state)!, (self.address?.zip)!]
-                                
-                                self.navigationController?.pushViewController(addFamilyVC, animated: true)
-                            } else {
-                                let alert = UIAlertController(title: "Incorrect Password", message: "Please try again.", preferredStyle: .alert)
-                                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                                self.present(alert, animated: false, completion: nil)
-                            }
-                            
-                        } else {
-                            print(error!)
-                        }
-                        
-                    }
-                    
-                } else {
-                    
-                    let alert = UIAlertController(title: "No Internet Connection", message: "Please establish an internet connection and try again.", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                    self.present(alert, animated: false, completion: nil)
-                    
-                }
-                
+        var newPeople: [[PersonMO]] = [[],[]]
+        var newPersonTypes: [String] = []
+        var newBirthOrders: [Int] = []
+        for person in self.people! {
+            let newPerson = PersonMO(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: Int(person.birthOrder!)!, uid: person.uid!)
+            if newPerson.type! != "Child" {
+                newPeople[0].append(newPerson)
+            } else {
+                newPeople[1].append(newPerson)
+            }
+            if !newPersonTypes.contains(newPerson.type!) {
+                newPersonTypes.append(newPerson.type!)
+            }
+            if !newBirthOrders.contains(newPerson.birthOrder!) {
+                newBirthOrders.append(newPerson.birthOrder!)
             }
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        addEntryVC.people = newPeople
+        addEntryVC.personTypes = newPersonTypes
+        addEntryVC.birthOrders = newBirthOrders
+        addEntryVC.entryUid = (self.entry?.uid)!
+        addEntryVC.group = self.group
+        addEntryVC.entry = self.entry
         
-        alertController.addTextField { (textField) in
-            textField.placeholder = "Administrator Password"
-            textField.isSecureTextEntry = true
-        }
+        addEntryVC.textFieldValues = [(self.entry?.name)!, (self.entry?.phone)!, (self.entry?.email)!, (self.address?.street)!, (self.address?.line2)!, (self.address?.line3)!, (self.address?.city)!, (self.address?.state)!, (self.address?.zip)!]
         
-        alertController.addAction(submitAction)
-        alertController.addAction(cancelAction)
-        
-        self.present(alertController, animated: true, completion: nil)
+        self.navigationController?.pushViewController(addEntryVC, animated: true)
         
     }
 
-    
-    
 }
 
 class OneLineDetailCell: UITableViewCell {

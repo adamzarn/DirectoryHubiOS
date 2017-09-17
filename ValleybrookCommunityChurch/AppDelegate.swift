@@ -135,18 +135,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func removeData () {
         //Remove the existing items
         let managedObjectContext = self.managedObjectContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Family")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Entry")
         
-        var families: [Family]?
+        var families: [Entry]?
         
         do {
-            families = try managedObjectContext.fetch(fetchRequest) as? [Family]
+            families = try managedObjectContext.fetch(fetchRequest) as? [Entry]
         } catch let e as NSError {
             print("Failed to retrieve record: \(e.localizedDescription)")
             return
         }
-        for family in families! {
-            managedObjectContext.delete(family)
+        for entry in families! {
+            managedObjectContext.delete(entry)
         }
     }
 

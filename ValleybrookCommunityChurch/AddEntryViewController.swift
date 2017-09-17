@@ -1,5 +1,5 @@
 //
-//  AddFamilyViewController.swift
+//  AddEntryViewController.swift
 //  ValleybrookCommunityChurch
 //
 //  Created by Adam Zarn on 6/16/17.
@@ -7,11 +7,11 @@
 //
 
 import UIKit
+import CoreData
 
-class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource {
+class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    var pvc: DirectoryViewController?
     
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var peopleTableView: UITableView!
@@ -30,7 +30,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     
     @IBOutlet weak var lastNameTextField: UITextField!
     @IBOutlet weak var homePhoneTextField: UITextField!
-    @IBOutlet weak var familyEmailTextField: UITextField!
+    @IBOutlet weak var entryEmailTextField: UITextField!
     
     @IBOutlet weak var addAddressView: UIView!
     //Add Address View
@@ -52,7 +52,9 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     
     @IBOutlet weak var submitButton: UIBarButtonItem!
     
-    var uid = ""
+    var entry: Entry!
+    var group: Group!
+    var entryUid: String?
     var people: [[PersonMO]] = [[],[]]
     var personTypes: [String] = []
     var editingPerson = false
@@ -77,9 +79,9 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         
         self.toolbar.isTranslucent = false
         
-        editAddressButton.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
-        addPersonButton.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
-        submitButton.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
+        editAddressButton.tintColor = GlobalFunctions.shared.themeColor()
+        addPersonButton.tintColor = GlobalFunctions.shared.themeColor()
+        submitButton.tintColor = GlobalFunctions.shared.themeColor()
         
         addressLabel.attributedText = GlobalFunctions.shared.bold(string: "Address")
         peopleLabel.attributedText = GlobalFunctions.shared.bold(string: "People")
@@ -154,7 +156,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
             textField.inputAccessoryView = toolBar
         }
         
-        if uid != "" {
+        if entryUid != nil {
         
             lastNameTextField.text = textFieldValues[0]
             homePhoneTextField.text = textFieldValues[1]
@@ -167,11 +169,11 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
             stateTextField.text = textFieldValues[7]
             zipTextField.text = textFieldValues[8]
             
-            self.title = "Edit Family"
+            self.title = "Edit Entry"
             submitButton.title = "SUBMIT CHANGES"
             
         } else {
-            self.title = "Add Family"
+            self.title = "Add Entry"
         }
         
         people[0].sort { $0.type! < $1.type! }
@@ -411,7 +413,12 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     func displayAlertAndDismiss(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
-            self.navigationController?.popToRootViewController(animated: true)
+            if self.entryUid != "" {
+                let entryVC = self.navigationController?.viewControllers[2] as! EntryViewController
+                
+
+            }
+            self.navigationController?.popViewController(animated: false)
         }))
         self.present(alert, animated: false, completion: nil)
     }
@@ -546,12 +553,12 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
     @IBAction func submitButtonPressed(_ sender: Any) {
         
         if lastNameTextField.text == "" {
-            displayAlert(title: "Missing Last Name", message: "A new family must have a last name.")
+            displayAlert(title: "Missing Last Name", message: "A new entry must have a last name.")
             return
         }
         
         if people[0].count == 0 {
-            displayAlert(title: "No Adults", message: "A new family must have at least 1 adult.")
+            displayAlert(title: "No Adults", message: "A new entry must have at least 1 adult.")
             return
         }
         
@@ -568,21 +575,18 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         let alert = UIAlertController(title: "Submit", message: "Are you sure you want to continue?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
             let allPeople = self.people[0] + self.people[1]
-            let newFamily = FamilyMO(name: self.lastNameTextField.text!, phone: self.homePhoneTextField.text!, email: self.familyEmailTextField.text!, address: self.address, people: allPeople)
+            let newEntry = EntryMO(name: self.lastNameTextField.text!, phone: self.homePhoneTextField.text!, email: self.entryEmailTextField.text!, address: self.address, people: allPeople)
             
             if GlobalFunctions.shared.hasConnectivity() {
-                
-                let church = self.appDelegate.defaults.value(forKey: "church") as! String
-                FirebaseClient.shared.addFamily(church: church, family: newFamily, uid: self.uid) { success in
-                    if success {
-                        self.pvc?.familiesWithSections = []
-                        self.appDelegate.comingFromUpdate = true
-                        self.displayAlertAndDismiss(title: "Success", message: "The new family information was added to the database.")
-                    } else {
-                        self.displayAlert(title: "Failure", message: "The new family information was not added to the database.")
+                FirebaseClient.shared.addEntry(groupUid: self.group.uid, entryUid: self.entryUid!, entry: newEntry) { success in
+                    if let success = success {
+                        if success {
+                            self.displayAlertAndDismiss(title: "Success", message: "The new entry information was added to the database.")
+                        } else {
+                            self.displayAlert(title: "Failure", message: "The new entry information was not added to the database.")
+                        }
                     }
                 }
-                
             } else {
                 self.displayAlert(title: "No Internet Connection", message: "Please establish an internet connection and try again.")
             }
@@ -617,14 +621,14 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         
         if personTypeTextField.text != "Child" {
             if personTypes.contains(personTypeTextField.text!) {
-                displayAlert(title: "Duplicate Person Type", message: "Families can only contain one \(personTypeTextField.text!).")
+                displayAlert(title: "Duplicate Person Type", message: "Entries can only contain one \(personTypeTextField.text!).")
                 return false
             }
         }
         
         if personTypeTextField.text == "Husband" || personTypeTextField.text == "Wife" {
             if personTypes.contains("Single") {
-                displayAlert(title: "Error", message: "Married couples and adult Singles cannot be in the same family.")
+                displayAlert(title: "Error", message: "Married couples and adult Singles cannot be in the same entry.")
                 return false
             }
             
@@ -632,7 +636,7 @@ class AddFamilyViewController: UIViewController, UITextFieldDelegate, UITableVie
         
         if personTypeTextField.text == "Single" {
             if personTypes.contains("Husband") || personTypes.contains("Wife") {
-                displayAlert(title: "Error", message: "Married couples and adult Singles cannot be in the same family.")
+                displayAlert(title: "Error", message: "Married couples and adult Singles cannot be in the same entry.")
                 return false
             }
         }

@@ -15,44 +15,31 @@ import Firebase
 
 class DirectoryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UISearchBarDelegate, UISearchControllerDelegate {
     
-    @IBOutlet weak var addFamilyButton: UIBarButtonItem!
+    @IBOutlet weak var addEntryButton: UIBarButtonItem!
     @IBOutlet weak var myTableView: UITableView!
-    @IBOutlet weak var switchChurchesButton: UIBarButtonItem!
     
+    var group: Group!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
     var sections = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
     
-    var families: [Family] = []
-    var filteredFamilies: [Family] = []
-    var familiesWithSections: [[Family]] = []
-    var filteredFamiliesWithSections: [[Family]] = []
+    var entries: [Entry] = []
+    var filteredEntries: [Entry] = []
+    var entriesWithSections: [[Entry]] = []
+    var filteredEntriesWithSections: [[Entry]] = []
     
-    var churches: [(name: String, location: String, password: String)] = []
-    var filteredChurches: [(name: String, location: String, password: String)] = []
-    var churchesWithSections: [[(name: String, location: String, password: String)]] = []
-    var filteredChurchesWithSections: [[(name: String, location: String, password: String)]] = []
     let screenSize = UIScreen.main.bounds
-    @IBOutlet weak var toolbar: UIToolbar!
 
-    @IBOutlet weak var lastUpdatedItem: UIBarButtonItem!
-    var loadingLabel: UILabel!
     @IBOutlet weak var aiv: UIActivityIndicatorView!
     
-    var tableViewShrunk = false
-    var churchesTable = false
     let searchController = UISearchController(searchResultsController: nil)
-    let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        myTableView.setContentOffset(CGPoint(x:0,y:searchController.searchBar.frame.size.height), animated: false)
-        
         self.navigationController?.navigationBar.tintColor = UIColor.white
-        self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
-        myTableView.sectionIndexColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
-        lastUpdatedItem.tintColor = GlobalFunctions.shared.color(r: 220, g: 111, b: 104)
+        self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()
+        myTableView.sectionIndexColor = GlobalFunctions.shared.themeColor()
         
         searchController.delegate = self
         searchController.searchBar.delegate = self
@@ -62,53 +49,13 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         searchController.hidesNavigationBarDuringPresentation = false
         myTableView.tableHeaderView = searchController.searchBar
         
-        loadingLabel = UILabel()
-        view.addSubview(loadingLabel)
-        
-        setLoadingPosition()
-        
         self.navigationController?.navigationBar.isTranslucent = false
-        self.toolbar.isTranslucent = false
         
-        if let church = appDelegate.defaults.value(forKey: "church") {
-            if church as! String != "" {
-                churchesTable = false
-                if let lastUpdateTime = appDelegate.defaults.value(forKey: "lastUpdated") {
-                    lastUpdatedItem.title = "Last Updated: \(lastUpdateTime)"
-                }
-                allowAccessToDirectory()
-            } else {
-                churchesTable = true
-                setUpChurchesView()
-                loadChurches()
-            }
-        } else {
-            churchesTable = true
-            setUpChurchesView()
-            loadChurches()
+        if !group.admins.contains((Auth.auth().currentUser?.uid)!) {
+            addEntryButton.isEnabled = false
+            addEntryButton.tintColor = UIColor.clear
         }
         
-    }
-    
-    func allowAccessToDirectory() {
-        
-        setLoadingPosition()
-        
-        self.title = "Directory"
-        switchChurchesButton.tintColor = .white
-        switchChurchesButton.isEnabled = true
-        addFamilyButton.tintColor = .white
-        addFamilyButton.isEnabled = true
-    
-        toolbar.isUserInteractionEnabled = false
-        loadingLabel.text = "Loading Directory..."
-        searchController.searchBar.placeholder = "Search by Last Name"
-        loadingLabel.isHidden = false
-        aiv.isHidden = false
-        
-        myTableView.isHidden = true
-        aiv.startAnimating()
-        updateData()
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -120,15 +67,17 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         if GlobalFunctions.shared.hasConnectivity() {
             appDelegate.removeData()
             
-            let church = appDelegate.defaults.value(forKey: "church") as! String
-            FirebaseClient.shared.updateData(church: church) { (success, error) -> () in
+            FirebaseClient.shared.updateData(uid: group.uid) { (success, error) -> () in
                 if success {
                     
                     self.displayData()
                     
                     let lastUpdateTime = GlobalFunctions.shared.getCurrentDateTime()
-                    self.lastUpdatedItem.title = "Last Updated: \(lastUpdateTime)"
                     self.appDelegate.defaults.setValue(lastUpdateTime, forKey: "lastUpdated")
+                    
+                    self.aiv.isHidden = true
+                    self.aiv.stopAnimating()
+                    self.myTableView.isHidden = false
                 
                 } else {
                     print(error!)
@@ -136,21 +85,20 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             }
         } else {
             displayData()
+            aiv.isHidden = true
+            aiv.stopAnimating()
+            myTableView.isHidden = false
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        aiv.isHidden = false
+        aiv.startAnimating()
+        myTableView.isHidden = true
         subscribeToKeyboardNotifications()
-        if appDelegate.comingFromUpdate {
-            loadingLabel.text = "Updating Directory..."
-            loadingLabel.isHidden = false
-            aiv.startAnimating()
-            aiv.isHidden = false
-            myTableView.isHidden = true
-            updateData()
-        }
-        appDelegate.comingFromUpdate = false
-        searchController.searchBar.isHidden = false
+        updateData()
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -159,27 +107,27 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
 
     func displayData() {
         
-        familiesWithSections = []
+        entriesWithSections = []
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Family")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Entry")
         
         do {
-            self.families = try self.appDelegate.managedObjectContext.fetch(fetchRequest) as! [Family]
+            self.entries = try self.appDelegate.managedObjectContext.fetch(fetchRequest) as! [Entry]
         } catch let e as NSError {
             print("Failed to retrieve record: \(e.localizedDescription)")
             return
         }
         
-        families.sort { $0.name! < $1.name! }
+        entries.sort { $0.name! < $1.name! }
         
         for i in 0...25 {
-            var tempArray: [Family] = []
-            for family in self.families {
-                if family.name?[0] == self.sections[i] {
-                    tempArray.append(family)
+            var tempArray: [Entry] = []
+            for entry in self.entries {
+                if entry.name?[0] == self.sections[i] {
+                    tempArray.append(entry)
                 }
             }
-            familiesWithSections.append(tempArray)
+            entriesWithSections.append(tempArray)
         }
         
         myTableView.reloadData()
@@ -187,35 +135,19 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         myTableView.setContentOffset(CGPoint(x:0,y:searchController.searchBar.frame.size.height), animated: false)
         aiv.stopAnimating()
         aiv.isHidden = true
-        loadingLabel.isHidden = true
-        loadingLabel.text = "Loading Directory..."
 
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        if churchesTable {
-            if searchController.isActive {
-                if filteredChurchesWithSections.count > 0 {
-                    return filteredChurchesWithSections[section].count
-                }
-                return 0
-            } else {
-                if churchesWithSections.count > 0 {
-                    return churchesWithSections[section].count
-                }
-                return 0
-            }
-        }
 
         if searchController.isActive && searchController.searchBar.text != "" {
-            if filteredFamiliesWithSections.count > 0 {
-                return filteredFamiliesWithSections[section].count
+            if filteredEntriesWithSections.count > 0 {
+                return filteredEntriesWithSections[section].count
             }
             return 0
         } else {
-            if familiesWithSections.count > 0 {
-                return familiesWithSections[section].count
+            if entriesWithSections.count > 0 {
+                return entriesWithSections[section].count
             }
             return 0
         }
@@ -232,28 +164,13 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         
-        if churchesTable {
-            var churches = churchesWithSections
-            if searchController.isActive {
-                churches = filteredChurchesWithSections
-            }
-            
-            if churches.count > 0 {
-                if churches[section].count == 0 {
-                    return nil
-                }
-                return sections[section]
-            }
-            return nil
-        }
-        
-        var families = familiesWithSections
+        var entries = entriesWithSections
         if searchController.isActive && searchController.searchBar.text != "" {
-            families = filteredFamiliesWithSections
+            entries = filteredEntriesWithSections
         }
 
-        if families.count > 0 {
-            if families[section].count == 0 {
+        if entries.count > 0 {
+            if entries[section].count == 0 {
                 return nil
             }
             return sections[section]
@@ -261,62 +178,20 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         return nil
     }
     
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        filteredChurchesWithSections = []
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if churchesTable {
-            var church: (name: String, location: String, password: String)!
-            if searchController.isActive {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLine") as! TwoLineCell
-                church = filteredChurchesWithSections[indexPath.section][indexPath.row]
-                cell.setUpCell(church: church)
-                return cell
-            } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLineWithImage") as! TwoLineWithImageCell
-                church = churchesWithSections[indexPath.section][indexPath.row]
-                cell.setUpCell(church: church)
-                let imageRef = Storage.storage().reference(withPath: "/\(church.name).jpg")
-                imageRef.getMetadata { (metadata, error) -> () in
-                    if let metadata = metadata {
-                        let downloadUrl = metadata.downloadURL()
-                        Alamofire.request(downloadUrl!, method: .get).responseImage { response in
-                            guard let image = response.result.value else {
-                                return
-                            }
-                            cell.myImageView.image = image
-                            cell.aiv.stopAnimating()
-                            cell.aiv.isHidden = true
-                        }
-                    } else {
-                        cell.myImageView.image = nil
-                        cell.aiv.stopAnimating()
-                        cell.aiv.isHidden = true
-                    }
-                }
-                if cell.myImageView.image == nil {
-                    cell.aiv.startAnimating()
-                    cell.aiv.isHidden = false
-                }
-                return cell
-            }
-            
-        }
-        
-        var family = familiesWithSections[indexPath.section][indexPath.row]
+        var entry = entriesWithSections[indexPath.section][indexPath.row]
         if searchController.isActive && searchController.searchBar.text != "" {
-            family = filteredFamiliesWithSections[indexPath.section][indexPath.row]
+            entry = filteredEntriesWithSections[indexPath.section][indexPath.row]
         }
         
-        let address = family.familyToAddress
-        let people = family.familyToPerson?.allObjects as! [Person]
+        let address = entry.entryToAddress
+        let people = entry.entryToPerson?.allObjects as! [Person]
         
-        let header = getHeader(family: family, people: people)
+        let header = getHeader(entry: entry, people: people)
         
-        let familyPhone = family.phone
-        let familyEmail = family.email
+        let entryPhone = entry.phone
+        let entryEmail = entry.email
         let addressStreet = address?.street
         let addressLine2 = address?.line2
         let addressLine3 = address?.line3
@@ -326,13 +201,13 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         var lineCount = 1
         var lines: [String] = [header]
         
-        if familyPhone != "" {
+        if entryPhone != "" {
             lineCount += 1
-            lines.append(familyPhone!)
+            lines.append(entryPhone!)
         }
-        if familyEmail != "" {
+        if entryEmail != "" {
             lineCount += 1
-            lines.append(familyEmail!)
+            lines.append(entryEmail!)
         }
         if addressLine2 != "" {
             lineCount += 1
@@ -393,14 +268,11 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if churchesTable {
-            return 76.0
-        }
         let cell = self.tableView(tableView, cellForRowAt: indexPath)
         return cell.frame.size.height
     }
     
-    func getHeader(family: Family, people: [Person]) -> String {
+    func getHeader(entry: Entry, people: [Person]) -> String {
         
         var husbandFirstName = ""
         var wifeFirstName = ""
@@ -416,9 +288,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             }
         }
         if singleFirstName != "" {
-            return family.name! + ", " + singleFirstName
+            return entry.name! + ", " + singleFirstName
         } else {
-            return family.name! + ", " + husbandFirstName + " & " + wifeFirstName
+            return entry.name! + ", " + husbandFirstName + " & " + wifeFirstName
         }
 
     }
@@ -471,134 +343,35 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if churchesTable {
-            var churchName = ""
-            var password = ""
-            if searchController.isActive && searchController.searchBar.text != "" {
-                churchName = filteredChurches[indexPath.row].name
-                password = filteredChurches[indexPath.row].password
-                searchController.searchBar.text = ""
-                searchController.isActive = false
-                searchController.dismiss(animated: false, completion: nil)
-            } else {
-                churchName = churchesWithSections[indexPath.section][indexPath.row].name
-                password = churchesWithSections[indexPath.section][indexPath.row].password
-            }
-            
-            let alertController = UIAlertController(title: "Password Required", message: "Enter the password to access the Directory for \(churchName).", preferredStyle: .alert)
-            
-            let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
-                if let field = alertController.textFields?[0] {
-
-                    if password == field.text {
-                        self.churchesTable = false
-                        self.appDelegate.defaults.setValue(churchName, forKey: "church")
-                        self.allowAccessToDirectory()
-                    } else {
-                        let alert = UIAlertController(title: "Incorrect Password", message: "Please try again.", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                        self.present(alert, animated: false, completion: nil)
-                        self.myTableView.deselectRow(at: indexPath, animated: false)
-                    }
-                }
-            }
-            
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
-            
-            alertController.addTextField { (textField) in
-                textField.placeholder = "Password"
-                textField.isSecureTextEntry = true
-            }
-            
-            alertController.addAction(submitAction)
-            alertController.addAction(cancelAction)
-            
-            self.present(alertController, animated: true, completion: nil)
-            myTableView.deselectRow(at: indexPath, animated: false)
-            
+        if searchController.isActive {
+            searchController.searchBar.isHidden = true
+            searchController.searchBar.resignFirstResponder()
+            let evc = storyboard?.instantiateViewController(withIdentifier: "EntryViewController") as! EntryViewController
+            evc.entry = filteredEntriesWithSections[indexPath.section][indexPath.row]
+            evc.group = self.group
+            self.navigationController?.pushViewController(evc, animated: true)
+            searchController.isActive = false
+            searchController.searchBar.text = ""
         } else {
-        
-            if searchController.isActive {
-                searchController.searchBar.isHidden = true
-                searchController.searchBar.resignFirstResponder()
-                let fvc = storyboard?.instantiateViewController(withIdentifier: "FamilyViewController") as! FamilyViewController
-                fvc.family = filteredFamiliesWithSections[indexPath.section][indexPath.row]
-                self.navigationController?.pushViewController(fvc, animated: true)
-                searchController.isActive = false
-                searchController.searchBar.text = ""
-            } else {
-                let fvc = storyboard?.instantiateViewController(withIdentifier: "FamilyViewController") as! FamilyViewController
-                fvc.family = familiesWithSections[indexPath.section][indexPath.row]
-                self.navigationController?.pushViewController(fvc, animated: true)
-                tableView.deselectRow(at: indexPath, animated: false)
-            }
-            
+            let evc = storyboard?.instantiateViewController(withIdentifier: "EntryViewController") as! EntryViewController
+            evc.entry = entriesWithSections[indexPath.section][indexPath.row]
+            evc.group = self.group
+            self.navigationController?.pushViewController(evc, animated: true)
+            tableView.deselectRow(at: indexPath, animated: false)
         }
+        
     }
     
-    @IBAction func addFamilyButtonPressed(_ sender: Any) {
-
-        let alertController = UIAlertController(title: "Password Required", message: "Enter the administrator password to add a family to the Directory.", preferredStyle: .alert)
+    @IBAction func addEntryButtonPressed(_ sender: Any) {
         
-        let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
-            if let field = alertController.textFields?[0] {
-                if GlobalFunctions.shared.hasConnectivity() {
-                    
-                    let church = self.appDelegate.defaults.value(forKey: "church") as! String
-                    FirebaseClient.shared.getAdminPassword(church: church) { (password, error) -> () in
-                        
-                        if let password = password {
-                            
-                            if password == field.text {
-                                let addFamilyVC = self.storyboard?.instantiateViewController(withIdentifier: "AddFamilyViewController") as! AddFamilyViewController
-                                addFamilyVC.pvc = self
-                                self.navigationController?.pushViewController(addFamilyVC, animated: true)
-                            } else {
-                                let alert = UIAlertController(title: "Incorrect Password", message: "Please try again.", preferredStyle: .alert)
-                                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                                self.present(alert, animated: false, completion: nil)
-                            }
-                            
-                        } else {
-                            print(error!)
-                        }
-                        
-                    }
-                    
-                } else {
-                    
-                    let alert = UIAlertController(title: "No Internet Connection", message: "Please establish an internet connection and try again.", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                    self.present(alert, animated: false, completion: nil)
-                    
-                }
-
-            }
-        }
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
-        
-        alertController.addTextField { (textField) in
-            textField.placeholder = "Administrator Password"
-            textField.isSecureTextEntry = true
-        }
-        
-        alertController.addAction(submitAction)
-        alertController.addAction(cancelAction)
-        
-        self.present(alertController, animated: true, completion: nil)
+        let addEntryVC = self.storyboard?.instantiateViewController(withIdentifier: "AddEntryViewController") as! AddEntryViewController
+        addEntryVC.group = self.group
+        self.navigationController?.pushViewController(addEntryVC, animated: true)
         
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        var families = 0
-        for section in familiesWithSections {
-            families += section.count
-            if families > 1 {
-                break
-            }
-        }
-        if searchController.isActive || churchesTable || families < 2 {
+        if searchController.isActive {
             return false
         }
         return true
@@ -606,37 +379,37 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
-        let familyToDelete = familiesWithSections[indexPath.section][indexPath.row]
-        let name = familyToDelete.name!
+        let entryToDelete = entriesWithSections[indexPath.section][indexPath.row]
+        let name = entryToDelete.name!
         
         if editingStyle == .delete {
             
-            let alertController = UIAlertController(title: "Password Required", message: "Enter the administrator password to remove a family from the Directory.", preferredStyle: .alert)
+            let alertController = UIAlertController(title: "Password Required", message: "Enter the administrator password to remove an entry from the Directory.", preferredStyle: .alert)
             
             let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
                 if let field = alertController.textFields?[0] {
                     
                     if GlobalFunctions.shared.hasConnectivity() {
                         
-                        let church = self.appDelegate.defaults.value(forKey: "church") as! String
-                        FirebaseClient.shared.getAdminPassword(church: church) { (password, error) -> () in
+                        let group = self.appDelegate.defaults.value(forKey: "group") as! String
+                        FirebaseClient.shared.getAdminPassword(group: group) { (password, error) -> () in
                             
                             if let password = password {
                                 
                                 if field.text == password {
                 
-                                    FirebaseClient.shared.deleteFamily(church: church, uid: familyToDelete.uid!) { success in
+                                    FirebaseClient.shared.deleteEntry(group: group, uid: entryToDelete.uid!) { success in
                     
                                         if success {
                         
-                                            self.displayAlert(title: "Family Deleted", message: "The \(name) family was successfully removed from the database.")
+                                            self.displayAlert(title: "Entry Deleted", message: "The \(name) entry was successfully removed from the database.")
                                             
-                                            self.familiesWithSections[indexPath.section].remove(at: indexPath.row)
+                                            self.entriesWithSections[indexPath.section].remove(at: indexPath.row)
                                             self.myTableView.reloadData()
                                 
                                         } else {
                                             
-                                            self.displayAlert(title:"Failed to Delete Family", message: "The delete operation failed to complete.")
+                                            self.displayAlert(title:"Failed to Delete Entry", message: "The delete operation failed to complete.")
                                             
                                         }
                     
@@ -679,139 +452,22 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     func filterContentForSearchText(searchText: String, scope: String = "All") {
         
-        if churchesTable {
-            
-            filteredChurches = churches.filter { church in
-                return (church.name.lowercased().contains(searchText.lowercased()))
-            }
-
-            filteredChurchesWithSections = []
-            for i in 0...25 {
-                var tempArray: [(name: String, location: String, password: String)] = []
-                for church in self.filteredChurches {
-                    if church.name[0] == self.sections[i] {
-                        tempArray.append(church)
-                    }
-                }
-                filteredChurchesWithSections.append(tempArray)
-            }
-            
-            myTableView.reloadData()
-            
-        } else {
-            
-            filteredFamilies = families.filter { family in
-                return (family.name?.lowercased().contains(searchText.lowercased()))!
-            }
-            filteredFamiliesWithSections = []
-            for i in 0...25 {
-                var tempArray: [Family] = []
-                for family in self.filteredFamilies {
-                    if family.name?[0] == self.sections[i] {
-                        tempArray.append(family)
-                    }
-                }
-                filteredFamiliesWithSections.append(tempArray)
-            }
-            
-            myTableView.reloadData()
-
+        filteredEntries = entries.filter { entry in
+            return (entry.name?.lowercased().contains(searchText.lowercased()))!
         }
-    }
-    
-    @IBAction func switchChurches(_ sender: Any) {
-        
-        let alert = UIAlertController(title: "Switch Churches", message: "You will need this directory's password to access it again. Are you sure you want to continue?" , preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
-            self.churchesTable = true
-            if self.churches.count == 0 {
-                self.setUpChurchesView()
-                self.loadChurches()
-            } else {
-                self.setUpChurchesView()
-                self.myTableView.reloadData()
-                self.myTableView.setContentOffset(CGPoint(x:0,y:self.searchController.searchBar.frame.size.height), animated: false)
-            }
-            self.appDelegate.defaults.setValue("", forKey: "church")
-            self.appDelegate.defaults.setValue("", forKey: "lastUpdated")
-        }))
-        
-        alert.addAction(UIAlertAction(title: "No", style: .default, handler: nil))
-        self.present(alert, animated: false, completion: nil)
-        
-    }
-    
-    func setUpChurchesView() {
-        self.title = "Find Your Church"
-        
-        lastUpdatedItem.title = "Directory App Version \(versionNumber)"
-        switchChurchesButton.tintColor = .clear
-        switchChurchesButton.isEnabled = false
-        addFamilyButton.tintColor = .clear
-        addFamilyButton.isEnabled = false
-        myTableView.rowHeight = 76.0
-        
-        churchesTable = true
-        searchController.searchBar.placeholder = "Search for a Church"
-        
-    }
-    
-    func setLoadingPosition() {
-        let w = screenSize.width
-        let h = screenSize.height
-        
-        let navBarHeight = self.navigationController?.navigationBar.frame.height
-        let statusBarHeight = UIApplication.shared.statusBarFrame.height
-        
-        let centerY = h/2 - navBarHeight! - statusBarHeight
-        
-        aiv.frame = CGRect(x: w/2 - 10, y: centerY - 10, width: 20, height: 20)
-        loadingLabel.frame = CGRect(x: 0, y: centerY + 20, width: w, height: 20)
-        loadingLabel.textAlignment = .center
-    }
-    
-    func loadChurches() {
-        
-        setLoadingPosition()
-        
-        churchesTable = true
-        myTableView.isHidden = true
-        aiv.isHidden = false
-        aiv.startAnimating()
-        loadingLabel.isHidden = false
-        loadingLabel.text = "Loading Churches..."
-        
-        lastUpdatedItem.title = "Directory App Version \(versionNumber)"
-        
-        FirebaseClient.shared.getChurches { (churches, error) -> () in
-            if let churches = churches {
-                self.churches = churches
-                
-                var sortedChurches = churches
-                sortedChurches.sort { $0.name < $1.name }
-                
-                self.churchesWithSections = []
-                for i in 0...25 {
-                    var tempArray: [(name: String, location: String, password: String)] = []
-                    for church in sortedChurches {
-                        if church.name[0] == self.sections[i] {
-                            tempArray.append(church)
-                        }
-                    }
-                    self.churchesWithSections.append(tempArray)
+        filteredEntriesWithSections = []
+        for i in 0...25 {
+            var tempArray: [Entry] = []
+            for entry in self.filteredEntries {
+                if entry.name?[0] == self.sections[i] {
+                    tempArray.append(entry)
                 }
-
-                
-                self.myTableView.reloadData()
-                self.myTableView.setContentOffset(CGPoint(x:0,y:self.searchController.searchBar.frame.size.height), animated: false)
-                self.myTableView.isHidden = false
-                self.aiv.isHidden = true
-                self.aiv.stopAnimating()
-                self.loadingLabel.isHidden = true
-            } else {
-                print(error!)
             }
+            filteredEntriesWithSections.append(tempArray)
         }
+        
+        myTableView.reloadData()
+
     }
     
     func subscribeToKeyboardNotifications() {
@@ -824,19 +480,11 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func keyboardWillShow(notification: NSNotification) {
-        if !tableViewShrunk {
-            let height = screenSize.height - getKeyboardHeight(notification: notification) - toolbar.frame.size.height - UIApplication.shared.statusBarFrame.height
-            myTableView.frame = CGRect(x: 0.0, y: 0.0, width: screenSize.width, height: height)
-            tableViewShrunk = true
-        }
+
     }
     
     func keyboardWillHide(notification: NSNotification) {
-        if tableViewShrunk {
-            let height = screenSize.height - toolbar.frame.size.height - (navigationController?.navigationBar.frame.size.height)! - UIApplication.shared.statusBarFrame.height
-            myTableView.frame = CGRect(x: 0.0, y: 0.0, width: screenSize.width, height: height)
-            tableViewShrunk = false
-        }
+
     }
     
     func getKeyboardHeight(notification: NSNotification) -> CGFloat {
@@ -868,28 +516,10 @@ class TwoLineCell: UITableViewCell {
         line2.text = lines[1]
     }
     
-    func setUpCell(church: (name: String, location: String, password: String)) {
-        header.attributedText = GlobalFunctions.shared.bold(string: church.0)
-        line2.attributedText = GlobalFunctions.shared.italics(string: church.1)
-    }
-    
-}
-
-class TwoLineWithImageCell: UITableViewCell {
-
-    @IBOutlet weak var header: UILabel!
-    @IBOutlet weak var line2: UILabel!
-    @IBOutlet weak var myImageView: UIImageView!
-    @IBOutlet weak var aiv: UIActivityIndicatorView!
-    
-    func setUpCell(church: (name: String, location: String, password: String)) {
-        header.attributedText = GlobalFunctions.shared.bold(string: church.0)
-        line2.attributedText = GlobalFunctions.shared.italics(string: church.1)
-        let w = myImageView.frame.size.width
-        myImageView.layer.cornerRadius = w/2
-        myImageView.layer.masksToBounds = true
-        myImageView.layer.borderWidth = 1
-        myImageView.layer.borderColor = UIColor.lightGray.cgColor
+    func setUpCell(group: Group) {
+        header.attributedText = GlobalFunctions.shared.bold(string: group.name)
+        let location = "\(group.city) \(group.state)"
+        line2.attributedText = GlobalFunctions.shared.italics(string: location)
     }
     
 }
