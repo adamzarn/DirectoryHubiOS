@@ -245,39 +245,41 @@ class FirebaseClient: NSObject {
         })
     }
     
-    func queryGroups(query: String, completion: @escaping (_ groups: [Group]?, _ error: NSString?) -> ()) {
-        self.ref.child("Groups").queryOrdered(byChild: "name").queryStarting(atValue: query).queryLimited(toFirst: 10).observeSingleEvent(of: .value, with: { snapshot in
-            if let groupsDict = (snapshot.value) {
-                var groups: [Group] = []
-                for (key, value) in groupsDict as! NSDictionary {
-                    let info = value as! NSDictionary
-                    var admins: [Member] = []
-                    var users: [Member] = []
-                    for (key, value) in info["admins"] as! NSDictionary {
-                        let member = Member(uid: key as! String, name: value as! String)
-                        admins.append(member)
-                    }
-                    if let usersDict = info["users"] {
-                        for (key, value) in usersDict as! NSDictionary {
+    func queryGroups(query: String, searchKey: String, completion: @escaping (_ groups: [Group]?, _ error: NSString?) -> ()) {
+        self.ref.child("Groups").queryOrdered(byChild: searchKey).queryStarting(atValue: query).queryLimited(toFirst: 10).observeSingleEvent(of: .value, with: { snapshot in
+            if snapshot.exists() {
+                if let groupsDict = (snapshot.value) {
+                    var groups: [Group] = []
+                    for (key, value) in groupsDict as! NSDictionary {
+                        let info = value as! NSDictionary
+                        var admins: [Member] = []
+                        var users: [Member] = []
+                        for (key, value) in info["admins"] as! NSDictionary {
                             let member = Member(uid: key as! String, name: value as! String)
-                            users.append(member)
+                            admins.append(member)
                         }
+                        if let usersDict = info["users"] {
+                            for (key, value) in usersDict as! NSDictionary {
+                                let member = Member(uid: key as! String, name: value as! String)
+                                users.append(member)
+                            }
+                        }
+                        let group = Group(uid: key as! String,
+                                          name: info["name"] as! String,
+                                          city: info["city"] as! String,
+                                          state: info["state"] as! String,
+                                          password: info["password"] as! String,
+                                          admins: admins,
+                                          users: users,
+                                          createdBy: info["createdBy"] as! String,
+                                    createdByUid: info["createdByUid"] as! String,
+                                          profilePicture: Data())
+                        groups.append(group)
                     }
-                    let group = Group(uid: key as! String,
-                                      name: info["name"] as! String,
-                                      city: info["city"] as! String,
-                                      state: info["state"] as! String,
-                                      password: info["password"] as! String,
-                                      admins: admins,
-                                      users: users,
-                                      createdBy: info["createdBy"] as! String,
-                                createdByUid: info["createdByUid"] as! String,
-                                      profilePicture: Data())
-                    groups.append(group)
+                    completion(groups, nil)
+                } else {
+                    completion([], "Could not retrieve Group List")
                 }
-                completion(groups, nil)
-            } else {
-                completion([], "Could not retrieve Group List")
             }
         })
     }

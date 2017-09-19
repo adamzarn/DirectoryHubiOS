@@ -129,28 +129,20 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
             }
             cell.setUpCell(group: group)
             if !imageFetched[indexPath.row] {
-                cell.aiv.startAnimating()
-                cell.aiv.isHidden = false
                 let imageRef = Storage.storage().reference(withPath: "/\(group.uid).jpg")
                 imageRef.getMetadata { (metadata, error) -> () in
                     if let metadata = metadata {
                         let downloadUrl = metadata.downloadURL()
                         Alamofire.request(downloadUrl!, method: .get).responseImage { response in
                                 guard let image = response.result.value else {
-                                    cell.aiv.stopAnimating()
-                                    cell.aiv.isHidden = true
-                                return
-                            }
+                                    return
+                                }
                             cell.myImageView.image = image
                             self.groups[indexPath.row].profilePicture = UIImageJPEGRepresentation(image, 0.0)!
-                            cell.aiv.stopAnimating()
-                            cell.aiv.isHidden = true
                         }
                     } else {
                         cell.myImageView.image = nil
                         self.groups[indexPath.row].profilePicture = UIImageJPEGRepresentation(UIImage(data: Data())!, 0.0)!
-                        cell.aiv.stopAnimating()
-                        cell.aiv.isHidden = true
                     }
                 }
                 imageFetched[indexPath.row] = true
@@ -394,12 +386,10 @@ class TwoLineWithImageCell: UITableViewCell {
     @IBOutlet weak var header: UILabel!
     @IBOutlet weak var line2: UILabel!
     @IBOutlet weak var myImageView: UIImageView!
-    @IBOutlet weak var aiv: UIActivityIndicatorView!
     @IBOutlet weak var createdByLabel: UILabel!
     
     func setUpCell(group: Group) {
         
-        myImageView.image = nil
         header.attributedText = GlobalFunctions.shared.bold(string: group.name)
         let location = "\(group.city), \(group.state)"
         line2.attributedText = GlobalFunctions.shared.italics(string: location)

@@ -17,6 +17,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     
     @IBOutlet weak var aiv: UIActivityIndicatorView!
     @IBOutlet weak var myTableView: UITableView!
+    @IBOutlet weak var searchCriteriaSegmentedControl: UISegmentedControl!
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
@@ -25,17 +26,20 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     let screenSize = UIScreen.main.bounds
     
     let searchController = UISearchController(searchResultsController: nil)
+    var searchKey: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         searchController.delegate = self
         searchController.searchBar.delegate = self
+        searchController.searchResultsUpdater = self
         searchController.dimsBackgroundDuringPresentation = false
         searchController.definesPresentationContext = false
         searchController.hidesNavigationBarDuringPresentation = false
         myTableView.tableHeaderView = searchController.searchBar
-        searchController.searchBar.placeholder = "Search for a group..."
+        searchController.searchBar.placeholder = "Enter a group name..."
+        searchKey = "name"
         
         self.navigationController?.navigationBar.isTranslucent = false
 
@@ -68,28 +72,20 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         group = groups[indexPath.row]
 
         cell.setUpCell(group: group)
-        cell.aiv.startAnimating()
-        cell.aiv.isHidden = false
+
         let imageRef = Storage.storage().reference(withPath: "/\(group.uid).jpg")
         imageRef.getMetadata { (metadata, error) -> () in
             if let metadata = metadata {
                 let downloadUrl = metadata.downloadURL()
                     Alamofire.request(downloadUrl!, method: .get).responseImage { response in
                         guard let image = response.result.value else {
-                            cell.aiv.stopAnimating()
-                            cell.aiv.isHidden = true
                             return
                         }
                     cell.myImageView.image = image
-                    self.groups[indexPath.row].profilePicture = UIImageJPEGRepresentation(image, 0.0)!
-                    cell.aiv.stopAnimating()
-                    cell.aiv.isHidden = true
                 }
             } else {
                 cell.myImageView.image = nil
                 self.groups[indexPath.row].profilePicture = UIImageJPEGRepresentation(UIImage(data: Data())!, 0.0)!
-                cell.aiv.stopAnimating()
-                cell.aiv.isHidden = true
             }
         }
         return cell
@@ -186,26 +182,42 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         return keyboardSize.cgRectValue.height
     }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    func performSearch() {
         self.groups = []
         let query = searchController.searchBar.text!
         if query != "" {
-            FirebaseClient.shared.queryGroups(query: query) { (groups, error) -> () in
+            FirebaseClient.shared.queryGroups(query: query, searchKey: searchKey) { (groups, error) -> () in
                 if let groups = groups {
                     for group in groups {
                         if !self.user.groups.contains(group.uid) {
                             self.groups.append(group)
                         }
                     }
-                    self.myTableView.reloadData()
-                } else {
-                    print(error!)
+                    self.groups.sort { $0.name < $1.name }
                 }
+                self.myTableView.reloadData()
             }
+        } else {
+            self.myTableView.reloadData()
         }
-        
     }
     
+    @IBAction func searchCriteriaChanged(_ sender: Any) {
+        if searchCriteriaSegmentedControl.selectedSegmentIndex == 0 {
+            searchController.searchBar.placeholder = "Enter a group name..."
+            searchKey = "name"
+        } else {
+            searchController.searchBar.placeholder = "Enter a group creator's name..."
+            searchKey = "createdBy"
+        }
+        performSearch()
+    }
+}
+
+extension SearchGroupsViewController: UISearchResultsUpdating {
+    func updateSearchResults(for: UISearchController) {
+        performSearch()
+    }
 }
 
 

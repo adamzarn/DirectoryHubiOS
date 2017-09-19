@@ -1264,7 +1264,7 @@
                                 <rect key="frame" x="177" y="323" width="20" height="20"/>
                             </activityIndicatorView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="95" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="sWe-rk-Ymf">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <rect key="frame" x="0.0" y="108" width="375" height="559"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TwoLineWithImage" rowHeight="90" id="L19-Xh-wWb" customClass="TwoLineWithImageCell" customModule="ValleybrookCommunityChurch" customModuleProvider="target">
@@ -1296,10 +1296,6 @@
                                                         <constraint firstAttribute="width" constant="60" id="riS-JO-jG1"/>
                                                     </constraints>
                                                 </imageView>
-                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="IIM-Vt-0N9">
-                                                    <rect key="frame" x="40" y="35" width="20" height="20"/>
-                                                    <color key="color" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                </activityIndicatorView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6pq-vR-HLv">
                                                     <rect key="frame" x="100" y="56" width="42" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -1309,7 +1305,6 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="t4T-ko-cWj" secondAttribute="trailing" constant="20" id="Oko-8a-0VI"/>
-                                                <constraint firstItem="IIM-Vt-0N9" firstAttribute="centerX" secondItem="606-0y-ZRg" secondAttribute="centerX" id="UCa-70-a5M"/>
                                                 <constraint firstAttribute="trailing" secondItem="WWb-SP-BEd" secondAttribute="trailing" constant="20" id="Vh4-fJ-GEq"/>
                                                 <constraint firstItem="t4T-ko-cWj" firstAttribute="leading" secondItem="606-0y-ZRg" secondAttribute="trailing" constant="20" id="Z8I-Du-UTE"/>
                                                 <constraint firstItem="WWb-SP-BEd" firstAttribute="top" secondItem="t4T-ko-cWj" secondAttribute="bottom" id="Zkw-DM-RYi"/>
@@ -1318,12 +1313,10 @@
                                                 <constraint firstItem="WWb-SP-BEd" firstAttribute="leading" secondItem="606-0y-ZRg" secondAttribute="trailing" constant="20" id="iKS-kA-Zdx"/>
                                                 <constraint firstItem="606-0y-ZRg" firstAttribute="centerY" secondItem="4Ph-Xf-Y0H" secondAttribute="centerY" id="icE-O1-FHE"/>
                                                 <constraint firstItem="606-0y-ZRg" firstAttribute="leading" secondItem="4Ph-Xf-Y0H" secondAttribute="leading" constant="20" id="l46-tk-wzq"/>
-                                                <constraint firstItem="IIM-Vt-0N9" firstAttribute="centerY" secondItem="606-0y-ZRg" secondAttribute="centerY" id="lKB-3N-iCl"/>
                                                 <constraint firstItem="t4T-ko-cWj" firstAttribute="top" secondItem="4Ph-Xf-Y0H" secondAttribute="topMargin" id="vqu-3f-NG2"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="aiv" destination="IIM-Vt-0N9" id="70i-Li-SHs"/>
                                             <outlet property="createdByLabel" destination="6pq-vR-HLv" id="KSE-al-Axp"/>
                                             <outlet property="header" destination="t4T-ko-cWj" id="KTC-Ec-iCy"/>
                                             <outlet property="line2" destination="WWb-SP-BEd" id="a2v-Ga-Vtc"/>
@@ -1336,20 +1329,35 @@
                                     <outlet property="delegate" destination="gBQ-22-iSz" id="FgR-7G-urH"/>
                                 </connections>
                             </tableView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="QRA-jf-lUt">
+                                <rect key="frame" x="8" y="72" width="359" height="29"/>
+                                <segments>
+                                    <segment title="By Group Name"/>
+                                    <segment title="By Creator Name"/>
+                                </segments>
+                                <color key="tintColor" red="0.86274509803921573" green="0.43529411764705883" blue="0.40784313725490196" alpha="1" colorSpace="calibratedRGB"/>
+                                <connections>
+                                    <action selector="searchCriteriaChanged:" destination="gBQ-22-iSz" eventType="valueChanged" id="mW4-qD-4vB"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="sWe-rk-Ymf" firstAttribute="top" secondItem="1EZ-Wb-7tH" secondAttribute="bottom" id="JgW-H9-Lns"/>
+                            <constraint firstItem="sWe-rk-Ymf" firstAttribute="top" secondItem="QRA-jf-lUt" secondAttribute="bottom" constant="8" id="6gC-o7-bVr"/>
+                            <constraint firstAttribute="trailing" secondItem="QRA-jf-lUt" secondAttribute="trailing" constant="8" id="YoP-Bt-L8q"/>
                             <constraint firstAttribute="trailing" secondItem="sWe-rk-Ymf" secondAttribute="trailing" id="YvL-ki-ikQ"/>
                             <constraint firstItem="1af-25-Bym" firstAttribute="top" secondItem="sWe-rk-Ymf" secondAttribute="bottom" id="j0q-jF-PPC"/>
                             <constraint firstItem="hCB-ws-eKA" firstAttribute="centerX" secondItem="cbn-5J-nHl" secondAttribute="centerX" id="kAR-au-QvF"/>
                             <constraint firstItem="sWe-rk-Ymf" firstAttribute="leading" secondItem="cbn-5J-nHl" secondAttribute="leading" id="qQr-Ca-R47"/>
+                            <constraint firstItem="QRA-jf-lUt" firstAttribute="top" secondItem="1EZ-Wb-7tH" secondAttribute="bottom" constant="8" id="t91-oA-99n"/>
+                            <constraint firstItem="QRA-jf-lUt" firstAttribute="leading" secondItem="cbn-5J-nHl" secondAttribute="leading" constant="8" id="wY9-au-xx2"/>
                             <constraint firstItem="hCB-ws-eKA" firstAttribute="centerY" secondItem="cbn-5J-nHl" secondAttribute="centerY" id="z9X-vw-D35"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="aiv" destination="hCB-ws-eKA" id="Isq-ga-D2g"/>
                         <outlet property="myTableView" destination="sWe-rk-Ymf" id="FCx-OG-Gnb"/>
+                        <outlet property="searchCriteriaSegmentedControl" destination="QRA-jf-lUt" id="Iwn-IZ-7GL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="u3u-L1-i3U" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1447,10 +1455,6 @@
                                                         <constraint firstAttribute="height" constant="60" id="dhd-7T-bOd"/>
                                                     </constraints>
                                                 </imageView>
-                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="YaF-gl-whn">
-                                                    <rect key="frame" x="40" y="35" width="20" height="20"/>
-                                                    <color key="color" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                </activityIndicatorView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W2A-fD-c65">
                                                     <rect key="frame" x="100" y="56" width="42" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -1466,15 +1470,12 @@
                                                 <constraint firstAttribute="trailing" secondItem="Jhq-Q3-WU9" secondAttribute="trailing" constant="20" id="akJ-gl-mpJ"/>
                                                 <constraint firstItem="W2A-fD-c65" firstAttribute="top" secondItem="Jhq-Q3-WU9" secondAttribute="bottom" id="d3G-qY-PUa"/>
                                                 <constraint firstItem="W2A-fD-c65" firstAttribute="leading" secondItem="Jhq-Q3-WU9" secondAttribute="leading" id="fdh-ag-F41"/>
-                                                <constraint firstItem="YaF-gl-whn" firstAttribute="centerX" secondItem="AUu-rE-BI0" secondAttribute="centerX" id="fe2-v8-P0T"/>
                                                 <constraint firstItem="Jhq-Q3-WU9" firstAttribute="top" secondItem="Nog-mg-3XA" secondAttribute="bottom" id="gfJ-6H-x5m"/>
                                                 <constraint firstItem="Nog-mg-3XA" firstAttribute="top" secondItem="0bh-LS-PCn" secondAttribute="topMargin" id="gwZ-xb-DNY"/>
-                                                <constraint firstItem="YaF-gl-whn" firstAttribute="centerY" secondItem="AUu-rE-BI0" secondAttribute="centerY" id="n3d-vz-3vc"/>
                                                 <constraint firstAttribute="trailing" secondItem="Nog-mg-3XA" secondAttribute="trailing" constant="20" id="nAC-Hf-f0o"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="aiv" destination="YaF-gl-whn" id="59d-eZ-Y3m"/>
                                             <outlet property="createdByLabel" destination="W2A-fD-c65" id="tzZ-iW-N33"/>
                                             <outlet property="header" destination="Nog-mg-3XA" id="vsx-To-Eg8"/>
                                             <outlet property="line2" destination="Jhq-Q3-WU9" id="Ig6-cS-68Q"/>
