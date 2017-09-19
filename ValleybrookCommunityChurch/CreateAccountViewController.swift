@@ -20,14 +20,17 @@ class CreateAccountViewController: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var verifyPasswordTextField: UITextField!
-    @IBOutlet weak var submitButton: UIButton!
+    @IBOutlet weak var submitButton: UIBarButtonItem!
+
     
     //Lifecycle methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        submitButton.setTitleColor(GlobalFunctions.shared.themeColor(), for: .normal)
+        submitButton.tintColor = GlobalFunctions.shared.themeColor()
+        self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()
+        self.navigationController?.navigationBar.isTranslucent = false
         
     }
     
@@ -38,7 +41,7 @@ class CreateAccountViewController: UIViewController {
     //IBActions
     
     @IBAction func cancelButtonPressed(_ sender: Any) {
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func submitButtonPressed(_ sender: Any) {
@@ -105,7 +108,9 @@ class CreateAccountViewController: UIViewController {
                                 if let success = success {
                                     if success {
                                         let groupsNC = self.storyboard?.instantiateViewController(withIdentifier: "DirectoryNavigationController") as! MyNavigationController
-                                        self.present(groupsNC, animated: false, completion: nil)
+                                        let groupsVC = groupsNC.viewControllers[0] as! GroupsViewController
+                                        groupsVC.user = newUser
+                                        self.present(groupsNC, animated: true, completion: nil)
                                     }
                                 } else {
                                     self.displayAlert(title: "Error", message: "We were unable to create an account for you. Please try again.")

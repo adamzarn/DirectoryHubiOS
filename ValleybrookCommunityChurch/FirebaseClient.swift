@@ -15,37 +15,50 @@ import CoreData
 class FirebaseClient: NSObject {
     
     let ref = Database.database().reference()
+    let storageRef = Storage.storage().reference()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
-    func createGroup(uid: String, group: Group, completion: @escaping (_ success: Bool?, _ message: NSString?) -> ()) {
+    func createGroup(userUid: String, userGroups: [String], group: Group, completion: @escaping (_ success: Bool?, _ message: NSString?, _ updatedUserGroups: [String]?) -> ()) {
         var groupsRef: DatabaseReference
-        if uid == "" {
+        var successMessage: NSString!
+        var updatedUserGroups: [String] = userGroups
+        if group.uid == "" {
+            successMessage = "Your group was successfully created."
             groupsRef = self.ref.child("Groups").childByAutoId()
+            updatedUserGroups.append(groupsRef.key)
         } else {
-            groupsRef = self.ref.child("Groups").child(uid)
+            successMessage = "Your group was successfully edited."
+            groupsRef = self.ref.child("Groups").child(group.uid)
         }
         groupsRef.setValue(group.toAnyObject()) { (error, ref) -> Void in
             if error != nil {
-                completion(false, "error")
+                completion(false, "error", [])
             } else {
-                let data = group.profilePicture
-                let storage = Storage.storage()
-                let storageRef = storage.reference()
-                let imageRef = storageRef.child("\(groupsRef.key).jpg")
-                    
-                imageRef.putData(data, metadata: nil) { (metadata, error) in
-                    guard metadata != nil else {
-                        completion(false, "error")
-                        return
+                self.updateUserGroups(userUid: userUid, groups: updatedUserGroups) { (success) -> () in
+                    if let success = success {
+                        if success {
+                            let data = group.profilePicture
+                            let imageRef = self.storageRef.child("\(groupsRef.key).jpg")
+                            
+                            imageRef.putData(data, metadata: nil) { (metadata, error) in
+                                guard metadata != nil else {
+                                    completion(false, "error", [])
+                                    return
+                                }
+                                completion(true, successMessage, updatedUserGroups)
+                            }
+                        } else {
+                            completion(false, "error", [])
+                        }
+                    } else {
+                        completion(false, "error", [])
                     }
-                    completion(true, "Your group was successfully created.")
                 }
             }
         }
-        
     }
     
-    func addEntry(groupUid: String, entryUid: String, entry: EntryMO, completion: @escaping (_ success: Bool?) -> ()) {
+    func addEntry(groupUid: String, entry: Entry, completion: @escaping (_ success: Bool?) -> ()) {
         let directoryRef = self.ref.child("Directories").child(groupUid)
         
         let name = entry.name!
@@ -55,10 +68,10 @@ class FirebaseClient: NSObject {
         let people = entry.people!
         
         var newEntryRef: DatabaseReference!
-        if entryUid == "" {
+        if entry.uid == "" {
             newEntryRef = directoryRef.childByAutoId()
         } else {
-            newEntryRef = directoryRef.child(entryUid)
+            newEntryRef = directoryRef.child(entry.uid!)
         }
         
         newEntryRef.child("name").setValue(name) { (error, ref) -> Void in
@@ -80,7 +93,7 @@ class FirebaseClient: NSObject {
         }
         
         let addressRef = newEntryRef.child("Address")
-        let newAddress = AddressMO(street: address.street!, line2: address.line2!, line3: address.line3!, city: address.city!, state: address.state!, zip: address.zip!)
+        let newAddress = Address(street: address.street!, line2: address.line2!, line3: address.line3!, city: address.city!, state: address.state!, zip: address.zip!)
         addressRef.setValue(newAddress.toAnyObject()) { (error, ref) -> Void in
             if error != nil {
                 completion(false)
@@ -91,7 +104,7 @@ class FirebaseClient: NSObject {
         peopleRef.removeValue()
         for person in people {
             let newPersonRef = peopleRef.childByAutoId()
-            let newPerson = PersonMO(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: person.birthOrder!, uid: "")
+            let newPerson = Person(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: person.birthOrder!, uid: "")
             newPersonRef.setValue(newPerson.toAnyObject()) { (error, ref) -> Void in
                 if error != nil {
                     completion(false)
@@ -103,113 +116,162 @@ class FirebaseClient: NSObject {
 
     }
     
-    func updateData(uid: String, completion: @escaping (_ success: Bool, _ error: NSString?) -> ()) {
-        self.ref.observeSingleEvent(of: .value, with: { snapshot in
-            if let directoriesData = (snapshot.value! as! NSDictionary)["Directories"] {
-                if let entriesData = (directoriesData as! NSDictionary)[uid] {
-                    for (key, value) in entriesData as! NSDictionary {
-                        
-                        let info = value as! NSDictionary
-                        
-                        let managedObjectContext = self.appDelegate.managedObjectContext
-                        
-                        let entry = NSEntityDescription.insertNewObject(forEntityName: "Entry", into: managedObjectContext) as! Entry
-                        
-                        entry.name = info.value(forKey: "name") as? String
-                        entry.phone = info.value(forKey: "phone") as? String
-                        entry.email = info.value(forKey: "email") as? String
-                        entry.uid = key as? String
-                        
-                        let a = info.value(forKey: "Address") as! NSDictionary
-                        
-                        let address = NSEntityDescription.insertNewObject(forEntityName: "Address", into: managedObjectContext) as! Address
-                        
-                        address.street = a.value(forKey: "street") as? String
-                        address.line2 = a.value(forKey: "line2") as? String
-                        address.line3 = a.value(forKey: "line3") as? String
-                        address.city = a.value(forKey: "city") as? String
-                        address.state = a.value(forKey: "state") as? String
-                        address.zip = a.value(forKey: "zip") as? String
-                        address.addressToEntry = entry
-                        
-                        let p = info.value(forKey: "People") as! NSDictionary
-
-                        for (key, value) in p {
-                            
-                            let person = NSEntityDescription.insertNewObject(forEntityName: "Person", into: managedObjectContext) as! Person
-                            let source = value as AnyObject
-                            person.type = source.value(forKey: "type") as? String
-                            person.name = source.value(forKey: "name") as? String
-                            person.phone = source.value(forKey: "phone") as? String
-                            person.email = source.value(forKey: "email") as? String
-                            person.birthOrder = String(describing: source.value(forKey: "birthOrder")!)
-                            person.uid = key as? String
-                            person.personToEntry = entry
-                            
+    func updateDirectory(uid: String, completion: @escaping (_ entries: [Entry]?, _ error: NSString?) -> ()) {
+        self.ref.child("Directories").child(uid).observeSingleEvent(of: .value, with: { snapshot in
+            if snapshot.exists() {
+                let directory = (snapshot.value! as! NSDictionary)
+                
+                var entries: [Entry] = []
+                
+                for (key, value) in directory {
+                    
+                    let uid = key as! String
+                    
+                    let record = value as! NSDictionary
+                    let name = record["name"] as! String
+                    let email = record["email"] as! String
+                    let phone = record["phone"] as! String
+                    
+                    let addressDict = record["Address"] as! NSDictionary
+                    let street = addressDict["street"] as! String
+                    let city = addressDict["city"] as! String
+                    let state = addressDict["state"] as! String
+                    let zip = addressDict["zip"] as! String
+                    let line2 = addressDict["line2"] as! String
+                    let line3 = addressDict["line3"] as! String
+                    
+                    let address = Address(street: street, line2: line2, line3: line3, city: city, state: state, zip: zip)
+                    
+                    var people: [Person] = []
+                    let peopleDict = record["People"] as! [String: Any]
+                    for (key, value) in peopleDict {
+                        let record = value as! NSDictionary
+                        let name = record["name"] as! String
+                        let birthOrder = record["birthOrder"]! as! Int
+                        let email = record["email"] as! String
+                        let phone = record["phone"] as! String
+                        let type = record["type"] as! String
+                        let newPerson = Person(type: type, name: name, phone: phone, email: email, birthOrder: birthOrder, uid: key)
+                        people.append(newPerson)
+                    }
+                    
+                    let entry = Entry(uid: uid, name: name, phone: phone, email: email, address: address, people: people)
+                    
+                    entries.append(entry)
+                    
+                }
+                
+                completion(entries, nil)
+                
+            } else {
+                completion(nil, "No Data")
+            }
+        })
+    }
+    
+    func deleteEntry(groupUid: String, entryUid: String, completion: @escaping (_ success: Bool?) -> ()) {
+        let directoryRef = self.ref.child("Directories").child(groupUid).child(entryUid)
+        directoryRef.removeValue() { (error, ref) -> Void in
+            if error != nil {
+                completion(false)
+            } else {
+                completion(true)
+            }
+        }
+    }
+    
+    func deleteGroup(uid: String, completion: @escaping (_ success: Bool?) -> ()) {
+        
+        let groupRef = self.ref.child("Groups").child(uid)
+        let directoryRef = self.ref.child("Directories").child(uid)
+        let imageRef = storageRef.child("\(uid).jpg")
+        
+        groupRef.removeValue() { (error, ref) -> Void in
+            if error != nil {
+                completion(false)
+            } else {
+                directoryRef.removeValue() { (error, ref) -> Void in
+                    if error != nil {
+                        completion(false)
+                    } else {
+                        imageRef.delete() { (error) -> Void in
+                            if error != nil {
+                                completion(false)
+                            } else {
+                                completion(true)
+                            }
                         }
-
                     }
-                    
-                    self.appDelegate.saveContext()
-                    completion(true, nil)
-                    
+                }
+            }
+        }
+    }
+    
+    func getGroup(groupUid: String, completion: @escaping (_ group: Group?, _ error: NSString?) -> ()) {
+        self.ref.child("Groups").child(groupUid).observeSingleEvent(of: .value, with: { snapshot in
+            if snapshot.exists() {
+                if let groupDict = (snapshot.value) {
+                    let info = groupDict as! NSDictionary
+                    var group: Group!
+                    var admins: [Member] = []
+                    var users: [Member] = []
+                    for (key, value) in info["admins"] as! NSDictionary {
+                        let member = Member(uid: key as! String, name: value as! String)
+                        admins.append(member)
+                    }
+                    if let usersDict = info["users"] {
+                        for (key, value) in usersDict as! NSDictionary {
+                            let member = Member(uid: key as! String, name: value as! String)
+                            users.append(member)
+                        }
+                    }
+                    group = Group(uid: groupUid,
+                                 name: info["name"] as! String,
+                                 city: info["city"] as! String,
+                                state: info["state"] as! String,
+                             password: info["password"] as! String,
+                               admins: admins,
+                                users: users,
+                            createdBy: info["createdBy"] as! String,
+                         createdByUid: info["createdByUid"] as! String,
+                       profilePicture: Data())
+                    completion(group, nil)
                 } else {
-                        
-                    completion(false, "Could not retrieve data")
-                        
+                    completion(nil, "Could not retrieve Group")
                 }
+            } else {
+                completion(nil, "Group no longer exists")
             }
         })
     }
     
-    func getPassword(group: String, completion: @escaping (_ password: String?, _ error: NSString?) -> ()) {
-        self.ref.observeSingleEvent(of: .value, with: { snapshot in
-            if let groupsData = (snapshot.value! as! NSDictionary)["Groups"] {
-                if let groupData = (groupsData as! NSDictionary)[group] {
-                    if let password = (groupData as! NSDictionary)["password"] {
-                        completion(password as? String, nil)
-                    } else {
-                        completion(nil, "Could not retrieve password")
-                    }
-                }
-            }
-        })
-    }
-    
-    func getAdminPassword(group: String, completion: @escaping (_ password: String?, _ error: NSString?) -> ()) {
-        self.ref.observeSingleEvent(of: .value, with: { snapshot in
-            if let groupsData = (snapshot.value! as! NSDictionary)["Groups"] {
-                if let groupData = (groupsData as! NSDictionary)[group] {
-                    if let password = (groupData as! NSDictionary)["adminPassword"] {
-                        completion(password as? String, nil)
-                    } else {
-                        completion(nil, "Could not retrieve password")
-                    }
-                }
-            }
-        })
-    }
-    
-    func deleteEntry(group: String, uid: String, completion: (Bool) -> ()) {
-        let directoryRef = self.ref.child(group).child("Directory")
-        directoryRef.child(uid).removeValue()
-        completion(true)
-    }
-    
-    func getGroups(completion: @escaping (_ groups: [Group]?, _ error: NSString?) -> ()) {
-        self.ref.observeSingleEvent(of: .value, with: { snapshot in
-            if let groupList = (snapshot.value! as! NSDictionary)["Groups"] {
+    func queryGroups(query: String, completion: @escaping (_ groups: [Group]?, _ error: NSString?) -> ()) {
+        self.ref.child("Groups").queryOrdered(byChild: "name").queryStarting(atValue: query).queryLimited(toFirst: 10).observeSingleEvent(of: .value, with: { snapshot in
+            if let groupsDict = (snapshot.value) {
                 var groups: [Group] = []
-                for (key, value) in groupList as! NSDictionary {
+                for (key, value) in groupsDict as! NSDictionary {
                     let info = value as! NSDictionary
+                    var admins: [Member] = []
+                    var users: [Member] = []
+                    for (key, value) in info["admins"] as! NSDictionary {
+                        let member = Member(uid: key as! String, name: value as! String)
+                        admins.append(member)
+                    }
+                    if let usersDict = info["users"] {
+                        for (key, value) in usersDict as! NSDictionary {
+                            let member = Member(uid: key as! String, name: value as! String)
+                            users.append(member)
+                        }
+                    }
                     let group = Group(uid: key as! String,
                                       name: info["name"] as! String,
                                       city: info["city"] as! String,
                                       state: info["state"] as! String,
                                       password: info["password"] as! String,
-                                      admins: info["admins"] as! [String],
-                                      users: info["users"] as! [String],
+                                      admins: admins,
+                                      users: users,
                                       createdBy: info["createdBy"] as! String,
+                                createdByUid: info["createdByUid"] as! String,
                                       profilePicture: Data())
                     groups.append(group)
                 }
@@ -253,7 +315,7 @@ class FirebaseClient: NSObject {
         })
     }
     
-    func joinGroup(userUid: String, groupUid: String, groups: [String], users: [String], completion: @escaping (_ success: Bool?) -> ()) {
+    func joinGroup(userUid: String, groupUid: String, groups: [String], users: [Member], completion: @escaping (_ success: Bool?) -> ()) {
         
         let userRef = self.ref.child("Users/\(userUid)")
         userRef.child("groups").setValue(groups) { (error, ref) -> Void in
@@ -261,7 +323,7 @@ class FirebaseClient: NSObject {
                 completion(false)
             } else {
                 let groupRef = self.ref.child("Groups/\(groupUid)")
-                groupRef.child("users").setValue(users) { (error, ref) -> Void in
+                groupRef.child("users").setValue(GlobalFunctions.shared.createMemberDict(members: users)) { (error, ref) -> Void in
                     if error != nil {
                         completion(false)
                     } else {
@@ -272,11 +334,23 @@ class FirebaseClient: NSObject {
         }
     }
     
+    func updateUserGroups(userUid: String, groups: [String], completion: @escaping (_ success: Bool?) -> ()) {
+        
+        let userRef = self.ref.child("Users/\(userUid)")
+        userRef.child("groups").setValue(groups) { (error, ref) -> Void in
+            if error != nil {
+                completion(false)
+            } else {
+                completion(true)
+            }
+        }
+    }
+    
     func logout(vc: UIViewController) {
         do {
             try Auth.auth().signOut()
             let loginVC = vc.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-            vc.present(loginVC, animated: false, completion: nil)
+            vc.present(loginVC, animated: true, completion: nil)
         } catch let signOutError as NSError {
             print("Error signing out: \(signOutError)")
         }

@@ -77,6 +77,19 @@ class GlobalFunctions: NSObject {
         let color = UIColor(red: 220.0/255.0, green: 111.0/255.0, blue: 104.0/255.0, alpha: 1.0)
         return color
     }
+    
+    func createMemberDict(members: [Member]) -> [String: String] {
+        var dict: [String: String] = [:]
+        for member in members {
+            dict[member.uid] = member.name
+        }
+        return dict
+    }
+    
+    func getStates() -> [String] {
+        return ["IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
+                            "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+    }
 
 
     static let shared = GlobalFunctions()

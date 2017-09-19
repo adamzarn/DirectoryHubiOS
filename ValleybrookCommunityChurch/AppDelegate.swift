@@ -26,7 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ]
         UINavigationBar.appearance().titleTextAttributes = textTitleOptions
         
-        autoSave(delayInSeconds: 5)
         FirebaseApp.configure()
     
         return true
@@ -115,38 +114,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
                 abort()
             }
-        }
-    }
-    
-    func autoSave(delayInSeconds : Int) {
-        
-        if delayInSeconds > 0 {
-            
-            saveContext()
-            
-            let time = DispatchTime.now() + .seconds(delayInSeconds)
-            
-            DispatchQueue.main.asyncAfter(deadline: time) {
-            }
-            
-        }
-    }
-
-    func removeData () {
-        //Remove the existing items
-        let managedObjectContext = self.managedObjectContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Entry")
-        
-        var families: [Entry]?
-        
-        do {
-            families = try managedObjectContext.fetch(fetchRequest) as? [Entry]
-        } catch let e as NSError {
-            print("Failed to retrieve record: \(e.localizedDescription)")
-            return
-        }
-        for entry in families! {
-            managedObjectContext.delete(entry)
         }
     }
 

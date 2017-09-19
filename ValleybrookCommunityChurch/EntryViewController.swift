@@ -28,6 +28,9 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()
+        self.navigationController?.navigationBar.isTranslucent = false
     
     }
     
@@ -37,7 +40,7 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         children = []
         populateTableView()
         
-        if !group.admins.contains((Auth.auth().currentUser?.uid)!) {
+        if !group.getAdminUids().contains((Auth.auth().currentUser?.uid)!) {
             editEntryBarButtonItem.isEnabled = false
             editEntryBarButtonItem.tintColor = UIColor.clear
         }
@@ -46,8 +49,8 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func populateTableView() {
         
-        address = entry?.entryToAddress
-        people = entry?.entryToPerson?.allObjects as? [Person]
+        address = entry?.address
+        people = entry?.people
         
         if entry?.phone == "" {
             info.append([])
@@ -124,7 +127,7 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         } else {
             
             let name = (entry?.name!)!
-            title = "The " + name + " Entry"
+            title = "The " + name + " Family"
             
         }
         
@@ -472,11 +475,11 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         let addEntryVC = self.storyboard?.instantiateViewController(withIdentifier: "AddEntryViewController") as! AddEntryViewController
         
-        var newPeople: [[PersonMO]] = [[],[]]
+        var newPeople: [[Person]] = [[],[]]
         var newPersonTypes: [String] = []
         var newBirthOrders: [Int] = []
         for person in self.people! {
-            let newPerson = PersonMO(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: Int(person.birthOrder!)!, uid: person.uid!)
+            let newPerson = Person(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: person.birthOrder!, uid: person.uid!)
             if newPerson.type! != "Child" {
                 newPeople[0].append(newPerson)
             } else {

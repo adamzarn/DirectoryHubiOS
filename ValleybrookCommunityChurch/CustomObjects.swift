@@ -10,15 +10,17 @@ import Foundation
 import CoreData
 import UIKit
 
-class EntryMO {
+class Entry {
     
+    var uid: String?
     var name: String?
     var phone: String?
     var email: String?
-    var address: AddressMO?
-    var people: [PersonMO]?
+    var address: Address?
+    var people: [Person]?
     
-    init(name: String, phone: String, email: String, address: AddressMO, people: [PersonMO]) {
+    init(uid: String, name: String, phone: String, email: String, address: Address, people: [Person]) {
+        self.uid = uid
         self.name = name
         self.phone = phone
         self.email = email
@@ -28,7 +30,7 @@ class EntryMO {
     
 }
 
-struct AddressMO {
+struct Address {
    
     var street: String?
     var line2: String?
@@ -52,7 +54,7 @@ struct AddressMO {
     
 }
 
-struct PersonMO {
+struct Person {
     
     var type: String?
     var name: String?
@@ -78,17 +80,18 @@ struct PersonMO {
 
 struct Group {
     
-    let uid: String
+    var uid: String
     let name: String
     let city: String
     let state: String
     let password: String
-    let admins: [String]
-    let users: [String]
+    var admins: [Member]
+    var users: [Member]
     let createdBy: String
-    let profilePicture: Data
+    let createdByUid: String
+    var profilePicture: Data
     
-    init(uid: String, name: String, city: String, state: String, password: String, admins: [String], users: [String], createdBy: String, profilePicture: Data) {
+    init(uid: String, name: String, city: String, state: String, password: String, admins: [Member], users: [Member], createdBy: String, createdByUid: String, profilePicture: Data) {
         self.uid = uid
         self.name = name
         self.city = city
@@ -97,6 +100,7 @@ struct Group {
         self.admins = admins
         self.users = users
         self.createdBy = createdBy
+        self.createdByUid = createdByUid
         self.profilePicture = profilePicture
     }
     
@@ -105,9 +109,42 @@ struct Group {
                 "city": city,
                 "state": state,
                 "password": password,
-                "admins": admins,
-                "users": users,
-                "createdBy": createdBy] as AnyObject
+                "admins": GlobalFunctions.shared.createMemberDict(members: admins),
+                "users": GlobalFunctions.shared.createMemberDict(members: users),
+                "createdBy": createdBy,
+            "createdByUid": createdByUid] as AnyObject
+    }
+    
+    func getAdminUids() -> [String] {
+        var uids: [String] = []
+        for member in admins {
+            uids.append(member.uid)
+        }
+        return uids
+    }
+    
+    func getAdminNames() -> [String] {
+        var names: [String] = []
+        for member in admins {
+            names.append(member.name)
+        }
+        return names
+    }
+    
+    func getUserUids() -> [String] {
+        var uids: [String] = []
+        for member in users {
+            uids.append(member.uid)
+        }
+        return uids
+    }
+    
+    func getUserNames() -> [String] {
+        var names: [String] = []
+        for member in users {
+            names.append(member.name)
+        }
+        return names
     }
     
 }
@@ -117,7 +154,7 @@ struct User {
     
     let uid: String
     let name: String
-    let groups: [String]
+    var groups: [String]
     
     init(uid: String, name: String, groups: [String]) {
         self.uid = uid
@@ -128,6 +165,22 @@ struct User {
     func toAnyObject() -> AnyObject {
         return ["name": name,
                 "groups": groups] as AnyObject
+    }
+    
+}
+
+struct Member {
+    
+    let uid: String
+    let name: String
+    
+    init(uid: String, name: String) {
+        self.uid = uid
+        self.name = name
+    }
+    
+    func toAnyObject() -> AnyObject {
+        return [uid: name] as AnyObject
     }
     
 }

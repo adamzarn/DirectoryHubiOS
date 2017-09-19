@@ -53,20 +53,18 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
     @IBOutlet weak var submitButton: UIBarButtonItem!
     
     var entry: Entry!
+    var newEntry: Entry?
     var group: Group!
-    var entryUid: String?
-    var people: [[PersonMO]] = [[],[]]
+    var entryUid: String = ""
+    var people: [[Person]] = [[],[]]
     var personTypes: [String] = []
     var editingPerson = false
     var indexPathBeingEdited: IndexPath?
-    var address: AddressMO = AddressMO(street: "", line2: "", line3: "", city: "", state: "", zip: "")
+    var address: Address = Address(street: "", line2: "", line3: "", city: "", state: "", zip: "")
     var typeOptions = ["Husband", "Wife", "Single", "Child"]
     let birthOrderOptions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
     var birthOrders: [Int] = []
-    let stateOptions = ["IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
-                        "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT",
-                        "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI",
-                        "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+    
     var textFieldValues: [String] = []
 
     var currentTextField: UITextField?
@@ -76,6 +74,9 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()
+        self.navigationController?.navigationBar.isTranslucent = false
         
         self.toolbar.isTranslucent = false
         
@@ -156,7 +157,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             textField.inputAccessoryView = toolBar
         }
         
-        if entryUid != nil {
+        if entryUid != "" {
         
             lastNameTextField.text = textFieldValues[0]
             homePhoneTextField.text = textFieldValues[1]
@@ -346,10 +347,10 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             
             let ip = indexPathBeingEdited!
             let uid = people[ip.section][ip.row].uid
-            people[ip.section][ip.row] = PersonMO(type: type, name: name, phone: phone, email: email, birthOrder: birthOrder, uid: uid!)
+            people[ip.section][ip.row] = Person(type: type, name: name, phone: phone, email: email, birthOrder: birthOrder, uid: uid!)
         
         } else {
-            let newPerson = PersonMO(type: type, name: name, phone: phone, email: email, birthOrder: birthOrder, uid: "")
+            let newPerson = Person(type: type, name: name, phone: phone, email: email, birthOrder: birthOrder, uid: "")
             if type != "Child" {
                 people[0].insert(newPerson, at: people[0].count)
             } else {
@@ -415,10 +416,9 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
             if self.entryUid != "" {
                 let entryVC = self.navigationController?.viewControllers[2] as! EntryViewController
-                
-
+                entryVC.entry = self.newEntry
             }
-            self.navigationController?.popViewController(animated: false)
+            self.navigationController?.popViewController(animated: true)
         }))
         self.present(alert, animated: false, completion: nil)
     }
@@ -427,10 +427,10 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
 
         if textField == stateTextField {
             if textField.text != "" {
-                statePicker.selectRow(stateOptions.index(of: textField.text!)!, inComponent: 0, animated: false)
+                statePicker.selectRow(GlobalFunctions.shared.getStates().index(of: textField.text!)!, inComponent: 0, animated: false)
             } else {
                 statePicker.selectRow(0, inComponent: 0, animated: false)
-                textField.text = stateOptions[0]
+                textField.text = GlobalFunctions.shared.getStates()[0]
             }
         }
         if textField == personTypeTextField {
@@ -464,7 +464,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if pickerView == statePicker {
-            return stateOptions.count
+            return GlobalFunctions.shared.getStates().count
         } else if pickerView == typePicker {
             return typeOptions.count
         } else {
@@ -474,7 +474,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         if pickerView == statePicker {
-            return stateOptions[row]
+            return GlobalFunctions.shared.getStates()[row]
         } else if pickerView == typePicker {
             return typeOptions[row]
         } else {
@@ -484,7 +484,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         if pickerView == statePicker {
-            stateTextField.text = stateOptions[row]
+            stateTextField.text = GlobalFunctions.shared.getStates()[row]
         } else if pickerView == typePicker {
             personTypeTextField.text = typeOptions[row]
         } else {
@@ -572,13 +572,23 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             }
         }
         
-        let alert = UIAlertController(title: "Submit", message: "Are you sure you want to continue?", preferredStyle: .alert)
+        var title: String!
+        if self.entryUid != "" {
+            title = "Edit Entry"
+        } else {
+            title = "Add Entry"
+        }
+        
+        let alert = UIAlertController(title: title, message: "Are you sure you want to continue?", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
             let allPeople = self.people[0] + self.people[1]
-            let newEntry = EntryMO(name: self.lastNameTextField.text!, phone: self.homePhoneTextField.text!, email: self.entryEmailTextField.text!, address: self.address, people: allPeople)
+            
+            self.newEntry = Entry(uid: self.entryUid, name: self.lastNameTextField.text!, phone: self.homePhoneTextField.text!, email: self.entryEmailTextField.text!, address: self.address, people: allPeople)
             
             if GlobalFunctions.shared.hasConnectivity() {
-                FirebaseClient.shared.addEntry(groupUid: self.group.uid, entryUid: self.entryUid!, entry: newEntry) { success in
+                FirebaseClient.shared.addEntry(groupUid: self.group.uid, entry: self.newEntry!) { success in
                     if let success = success {
                         if success {
                             self.displayAlertAndDismiss(title: "Success", message: "The new entry information was added to the database.")
@@ -592,7 +602,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             }
         }))
 
-        alert.addAction(UIAlertAction(title: "No", style: .default, handler: nil))
+        
         self.present(alert, animated: false, completion: nil)
         
     }
@@ -722,7 +732,7 @@ class AddressCell: UITableViewCell {
     @IBOutlet weak var line3: UILabel!
     @IBOutlet weak var line4: UILabel!
     
-    func setUpCell(address: AddressMO) {
+    func setUpCell(address: Address) {
         
         self.line1.attributedText = GlobalFunctions.shared.getFormattedString(string1: "Street: ", string2: address.street!)
         self.line2.attributedText = GlobalFunctions.shared.getFormattedString(string1:"Line 2: ", string2: address.line2!)

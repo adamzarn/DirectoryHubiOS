@@ -22,6 +22,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     //Lifecycle methods
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.backgroundColor = GlobalFunctions.shared.themeColor()
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         setUpView()
         subscribeToKeyboardNotifications()
@@ -59,7 +64,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         let myNC = self.storyboard?.instantiateViewController(withIdentifier: "DirectoryNavigationController") as! MyNavigationController
                         let groupsVC = myNC.topViewController as! GroupsViewController
                         groupsVC.user = user
-                        self.present(myNC, animated: false, completion: nil)
+                        self.present(myNC, animated: true, completion: nil)
                     }
                 } else {
                     self.displayAlert(title: "No Internet Connectivity", message: "Establish an Internet Connection and try again.")

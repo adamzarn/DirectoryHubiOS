@@ -39,6 +39,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         
         self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()
+        self.navigationController?.navigationBar.isTranslucent = false
         myTableView.sectionIndexColor = GlobalFunctions.shared.themeColor()
         
         searchController.delegate = self
@@ -48,10 +49,11 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         searchController.definesPresentationContext = false
         searchController.hidesNavigationBarDuringPresentation = false
         myTableView.tableHeaderView = searchController.searchBar
+        searchController.searchBar.placeholder = "Search by Last Name"
         
         self.navigationController?.navigationBar.isTranslucent = false
         
-        if !group.admins.contains((Auth.auth().currentUser?.uid)!) {
+        if !group.getAdminUids().contains((Auth.auth().currentUser?.uid)!) {
             addEntryButton.isEnabled = false
             addEntryButton.tintColor = UIColor.clear
         }
@@ -64,13 +66,16 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     func updateData() {
         
+        aiv.isHidden = false
+        aiv.startAnimating()
+        myTableView.isHidden = true
+        
         if GlobalFunctions.shared.hasConnectivity() {
-            appDelegate.removeData()
             
-            FirebaseClient.shared.updateData(uid: group.uid) { (success, error) -> () in
-                if success {
+            FirebaseClient.shared.updateDirectory(uid: group.uid) { (entries, error) -> () in
+                if let entries = entries {
                     
-                    self.displayData()
+                    self.entries = entries
                     
                     let lastUpdateTime = GlobalFunctions.shared.getCurrentDateTime()
                     self.appDelegate.defaults.setValue(lastUpdateTime, forKey: "lastUpdated")
@@ -78,24 +83,26 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
                     self.aiv.isHidden = true
                     self.aiv.stopAnimating()
                     self.myTableView.isHidden = false
+                    
+                    self.displayData()
                 
                 } else {
-                    print(error!)
+                    
+                    self.aiv.isHidden = true
+                    self.aiv.stopAnimating()
+                    self.myTableView.isHidden = false
+                    
                 }
             }
         } else {
-            displayData()
-            aiv.isHidden = true
-            aiv.stopAnimating()
-            myTableView.isHidden = false
+            
+            self.displayAlert(title: "No Internet Connection", message: "Please establish an internet connection and try again.")
+            
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
-        aiv.isHidden = false
-        aiv.startAnimating()
-        myTableView.isHidden = true
+    
         subscribeToKeyboardNotifications()
         updateData()
         
@@ -109,16 +116,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         
         entriesWithSections = []
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Entry")
-        
-        do {
-            self.entries = try self.appDelegate.managedObjectContext.fetch(fetchRequest) as! [Entry]
-        } catch let e as NSError {
-            print("Failed to retrieve record: \(e.localizedDescription)")
-            return
-        }
-        
-        entries.sort { $0.name! < $1.name! }
+        self.entries.sort { $0.name! < $1.name! }
         
         for i in 0...25 {
             var tempArray: [Entry] = []
@@ -185,8 +183,8 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             entry = filteredEntriesWithSections[indexPath.section][indexPath.row]
         }
         
-        let address = entry.entryToAddress
-        let people = entry.entryToPerson?.allObjects as! [Person]
+        let address = entry.address
+        let people = entry.people!
         
         let header = getHeader(entry: entry, people: people)
         
@@ -371,6 +369,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        if !group.getAdminUids().contains((Auth.auth().currentUser?.uid)!) {
+            return false
+        }
         if searchController.isActive {
             return false
         }
@@ -378,68 +379,38 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        
         let entryToDelete = entriesWithSections[indexPath.section][indexPath.row]
-        let name = entryToDelete.name!
-        
         if editingStyle == .delete {
             
-            let alertController = UIAlertController(title: "Password Required", message: "Enter the administrator password to remove an entry from the Directory.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Delete Entry", message: "Are you sure you want to continue?", preferredStyle: .alert)
+        let yes = UIAlertAction(title: "Yes", style: .default, handler: { (action) in
             
-            let submitAction = UIAlertAction(title: "Submit", style: .default) { (_) in
-                if let field = alertController.textFields?[0] {
-                    
-                    if GlobalFunctions.shared.hasConnectivity() {
-                        
-                        let group = self.appDelegate.defaults.value(forKey: "group") as! String
-                        FirebaseClient.shared.getAdminPassword(group: group) { (password, error) -> () in
-                            
-                            if let password = password {
-                                
-                                if field.text == password {
-                
-                                    FirebaseClient.shared.deleteEntry(group: group, uid: entryToDelete.uid!) { success in
-                    
-                                        if success {
-                        
-                                            self.displayAlert(title: "Entry Deleted", message: "The \(name) entry was successfully removed from the database.")
-                                            
-                                            self.entriesWithSections[indexPath.section].remove(at: indexPath.row)
-                                            self.myTableView.reloadData()
-                                
-                                        } else {
-                                            
-                                            self.displayAlert(title:"Failed to Delete Entry", message: "The delete operation failed to complete.")
-                                            
-                                        }
-                    
-                                    }
-                                    
-                                } else {
-                                    self.displayAlert(title: "Incorrect Password", message: "Please try again.")
-                                }
-                
-                            } else {
-                                print("Password not retrieved")
-                            }
+            if GlobalFunctions.shared.hasConnectivity() {
+                FirebaseClient.shared.deleteEntry(groupUid: self.group.uid, entryUid: entryToDelete.uid!) { (success) -> () in
+                    if let success = success {
+                        if success {
+                            let alert = UIAlertController(title: "Success", message: "The entry was successfully removed from the database.", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                                self.updateData()
+                            }))
+                            self.present(alert, animated: false, completion: nil)
+                        } else {
+                            self.displayAlert(title: "Error", message: "We were unable to remove the entry from the database.")
                         }
                     } else {
-                        self.displayAlert(title: "No Internet Connection", message: "Please establish an internet connection and try again.")
+                        self.displayAlert(title: "Error", message: "We were unable to remove the entry from the database.")
                     }
                 }
+            } else {
+                self.displayAlert(title: "No Internet Connection", message: "Please establish an internet connection and try again.")
             }
-            
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
-            
-            alertController.addTextField { (textField) in
-                textField.placeholder = "Administrator Password"
-                textField.isSecureTextEntry = true
-            }
-            
-            alertController.addAction(submitAction)
-            alertController.addAction(cancelAction)
-            
-            self.present(alertController, animated: true, completion: nil)
+        })
+
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(yes)
+        alert.addAction(cancel)
+
+        self.present(alert, animated: false, completion: nil)
             
         }
     }
