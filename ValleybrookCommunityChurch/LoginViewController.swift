@@ -27,12 +27,17 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         self.view.backgroundColor = GlobalFunctions.shared.themeColor()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         setUpView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
         subscribeToKeyboardNotifications()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        aiv.isHidden = true
+        aiv.stopAnimating()
         unsubscribeFromKeyboardNotifications()
     }
     

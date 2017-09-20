@@ -100,6 +100,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         tableView.deselectRow(at: indexPath, animated: false)
         
         var selectedGroup: Group!
+        print(self.groups)
         selectedGroup = groups[indexPath.row]
         
         let alertController = UIAlertController(title: "Password Required", message: "Enter the password to join the group \"\(selectedGroup.name)\"", preferredStyle: .alert)
@@ -195,9 +196,11 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
                     }
                     self.groups.sort { $0.name < $1.name }
                 }
+                print(self.groups)
                 self.myTableView.reloadData()
             }
         } else {
+            print(self.groups)
             self.myTableView.reloadData()
         }
     }
@@ -212,11 +215,14 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         }
         performSearch()
     }
+    
 }
 
 extension SearchGroupsViewController: UISearchResultsUpdating {
     func updateSearchResults(for: UISearchController) {
-        performSearch()
+        if searchController.isActive {
+            performSearch()
+        }
     }
 }
 
