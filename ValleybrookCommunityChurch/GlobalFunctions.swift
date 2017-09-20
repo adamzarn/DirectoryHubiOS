@@ -10,6 +10,8 @@ import Foundation
 import UIKit
 
 class GlobalFunctions: NSObject {
+    
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
 
     func hasConnectivity() -> Bool {
         do {
@@ -89,6 +91,41 @@ class GlobalFunctions: NSObject {
     func getStates() -> [String] {
         return ["IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
                             "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+    }
+    
+    func configureTwoLineTitleView(_ topLine: String, bottomLine: String) -> UIView {
+        
+        let titleLabel = UILabel(frame: CGRect(x: 0, y: -4, width: 0, height: 0))
+        titleLabel.backgroundColor = UIColor.clear
+        titleLabel.textColor = UIColor.white
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
+        titleLabel.text = topLine
+        titleLabel.sizeToFit()
+        
+        let subTitleLabel = UILabel(frame: CGRect(x: 0, y: 18, width: 0, height: 0))
+        subTitleLabel.backgroundColor = UIColor.clear
+        subTitleLabel.textColor = UIColor.white
+        subTitleLabel.font = UIFont.systemFont(ofSize: 12)
+        subTitleLabel.text = bottomLine
+        subTitleLabel.sizeToFit()
+        
+        let twoLineTitleView = UIView(frame: CGRect(x: 0, y: 0, width: max(subTitleLabel.frame.size.width, titleLabel.frame.size.width), height: 30))
+        twoLineTitleView.addSubview(titleLabel)
+        twoLineTitleView.addSubview(subTitleLabel)
+        let widthDiff: Float = Float(subTitleLabel.frame.size.width - titleLabel.frame.size.width)
+        if widthDiff > 0 {
+            var frame: CGRect = titleLabel.frame
+            frame.origin.x = CGFloat(widthDiff / 2)
+            titleLabel.frame = frame.integral
+        }
+        else {
+            var frame: CGRect = subTitleLabel.frame
+            frame.origin.x = CGFloat(fabsf(widthDiff) / 2)
+            subTitleLabel.frame = frame.integral
+        }
+        
+        return twoLineTitleView
+        
     }
 
 

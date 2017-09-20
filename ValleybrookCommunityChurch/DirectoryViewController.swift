@@ -49,7 +49,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         searchController.definesPresentationContext = false
         searchController.hidesNavigationBarDuringPresentation = false
         myTableView.tableHeaderView = searchController.searchBar
-        searchController.searchBar.placeholder = "Search by Last Name"
+        searchController.searchBar.placeholder = "Search by Last Name..."
         
         self.navigationController?.navigationBar.isTranslucent = false
         
@@ -57,6 +57,8 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             addEntryButton.isEnabled = false
             addEntryButton.tintColor = UIColor.clear
         }
+        
+        self.navigationItem.titleView = GlobalFunctions.shared.configureTwoLineTitleView("Directory", bottomLine: group.name)
         
     }
     
