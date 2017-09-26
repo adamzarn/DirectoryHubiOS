@@ -27,6 +27,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     
     let searchController = UISearchController(searchResultsController: nil)
     var searchKey: String!
+    var tableViewShrunk = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +40,6 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         searchController.hidesNavigationBarDuringPresentation = false
         myTableView.tableHeaderView = searchController.searchBar
         searchController.searchBar.placeholder = "Enter a group name..."
-        searchKey = "name"
         
         self.navigationController?.navigationBar.isTranslucent = false
 
@@ -59,6 +59,9 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     
     override func viewWillDisappear(_ animated: Bool) {
         unsubscribeFromKeyboardNotifications()
+        if searchController.isActive {
+            searchController.isActive = false
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -161,20 +164,27 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     }
     
     func subscribeToKeyboardNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(DirectoryViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow,object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(DirectoryViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide,object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SearchGroupsViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow,object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SearchGroupsViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide,object: nil)
     }
     
     func unsubscribeFromKeyboardNotifications() {
         NotificationCenter.default.removeObserver(self,name: NSNotification.Name.UIKeyboardWillShow,object: nil)
+        NotificationCenter.default.removeObserver(self,name: NSNotification.Name.UIKeyboardWillHide,object: nil)
     }
     
     func keyboardWillShow(notification: NSNotification) {
-        
+        if (!tableViewShrunk) {
+            myTableView.frame.size.height -= getKeyboardHeight(notification: notification)
+        }
+        tableViewShrunk = true
     }
     
     func keyboardWillHide(notification: NSNotification) {
-        
+        if (tableViewShrunk) {
+            myTableView.frame.size.height += getKeyboardHeight(notification: notification)
+        }
+        tableViewShrunk = false
     }
     
     func getKeyboardHeight(notification: NSNotification) -> CGFloat {
@@ -183,11 +193,11 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         return keyboardSize.cgRectValue.height
     }
     
-    func performSearch() {
+    func performSearch(key: String) {
         self.groups = []
-        let query = searchController.searchBar.text!
+        let query = searchController.searchBar.text!.lowercased()
         if query != "" {
-            FirebaseClient.shared.queryGroups(query: query, searchKey: searchKey) { (groups, error) -> () in
+            FirebaseClient.shared.queryGroups(query: query, searchKey: key) { (groups, error) -> () in
                 if let groups = groups {
                     for group in groups {
                         if !self.user.groups.contains(group.uid) {
@@ -196,11 +206,9 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
                     }
                     self.groups.sort { $0.name < $1.name }
                 }
-                print(self.groups)
                 self.myTableView.reloadData()
             }
         } else {
-            print(self.groups)
             self.myTableView.reloadData()
         }
     }
@@ -208,12 +216,11 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     @IBAction func searchCriteriaChanged(_ sender: Any) {
         if searchCriteriaSegmentedControl.selectedSegmentIndex == 0 {
             searchController.searchBar.placeholder = "Enter a group name..."
-            searchKey = "name"
+            performSearch(key: "lowercasedName")
         } else {
             searchController.searchBar.placeholder = "Enter a group creator's name..."
-            searchKey = "createdBy"
+            performSearch(key: "lowercasedCreatedBy")
         }
-        performSearch()
     }
     
 }
@@ -221,7 +228,11 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
 extension SearchGroupsViewController: UISearchResultsUpdating {
     func updateSearchResults(for: UISearchController) {
         if searchController.isActive {
-            performSearch()
+            if searchCriteriaSegmentedControl.selectedSegmentIndex == 0 {
+                performSearch(key: "lowercasedName")
+            } else {
+                performSearch(key: "lowercasedCreatedBy")
+            }
         }
     }
 }

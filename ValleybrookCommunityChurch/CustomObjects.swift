@@ -82,37 +82,43 @@ struct Group {
     
     var uid: String
     let name: String
+    let lowercasedName: String
     let city: String
     let state: String
     let password: String
     var admins: [Member]
     var users: [Member]
     let createdBy: String
+    let lowercasedCreatedBy: String
     let createdByUid: String
     var profilePicture: Data
     
-    init(uid: String, name: String, city: String, state: String, password: String, admins: [Member], users: [Member], createdBy: String, createdByUid: String, profilePicture: Data) {
+    init(uid: String, name: String, lowercasedName: String, city: String, state: String, password: String, admins: [Member], users: [Member], createdBy: String, lowercasedCreatedBy: String, createdByUid: String, profilePicture: Data) {
         self.uid = uid
         self.name = name
+        self.lowercasedName = lowercasedName
         self.city = city
         self.state = state
         self.password = password
         self.admins = admins
         self.users = users
         self.createdBy = createdBy
+        self.lowercasedCreatedBy = lowercasedCreatedBy
         self.createdByUid = createdByUid
         self.profilePicture = profilePicture
     }
     
     func toAnyObject() -> AnyObject {
         return ["name": name,
+                "lowercasedName": lowercasedName,
                 "city": city,
                 "state": state,
                 "password": password,
                 "admins": GlobalFunctions.shared.createMemberDict(members: admins),
                 "users": GlobalFunctions.shared.createMemberDict(members: users),
                 "createdBy": createdBy,
-            "createdByUid": createdByUid] as AnyObject
+                "lowercasedCreatedBy": lowercasedCreatedBy,
+                "createdByUid": createdByUid] as AnyObject
     }
     
     func getAdminUids() -> [String] {

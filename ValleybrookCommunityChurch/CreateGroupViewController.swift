@@ -22,6 +22,9 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
     @IBOutlet weak var submitButton: UIBarButtonItem!
     @IBOutlet weak var profilePictureImageView: UIImageView!
     @IBOutlet weak var manageAdministratorsButton: UIButton!
+    @IBOutlet weak var uniqueIDTextView: UITextView!
+    @IBOutlet weak var deleteBarButtonItem: UIBarButtonItem!
+    
     var statePicker: UIPickerView!
     
     var currentTextField: UITextField?
@@ -119,6 +122,9 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
             } else {
                 profilePictureImageView.image = UIImage(data: groupToEdit.profilePicture)
             }
+            uniqueIDTextView.text = "UNIQUE ID: \(groupToEdit.uid)"
+            deleteBarButtonItem.isEnabled = true
+            deleteBarButtonItem.tintColor = .white
         
         } else {
             
@@ -126,6 +132,10 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
             submitButton.title = "SUBMIT"
             manageAdministratorsButton.isEnabled = false
             manageAdministratorsButton.isHidden = true
+            uniqueIDTextView.text = "UNIQUE ID: NOT YET ASSIGNED"
+            deleteBarButtonItem.isEnabled = false
+            deleteBarButtonItem.tintColor = .clear
+            
             
         }
         
@@ -150,16 +160,20 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
         
         var newGroup: Group!
         
-        let groupName = groupNameTextField.text!
+        let name = groupNameTextField.text!
+        let lowercasedName = name.lowercased()
         let city = cityTextField.text!
         let state = stateTextField.text!
         let password = passwordTextField.text!
         
+        let createdBy = Auth.auth().currentUser?.value(forKey: "displayName") as! String
+        let lowercasedCreatedBy = createdBy.lowercased()
+        
         if let groupToEdit = groupToEdit {
-            newGroup = Group(uid: groupToEdit.uid, name: groupName, city: city, state: state, password: password, admins: groupToEdit.admins, users: groupToEdit.users, createdBy: groupToEdit.createdBy, createdByUid: groupToEdit.createdByUid, profilePicture: groupToEdit.profilePicture)
+            newGroup = Group(uid: groupToEdit.uid, name: name, lowercasedName: lowercasedName, city: city, state: state, password: password, admins: groupToEdit.admins, users: groupToEdit.users, createdBy: groupToEdit.createdBy, lowercasedCreatedBy: groupToEdit.lowercasedCreatedBy, createdByUid: groupToEdit.createdByUid, profilePicture: groupToEdit.profilePicture)
         } else {
             let userUid = (Auth.auth().currentUser?.uid)!
-            newGroup = Group(uid: "", name: groupName, city: city, state: state, password: password, admins: [Member(uid: userUid, name: Auth.auth().currentUser?.value(forKey: "displayName") as! String)], users: [], createdBy: Auth.auth().currentUser?.value(forKey: "displayName") as! String, createdByUid: userUid, profilePicture: Data())
+            newGroup = Group(uid: "", name: name, lowercasedName: lowercasedName, city: city, state: state, password: password, admins: [Member(uid: userUid, name: Auth.auth().currentUser?.value(forKey: "displayName") as! String)], users: [], createdBy: createdBy, lowercasedCreatedBy: lowercasedCreatedBy, createdByUid: userUid, profilePicture: Data())
             if let image = profilePictureImageData {
                 newGroup.profilePicture = image
             }
@@ -264,8 +278,49 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
         currentTextField = textField
         textField.becomeFirstResponder()
     }
+    
+    @IBAction func deleteButtonPressed(_ sender: Any) {
+        
+        let message = "This will delete this group from the database. Are you sure you want to continue?"
+        
+        if let groupToEdit = groupToEdit {
+            
+            let alert = UIAlertController(title: "Delete Group", message: message, preferredStyle: .alert)
+            let yes = UIAlertAction(title: "Yes", style: .default, handler: { (action) in
+                
+                self.aiv.isHidden = false
+                self.aiv.startAnimating()
+            
+                FirebaseClient.shared.deleteGroup(uid: groupToEdit.uid) { (success) -> () in
+                    self.aiv.isHidden = true
+                    self.aiv.stopAnimating()
+                    if let success = success {
+                        if success {
+                            let successfulDelete = UIAlertController(title: "Success", message: "This group was successfully deleted from the database.", preferredStyle: .alert)
+                            let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                                self.dismiss(animated: true, completion: nil)
+                            })
+                            successfulDelete.addAction(ok)
+                            self.present(successfulDelete, animated: false, completion: nil)
+                        } else {
+                            self.displayAlert(title: "Error", message: "There was a problem removing \(groupToEdit.name) from the database. Please try again.")
+                        }
+                    } else {
+                        self.displayAlert(title: "Error", message: "There was a problem removing \(groupToEdit.name) from the database. Please try again.")
+                    }
+                }
+                
+            })
+            
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(yes)
+            alert.addAction(cancel)
+            
+            self.present(alert, animated: false, completion: nil)
 
-
+        }
+        
+    }
 }
 
     

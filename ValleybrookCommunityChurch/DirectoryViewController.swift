@@ -27,6 +27,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     var filteredEntries: [Entry] = []
     var entriesWithSections: [[Entry]] = []
     var filteredEntriesWithSections: [[Entry]] = []
+    var tableViewShrunk = false
     
     let screenSize = UIScreen.main.bounds
 
@@ -450,14 +451,21 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     func unsubscribeFromKeyboardNotifications() {
         NotificationCenter.default.removeObserver(self,name: NSNotification.Name.UIKeyboardWillShow,object: nil)
+        NotificationCenter.default.removeObserver(self,name: NSNotification.Name.UIKeyboardWillHide,object: nil)
     }
     
     func keyboardWillShow(notification: NSNotification) {
-
+        if (!tableViewShrunk) {
+            myTableView.frame.size.height -= getKeyboardHeight(notification: notification)
+        }
+        tableViewShrunk = true
     }
     
     func keyboardWillHide(notification: NSNotification) {
-
+        if (tableViewShrunk) {
+            myTableView.frame.size.height += getKeyboardHeight(notification: notification)
+        }
+        tableViewShrunk = false
     }
     
     func getKeyboardHeight(notification: NSNotification) -> CGFloat {

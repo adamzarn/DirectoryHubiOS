@@ -19,7 +19,8 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet weak var addGroupButton: UIBarButtonItem!
     @IBOutlet weak var myTableView: UITableView!
     @IBOutlet weak var welcomeBarButtonItem: UIBarButtonItem!
-    
+    @IBOutlet weak var myToolbar: UIToolbar!
+
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
     var user: User!
@@ -27,6 +28,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     var imageFetched: [Bool] = []
     var filteredGroups: [Group] = []
     let screenSize = UIScreen.main.bounds
+    var tableViewShrunk = false
     
     let searchController = UISearchController(searchResultsController: nil)
     
@@ -179,15 +181,8 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         let groupToEdit = groups[indexPath.row]
-        var message: String!
-        var admin: Bool!
-        if groupToEdit.getAdminUids().contains((Auth.auth().currentUser?.uid)!) {
-            message = "Since you are an admin of this group, this will delete this group from the database. Are you sure you want to continue?"
-            admin = true
-        } else {
-            message = "This will only remove this group from \"My Groups\". You will be able to add it back again later. Continue?"
-            admin = false
-        }
+
+        let message = "This will only remove \"\(groupToEdit.name)\" from \"My Groups\". You will be able to add it back again later. Continue?"
         
         if editingStyle == .delete {
             
@@ -196,36 +191,23 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
             
                 if GlobalFunctions.shared.hasConnectivity() {
                     
-                    if admin {
-                        FirebaseClient.shared.deleteGroup(uid: groupToEdit.uid) { (success) -> () in
-                            if let success = success {
-                                if success {
-                                    self.displayAlert(title: "Success", message: "\(groupToEdit.name) was successfully removed from the database.")
-                                    self.loadGroups()
-                                } else {
-                                    self.displayAlert(title: "Error", message: "There was a problem removing \(groupToEdit.name) from the database. Please try again.")
-                                }
-                            } else {
-                                self.displayAlert(title: "Error", message: "There was a problem removing \(groupToEdit.name) from the database. Please try again.")
-                            }
-                        }
-                    } else {
-                        var updatedUserGroups = self.user.groups
-                        updatedUserGroups = updatedUserGroups.filter { $0 != groupToEdit.uid }
+                    var updatedUserGroups = self.user.groups
+                    updatedUserGroups = updatedUserGroups.filter { $0 != groupToEdit.uid }
                         
-                        FirebaseClient.shared.updateUserGroups(userUid: self.user.uid, groups: updatedUserGroups) { (success) -> () in
-                            if let success = success {
-                                if success {
-                                    self.displayAlert(title: "Success", message: "\(groupToEdit.name) was successfully removed from \"My Groups\".")
+                    FirebaseClient.shared.updateUserGroups(userUid: self.user.uid, groups: updatedUserGroups) { (success) -> () in
+                        if let success = success {
+                            if success {
+                                self.displayAlert(title: "Success", message: "\(groupToEdit.name) was successfully removed from \"My Groups\".")
+                                    self.user.groups = updatedUserGroups
                                     self.loadGroups()
-                                } else {
-                                self.displayAlert(title: "Error", message: "There was a problem removing \(groupToEdit.name) from \"My Groups\". Please try again.")
-                                }
                             } else {
                                 self.displayAlert(title: "Error", message: "There was a problem removing \(groupToEdit.name) from \"My Groups\". Please try again.")
                             }
+                        } else {
+                            self.displayAlert(title: "Error", message: "There was a problem removing \(groupToEdit.name) from \"My Groups\". Please try again.")
                         }
                     }
+                    
                 } else {
                     self.displayAlert(title: "No Internet Connection", message: "Please establish an internet connection and try again.")
                 }
@@ -279,28 +261,27 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
             
                 FirebaseClient.shared.getGroup(groupUid: groupUid) { (group, error) -> () in
                     if let group = group {
-                        
                         self.groups.append(group)
-                        
-                        if self.groups.count == self.user.groups.count - deletedGroups {
-                        
-                            for _ in self.groups {
-                                self.imageFetched.append(false)
-                            }
-                            
-                            self.groups.sort { $0.name < $1.name }
-                            
-                            self.myTableView.reloadData()
-                            self.myTableView.isHidden = false
-                            self.aiv.isHidden = true
-                            self.aiv.stopAnimating()
-                            
-                        }
-                        
                     } else {
                         deletedGroups += 1
                         print(error!)
                     }
+                    
+                    if self.groups.count == self.user.groups.count - deletedGroups {
+                        
+                        for _ in self.groups {
+                            self.imageFetched.append(false)
+                        }
+                        
+                        self.groups.sort { $0.name < $1.name }
+                        
+                        self.myTableView.reloadData()
+                        self.myTableView.isHidden = false
+                        self.aiv.isHidden = true
+                        self.aiv.stopAnimating()
+                        
+                    }
+                    
                 }
             }
             
@@ -308,20 +289,27 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func subscribeToKeyboardNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(DirectoryViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow,object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(DirectoryViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide,object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(GroupsViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow,object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(GroupsViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide,object: nil)
     }
     
     func unsubscribeFromKeyboardNotifications() {
         NotificationCenter.default.removeObserver(self,name: NSNotification.Name.UIKeyboardWillShow,object: nil)
+        NotificationCenter.default.removeObserver(self,name: NSNotification.Name.UIKeyboardWillHide,object: nil)
     }
     
     func keyboardWillShow(notification: NSNotification) {
-
+        if (!tableViewShrunk) {
+            myTableView.frame.size.height -= (getKeyboardHeight(notification: notification) - myToolbar.frame.size.height)
+        }
+        tableViewShrunk = true
     }
     
     func keyboardWillHide(notification: NSNotification) {
-
+        if (tableViewShrunk) {
+            myTableView.frame.size.height += (getKeyboardHeight(notification: notification) - myToolbar.frame.size.height)
+        }
+        tableViewShrunk = false
     }
     
     func getKeyboardHeight(notification: NSNotification) -> CGFloat {

@@ -227,12 +227,14 @@ class FirebaseClient: NSObject {
                     }
                     group = Group(uid: groupUid,
                                  name: info["name"] as! String,
+                       lowercasedName: info["lowercasedName"] as! String,
                                  city: info["city"] as! String,
                                 state: info["state"] as! String,
                              password: info["password"] as! String,
                                admins: admins,
                                 users: users,
                             createdBy: info["createdBy"] as! String,
+                  lowercasedCreatedBy: info["lowercasedCreatedBy"] as! String,
                          createdByUid: info["createdByUid"] as! String,
                        profilePicture: Data())
                     completion(group, nil)
@@ -266,13 +268,15 @@ class FirebaseClient: NSObject {
                         }
                         let group = Group(uid: key as! String,
                                           name: info["name"] as! String,
+                                          lowercasedName: info["lowercasedName"] as! String,
                                           city: info["city"] as! String,
                                           state: info["state"] as! String,
                                           password: info["password"] as! String,
                                           admins: admins,
                                           users: users,
                                           createdBy: info["createdBy"] as! String,
-                                    createdByUid: info["createdByUid"] as! String,
+                                          lowercasedCreatedBy: info["lowercasedCreatedBy"] as! String,
+                                          createdByUid: info["createdByUid"] as! String,
                                           profilePicture: Data())
                         groups.append(group)
                     }
