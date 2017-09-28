@@ -248,7 +248,7 @@ class FirebaseClient: NSObject {
     }
     
     func queryGroups(query: String, searchKey: String, completion: @escaping (_ groups: [Group]?, _ error: NSString?) -> ()) {
-        self.ref.child("Groups").queryOrdered(byChild: searchKey).queryStarting(atValue: query).queryLimited(toFirst: 10).observeSingleEvent(of: .value, with: { snapshot in
+        self.ref.child("Groups").queryOrdered(byChild: searchKey).queryStarting(atValue: query).queryLimited(toFirst: 20).observeSingleEvent(of: .value, with: { snapshot in
             if snapshot.exists() {
                 if let groupsDict = (snapshot.value) {
                     var groups: [Group] = []
@@ -338,6 +338,43 @@ class FirebaseClient: NSObject {
                 }
             }
         }
+    }
+    
+    func updateUserGroups(userUid: String, groupUid: String, groups: [String], completion: @escaping (_ success: Bool?, _ message: String?) -> ()) {
+        
+        let userRef = self.ref.child("Users").child(userUid).child("groups")
+        let adminRef = self.ref.child("Groups").child(groupUid).child("admins").child(userUid)
+        
+        let usersRef = self.ref.child("Groups").child(groupUid).child("users").child(userUid)
+        let adminsRef = self.ref.child("Groups").child(groupUid).child("admins")
+        
+        adminsRef.observeSingleEvent(of: .value, with: { snapshot in
+            let admins = snapshot.value;
+            let result = admins as! NSDictionary
+            if (result.allKeys.count == 1 && (result.allKeys[0] as! String) == userUid) {
+                completion(false, "You are the only administrator for this group, so you cannot remove it from \"My Groups\".")
+            } else {
+                userRef.setValue(groups) { (error, ref) -> Void in
+                    if error != nil {
+                        completion(false, nil)
+                    } else {
+                        adminRef.setValue(nil) { (error, ref) -> Void in
+                            if error != nil {
+                                completion(false, nil)
+                            } else {
+                                usersRef.setValue(nil) { (error, ref) -> Void in
+                                    if error != nil {
+                                        completion(false, nil)
+                                    } else {
+                                        completion(true, nil)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
     
     func updateUserGroups(userUid: String, groups: [String], completion: @escaping (_ success: Bool?) -> ()) {

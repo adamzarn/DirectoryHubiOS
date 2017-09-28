@@ -194,33 +194,68 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     }
     
     func performSearch(key: String) {
-        self.groups = []
-        let query = searchController.searchBar.text!.lowercased()
-        if query != "" {
-            FirebaseClient.shared.queryGroups(query: query, searchKey: key) { (groups, error) -> () in
-                if let groups = groups {
-                    for group in groups {
-                        if !self.user.groups.contains(group.uid) {
-                            self.groups.append(group)
+        if GlobalFunctions.shared.hasConnectivity() {
+            self.groups = []
+            let query = searchController.searchBar.text!.lowercased()
+            if query != "" {
+                FirebaseClient.shared.queryGroups(query: query, searchKey: key) { (groups, error) -> () in
+                    if let groups = groups {
+                        for group in groups {
+                            if !self.user.groups.contains(group.uid) {
+                                self.groups.append(group)
+                            }
                         }
+                        self.groups.sort { $0.name < $1.name }
                     }
-                    self.groups.sort { $0.name < $1.name }
+                    self.myTableView.reloadData()
                 }
+            } else {
                 self.myTableView.reloadData()
             }
         } else {
-            self.myTableView.reloadData()
+            self.displayAlert(title: "No Internet Connection", message: "Please establish an internet connection and try again.")
+        }
+    }
+    
+    func performSearch() {
+        if GlobalFunctions.shared.hasConnectivity() {
+            self.groups = []
+            let groupUid = searchController.searchBar.text!
+            if groupUid != "" {
+                FirebaseClient.shared.getGroup(groupUid: groupUid) { (group, error) -> () in
+                    if let group = group {
+                        if !self.user.groups.contains(group.uid) {
+                            self.groups = [group]
+                        }
+                        self.myTableView.reloadData()
+                    } else {
+                        self.myTableView.reloadData()
+                    }
+                }
+            } else {
+                self.myTableView.reloadData()
+            }
+        } else {
+            self.displayAlert(title: "No Internet Connection", message: "Please establish an internet connection and try again.")
         }
     }
     
     @IBAction func searchCriteriaChanged(_ sender: Any) {
-        if searchCriteriaSegmentedControl.selectedSegmentIndex == 0 {
-            searchController.searchBar.placeholder = "Enter a group name..."
-            performSearch(key: "lowercasedName")
-        } else {
-            searchController.searchBar.placeholder = "Enter a group creator's name..."
-            performSearch(key: "lowercasedCreatedBy")
+        switch (searchCriteriaSegmentedControl.selectedSegmentIndex) {
+            case 0:
+                searchController.searchBar.placeholder = "Enter a group name..."
+                performSearch(key: "lowercasedName")
+            case 1:
+                searchController.searchBar.placeholder = "Enter a group creator's name..."
+                performSearch(key: "lowercasedCreatedBy")
+            case 2:
+                searchController.searchBar.placeholder = "Enter a group Unique ID..."
+                performSearch()
+            default:
+                searchController.searchBar.placeholder = "Enter a group name..."
+                performSearch(key: "lowercasedName")
         }
+
     }
     
 }
@@ -228,10 +263,11 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
 extension SearchGroupsViewController: UISearchResultsUpdating {
     func updateSearchResults(for: UISearchController) {
         if searchController.isActive {
-            if searchCriteriaSegmentedControl.selectedSegmentIndex == 0 {
-                performSearch(key: "lowercasedName")
-            } else {
-                performSearch(key: "lowercasedCreatedBy")
+            switch (searchCriteriaSegmentedControl.selectedSegmentIndex) {
+                case 0: performSearch(key: "lowercasedName")
+                case 1: performSearch(key: "lowercasedCreatedBy")
+                case 2: performSearch()
+                default: performSearch(key: "lowercasedName")
             }
         }
     }

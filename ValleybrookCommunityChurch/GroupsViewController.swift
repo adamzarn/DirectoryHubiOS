@@ -137,6 +137,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
                         let downloadUrl = metadata.downloadURL()
                         Alamofire.request(downloadUrl!, method: .get).responseImage { response in
                                 guard let image = response.result.value else {
+                                    cell.myImageView.image = nil
                                     return
                                 }
                             cell.myImageView.image = image
@@ -194,7 +195,11 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
                     var updatedUserGroups = self.user.groups
                     updatedUserGroups = updatedUserGroups.filter { $0 != groupToEdit.uid }
                         
-                    FirebaseClient.shared.updateUserGroups(userUid: self.user.uid, groups: updatedUserGroups) { (success) -> () in
+                    FirebaseClient.shared.updateUserGroups(userUid: self.user.uid, groupUid: groupToEdit.uid, groups: updatedUserGroups) { (success, message) -> () in
+                        if let message = message {
+                            self.displayAlert(title: "Failure", message: message)
+                            return
+                        }
                         if let success = success {
                             if success {
                                 self.displayAlert(title: "Success", message: "\(groupToEdit.name) was successfully removed from \"My Groups\".")
@@ -321,7 +326,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     @IBAction func addGroupButtonPressed(_ sender: Any) {
         
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        actionSheet.addAction(UIAlertAction(title: "Create a New Group", style: .default) { (_) in
+        actionSheet.addAction(UIAlertAction(title: "Create Group", style: .default) { (_) in
             let createGroupNC = self.storyboard?.instantiateViewController(withIdentifier: "CreateGroupNavigationController") as! MyNavigationController
             let createGroupVC = createGroupNC.viewControllers[0] as! CreateGroupViewController
             createGroupVC.delegate = self
@@ -329,7 +334,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
             self.present(createGroupNC, animated: true, completion: nil)
         })
         
-        actionSheet.addAction(UIAlertAction(title: "Search for a Group", style: .default) { (_) in
+        actionSheet.addAction(UIAlertAction(title: "Search Groups", style: .default) { (_) in
             let searchGroupsVC = self.storyboard?.instantiateViewController(withIdentifier: "SearchGroupsViewController") as! SearchGroupsViewController
             searchGroupsVC.user = self.user
             self.navigationController?.pushViewController(searchGroupsVC, animated: true)
