@@ -105,13 +105,14 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     override func viewWillAppear(_ animated: Bool) {
-    
+        
         subscribeToKeyboardNotifications()
         updateData()
         
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        searchController.isActive = false
         unsubscribeFromKeyboardNotifications()
     }
 
@@ -364,6 +365,8 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     @IBAction func addEntryButtonPressed(_ sender: Any) {
+        
+        searchController.isActive = false
         
         let addEntryVC = self.storyboard?.instantiateViewController(withIdentifier: "AddEntryViewController") as! AddEntryViewController
         addEntryVC.group = self.group

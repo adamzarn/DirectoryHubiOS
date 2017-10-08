@@ -59,9 +59,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     
     override func viewWillDisappear(_ animated: Bool) {
         unsubscribeFromKeyboardNotifications()
-        if searchController.isActive {
-            searchController.isActive = false
-        }
+        searchController.isActive = false
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -96,14 +94,11 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if searchController.isActive {
-            searchController.isActive = false
-        }
+        searchController.isActive = false
         
         tableView.deselectRow(at: indexPath, animated: false)
         
         var selectedGroup: Group!
-        print(self.groups)
         selectedGroup = groups[indexPath.row]
         
         let alertController = UIAlertController(title: "Password Required", message: "Enter the password to join the group \"\(selectedGroup.name)\"", preferredStyle: .alert)
@@ -195,10 +190,10 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     
     func performSearch(key: String) {
         if GlobalFunctions.shared.hasConnectivity() {
-            self.groups = []
             let query = searchController.searchBar.text!.lowercased()
             if query != "" {
                 FirebaseClient.shared.queryGroups(query: query, searchKey: key) { (groups, error) -> () in
+                    self.groups = []
                     if let groups = groups {
                         for group in groups {
                             if !self.user.groups.contains(group.uid) {
@@ -219,10 +214,10 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     
     func performSearch() {
         if GlobalFunctions.shared.hasConnectivity() {
-            self.groups = []
             let groupUid = searchController.searchBar.text!
             if groupUid != "" {
                 FirebaseClient.shared.getGroup(groupUid: groupUid) { (group, error) -> () in
+                    self.groups = []
                     if let group = group {
                         if !self.user.groups.contains(group.uid) {
                             self.groups = [group]
@@ -267,7 +262,7 @@ extension SearchGroupsViewController: UISearchResultsUpdating {
                 case 0: performSearch(key: "lowercasedName")
                 case 1: performSearch(key: "lowercasedCreatedBy")
                 case 2: performSearch()
-                default: performSearch(key: "lowercasedName")
+                default: ()
             }
         }
     }

@@ -325,6 +325,8 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     
     @IBAction func addGroupButtonPressed(_ sender: Any) {
         
+        searchController.isActive = false
+        
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Create Group", style: .default) { (_) in
             let createGroupNC = self.storyboard?.instantiateViewController(withIdentifier: "CreateGroupNavigationController") as! MyNavigationController
@@ -348,6 +350,9 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     @IBAction func logoutButtonPressed(_ sender: Any) {
+        
+        searchController.isActive = false
+        
         FirebaseClient.shared.logout(vc: self)
     }
     

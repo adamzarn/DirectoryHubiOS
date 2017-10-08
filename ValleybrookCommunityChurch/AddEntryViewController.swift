@@ -288,7 +288,6 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             cityTextField.text == "" &&
             stateTextField.text == "" &&
             zipTextField.text == "" {
-            print("Nothing entered")
         } else {
             if streetTextField.text == "" {
                 displayAlert(title: "No Street", message: "A valid address must include a street.")
