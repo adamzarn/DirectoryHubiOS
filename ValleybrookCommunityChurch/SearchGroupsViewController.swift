@@ -73,7 +73,8 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         group = groups[indexPath.row]
 
         cell.setUpCell(group: group)
-
+        cell.myImageView.image = nil
+        
         let imageRef = Storage.storage().reference(withPath: "/\(group.uid).jpg")
         imageRef.getMetadata { (metadata, error) -> () in
             if let metadata = metadata {
@@ -84,9 +85,6 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
                         }
                     cell.myImageView.image = image
                 }
-            } else {
-                cell.myImageView.image = nil
-                self.groups[indexPath.row].profilePicture = UIImageJPEGRepresentation(UIImage(data: Data())!, 0.0)!
             }
         }
         return cell
@@ -257,6 +255,8 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
 
 extension SearchGroupsViewController: UISearchResultsUpdating {
     func updateSearchResults(for: UISearchController) {
+        groups.removeAll()
+        myTableView.reloadData()
         if searchController.isActive {
             switch (searchCriteriaSegmentedControl.selectedSegmentIndex) {
                 case 0: performSearch(key: "lowercasedName")

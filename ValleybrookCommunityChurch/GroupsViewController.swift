@@ -129,7 +129,10 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
             } else {
                 cell.accessoryType = UITableViewCellAccessoryType.none
             }
+            
             cell.setUpCell(group: group)
+            cell.myImageView.image = nil
+            
             if !imageFetched[indexPath.row] {
                 let imageRef = Storage.storage().reference(withPath: "/\(group.uid).jpg")
                 imageRef.getMetadata { (metadata, error) -> () in
@@ -137,15 +140,10 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
                         let downloadUrl = metadata.downloadURL()
                         Alamofire.request(downloadUrl!, method: .get).responseImage { response in
                                 guard let image = response.result.value else {
-                                    cell.myImageView.image = nil
                                     return
                                 }
                             cell.myImageView.image = image
-                            self.groups[indexPath.row].profilePicture = UIImageJPEGRepresentation(image, 0.0)!
                         }
-                    } else {
-                        cell.myImageView.image = nil
-                        self.groups[indexPath.row].profilePicture = UIImageJPEGRepresentation(UIImage(data: Data())!, 0.0)!
                     }
                 }
                 imageFetched[indexPath.row] = true
@@ -235,7 +233,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func filterContentForSearchText(searchText: String, scope: String = "All") {
-            
+        
         filteredGroups = groups.filter { group in
             return (group.name.lowercased().contains(searchText.lowercased()))
         }
@@ -411,8 +409,6 @@ extension GroupsViewController: UISearchResultsUpdating {
 }
 
 protocol PresentingViewController {
-    
     var user: User! {get set}
-    
 }
 

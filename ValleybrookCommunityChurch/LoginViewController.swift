@@ -28,7 +28,21 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        setUpView()
+        
+        if let currentUser = Auth.auth().currentUser {
+            if GlobalFunctions.shared.hasConnectivity() {
+                FirebaseClient.shared.getUserData(uid: currentUser.uid) { (user, error) in
+                    let myNC = self.storyboard?.instantiateViewController(withIdentifier: "DirectoryNavigationController") as! MyNavigationController
+                    let groupsVC = myNC.topViewController as! GroupsViewController
+                    groupsVC.user = user
+                    self.present(myNC, animated: true, completion: nil)
+                }
+            } else {
+                self.displayAlert(title: "No Internet Connectivity", message: "Establish an Internet Connection and try again.")
+            }
+        } else {
+            setUpView()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
