@@ -35,6 +35,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     var entriesWithSections: [[Entry]] = []
     var filteredEntriesWithSections: [[Entry]] = []
     var tableViewShrunk = false
+    var titleViewTouch: UITapGestureRecognizer!
     
     let screenSize = UIScreen.main.bounds
 
@@ -61,15 +62,36 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         
         self.navigationController?.navigationBar.isTranslucent = false
         
-        if !group.getAdminUids().contains((Auth.auth().currentUser?.uid)!) {
-            addEntryButton.isEnabled = false
-            addEntryButton.tintColor = UIColor.clear
+        if let uid = Auth.auth().currentUser?.uid {
+            if !group.getAdminUids().contains(uid) {
+                addEntryButton.isEnabled = false
+                addEntryButton.tintColor = UIColor.clear
+            }
         }
         
         self.navigationItem.titleView = GlobalFunctions.shared.configureTwoLineTitleView("Directory", bottomLine: group.name)
+        titleViewTouch = UITapGestureRecognizer(target: self, action: #selector(DirectoryViewController.showCounts))
+        self.navigationItem.titleView?.isUserInteractionEnabled = true
+        self.navigationItem.titleView?.addGestureRecognizer(titleViewTouch)
         
         updateData()
         
+    }
+    
+    func showCounts() {
+        if entries.count > 0 {
+            var adultCount = 0
+            var childCount = 0
+            for entry in entries {
+                adultCount += entry.personCount(personTypes: [PersonType.husband, PersonType.wife, PersonType.single])
+                childCount += entry.personCount(personTypes: [PersonType.child])
+            }
+            self.displayAlert(title: "Counts",
+                              message: "\nEntries: \(entries.count)"
+                                     + "\n\nAdults: \(adultCount)"
+                                     + "\nChildren: \(childCount)"
+                                     + "\nTotal: \(adultCount + childCount)")
+        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

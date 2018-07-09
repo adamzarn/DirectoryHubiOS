@@ -28,6 +28,21 @@ class Entry {
         self.people = people
     }
     
+    func personCount(personTypes: [PersonType]) -> Int {
+        var count = 0
+        let personTypeValues = personTypes.map { $0.rawValue }
+        if let people = self.people {
+            for person in people {
+                if let type = person.type {
+                    if personTypeValues.contains(type) {
+                        count += 1
+                    }
+                }
+            }
+        }
+        return count
+    }
+    
     func toAnyObject() -> [String : AnyObject] {
         return ["name": name as AnyObject,
                 "phone": phone as AnyObject,
@@ -69,6 +84,13 @@ struct Address {
         
     }
     
+}
+
+enum PersonType: String {
+    case husband = "Husband"
+    case wife = "Wife"
+    case single = "Single"
+    case child = "Child"
 }
 
 struct Person {
