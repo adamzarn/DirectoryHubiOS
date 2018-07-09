@@ -61,7 +61,20 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         
         self.myTableView.rowHeight = 90.0
         
-        loadGroups()
+        if let currentUser = Auth.auth().currentUser {
+            if GlobalFunctions.shared.hasConnectivity() {
+                FirebaseClient.shared.getUserData(uid: currentUser.uid) { (user, error) in
+                    if let error = error {
+                        self.displayAlert(title: "Error", message: error.localizedLowercase)
+                    } else if let user = user {
+                        self.user = user
+                        self.loadGroups()
+                    }
+                }
+            } else {
+                self.displayAlert(title: "Error", message: "No Internet Connectivity")
+            }
+        }
         
     }
     
@@ -288,11 +301,9 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         } else {
         
             for groupUid in user.groups {
-                print(groupUid)
             
                 FirebaseClient.shared.getGroup(groupUid: groupUid) { (group, error) -> () in
                     if let group = group {
-                        print(group.name)
                         self.groups.append(group)
                     } else {
                         deletedGroups += 1
