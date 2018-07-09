@@ -29,6 +29,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
         GADMobileAds.configure(withApplicationID: "ca-app-pub-4590926477342036~6914747663")
+        
+        if let _ = Auth.auth().currentUser {
+            let myNC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DirectoryNavigationController") as! MyNavigationController
+            window?.rootViewController = myNC
+            window?.makeKeyAndVisible()
+        }
     
         return true
         
