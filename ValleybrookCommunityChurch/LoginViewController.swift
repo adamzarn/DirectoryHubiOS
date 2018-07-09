@@ -15,6 +15,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     let defaults = UserDefaults.standard
     
     @IBOutlet weak var aiv: UIActivityIndicatorView!
+    @IBOutlet weak var loggingInLabel: UILabel!
     
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var emailTextField: UITextField!
@@ -29,7 +30,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         
+        setUpView()
+        
         if let currentUser = Auth.auth().currentUser {
+            aiv.isHidden = false
+            aiv.startAnimating()
+            loggingInLabel.isHidden = false
+            loggingInLabel.text = "Establishing \(String(describing: currentUser.displayName!))'s session..."
             if GlobalFunctions.shared.hasConnectivity() {
                 FirebaseClient.shared.getUserData(uid: currentUser.uid) { (user, error) in
                     let myNC = self.storyboard?.instantiateViewController(withIdentifier: "DirectoryNavigationController") as! MyNavigationController
@@ -38,11 +45,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     self.present(myNC, animated: true, completion: nil)
                 }
             } else {
+                aiv.isHidden = true
+                aiv.stopAnimating()
+                loggingInLabel.isHidden = true
                 self.displayAlert(title: "No Internet Connectivity", message: "Establish an Internet Connection and try again.")
             }
-        } else {
-            setUpView()
         }
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -52,6 +61,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         aiv.isHidden = true
         aiv.stopAnimating()
+        loggingInLabel.isHidden = true
         unsubscribeFromKeyboardNotifications()
     }
     
@@ -68,6 +78,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBAction func loginButtonPressed(_ sender: Any) {
         aiv.startAnimating()
         aiv.isHidden = false
+        loggingInLabel.isHidden = false
         
         if emailTextField.text == "" || passwordTextField.text == "" {
             displayAlert(title: "Error", message: "You must provide an email and password to login.")
@@ -141,6 +152,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func setUpView() {
         aiv.isHidden = true
+        loggingInLabel.isHidden = true
+        loggingInLabel.text = "Logging in..."
         if let email = defaults.value(forKey: "lastEmail") {
             emailTextField.text = email as? String
         }
@@ -152,6 +165,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func displayAlert(title: String, message: String) {
         self.aiv.isHidden = true
         self.aiv.stopAnimating()
+        loggingInLabel.isHidden = true
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: false, completion: nil)

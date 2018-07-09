@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AA3D7957C90FC46BE18788A2A346100"
+               BlueprintIdentifier = "6F16D63D1F0C7EE1E168A9A69618A91D"
                BuildableName = "Pods_ValleybrookCommunityChurch.framework"
                BlueprintName = "Pods-ValleybrookCommunityChurch"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -26,6 +26,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
@@ -36,6 +37,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -45,7 +47,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AA3D7957C90FC46BE18788A2A346100"
+            BlueprintIdentifier = "6F16D63D1F0C7EE1E168A9A69618A91D"
             BuildableName = "Pods_ValleybrookCommunityChurch.framework"
             BlueprintName = "Pods-ValleybrookCommunityChurch"
             ReferencedContainer = "container:Pods.xcodeproj">

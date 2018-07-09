@@ -298,7 +298,7 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
                 onlyEmail = true
             }
             
-            actionSheet = UIAlertController(title: "\(name!) \((entry?.name!)!)", message: "What would you like to do?", preferredStyle: UIAlertControllerStyle.actionSheet)
+            actionSheet = UIAlertController(title: "\(name!) \((entry?.name!)!)", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
             
             if phone != "" {
                 
@@ -411,12 +411,63 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
     }
     
+    func generateInfoBody(subject: Bool) -> String {
+        var body = ""
+        if (!subject) {
+            body = "\(title!)\n\n"
+        }
+        if info[0].count > 0 {
+            body = body + "Home Phone: " + info[0][0][0] + "\n"
+        }
+        if info[1].count > 0 {
+            body = body + "Email: " + info[1][0][0] + "\n"
+        }
+        if info[0].count > 0 || info[1].count > 0 {
+            body = body + "\n"
+        }
+        if info[2].count > 0 {
+            body = body + "Address:" + "\n"
+            for addressLine in info[2][0] {
+                body = body + addressLine + "\n"
+            }
+            body = body + "\n"
+        }
+        if info[3].count > 0 {
+            for item in info[3] {
+                for detail in item {
+                    body = body + detail + "\n"
+                }
+                body = body + "\n"
+            }
+        }
+        if info[4].count > 0 {
+            for item in info[4] {
+                for detail in item {
+                    body = body + detail + "\n"
+                }
+                body = body + "\n"
+            }
+        }
+        return body
+    }
+    
     func configuredMessageComposeViewController(recipients: [String]) -> MFMessageComposeViewController {
         
         let textMessageVC = MFMessageComposeViewController()
         textMessageVC.messageComposeDelegate = self
         
         textMessageVC.recipients = recipients
+        
+        return textMessageVC
+        
+    }
+    
+    func shareEntryByText() -> MFMessageComposeViewController {
+        
+        let textMessageVC = MFMessageComposeViewController()
+        textMessageVC.messageComposeDelegate = self
+        
+        textMessageVC.body = generateInfoBody(subject: false)
         
         return textMessageVC
         
@@ -431,6 +482,34 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         return mailComposerVC
     }
+    
+    func shareEntryByEmail() -> MFMailComposeViewController {
+        
+        let mailComposerVC = MFMailComposeViewController()
+        mailComposerVC.mailComposeDelegate = self
+        
+        mailComposerVC.setSubject(title!)
+        mailComposerVC.setMessageBody(generateInfoBody(subject: true), isHTML: false)
+        
+        return mailComposerVC
+        
+    }
+    
+    @IBAction func shareEntry(_ sender: Any) {
+        
+        let actionSheet = UIAlertController(title: "Share Entry", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Text", style: UIAlertActionStyle.default, handler: { (action) in
+            self.present(self.shareEntryByText(), animated: false, completion: nil)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Email", style: UIAlertActionStyle.default, handler: { (action) in
+            self.present(self.shareEntryByEmail(), animated: false, completion: nil)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+        
+        self.present(actionSheet, animated: true, completion: nil)
+
+    }
+    
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.dismiss(animated: true, completion: nil)

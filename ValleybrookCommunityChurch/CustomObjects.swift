@@ -28,6 +28,14 @@ class Entry {
         self.people = people
     }
     
+    func toAnyObject() -> [String : AnyObject] {
+        return ["name": name as AnyObject,
+                "phone": phone as AnyObject,
+                "email": email as AnyObject,
+                "Address": (address?.toAnyObject())!,
+                "People": peopleToAnyObject(people: people!)] as [String : AnyObject]
+    }
+    
 }
 
 struct Address {
@@ -50,6 +58,15 @@ struct Address {
 
     func toAnyObject() -> AnyObject {
         return ["street": street, "line2": line2, "line3": line3, "city": city, "state": state, "zip": zip] as AnyObject
+    }
+    
+    func getCityStateZipString() -> String {
+
+        if city == "" {
+            return ""
+        }
+        return city! + ", " + state! + " " + zip!
+        
     }
     
 }
@@ -76,6 +93,14 @@ struct Person {
         return ["type": type!, "name": name!, "phone": phone!, "email": email!, "birthOrder": birthOrder!] as AnyObject
     }
     
+}
+
+func peopleToAnyObject(people: [Person]) -> [String : AnyObject] {
+    var peopleObject = [:] as [String:AnyObject]
+    for person in people {
+        peopleObject[UUID().uuidString] = person.toAnyObject()
+    }
+    return peopleObject
 }
 
 struct Group {

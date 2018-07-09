@@ -12,11 +12,18 @@ import Contacts
 import Alamofire
 import AlamofireImage
 import Firebase
+import GoogleMobileAds
+import MessageUI
 
-class DirectoryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UISearchBarDelegate, UISearchControllerDelegate {
+class DirectoryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UISearchBarDelegate, UISearchControllerDelegate, UINavigationControllerDelegate, MFMailComposeViewControllerDelegate, GADBannerViewDelegate {
+    
+    let defaults = UserDefaults.standard
     
     @IBOutlet weak var addEntryButton: UIBarButtonItem!
     @IBOutlet weak var myTableView: UITableView!
+    
+    var bannerView: GADBannerView!
+    @IBOutlet weak var adContainer: UIView!
     
     var group: Group!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -60,6 +67,8 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         }
         
         self.navigationItem.titleView = GlobalFunctions.shared.configureTwoLineTitleView("Directory", bottomLine: group.name)
+        
+        updateData()
         
     }
     
@@ -107,8 +116,28 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     override func viewWillAppear(_ animated: Bool) {
         
         subscribeToKeyboardNotifications()
-        updateData()
         
+        if defaults.bool(forKey: "shouldUpdateDirectory") {
+            updateData()
+            defaults.setValue(false, forKey: "shouldUpdateDirectory")
+        }
+        
+        bannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
+        bannerView.delegate = self
+        bannerView.adUnitID = "ca-app-pub-4590926477342036/8203778607"
+        //bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716" //test ad-unit id
+        bannerView.rootViewController = self
+        let request = GADRequest()
+        //request.testDevices = ["191b6aacb501d4f65eef7379f19afce6"]
+        bannerView.load(request)
+        
+    }
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        adContainer.addSubview(bannerView)
+    }
+    
+    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -197,8 +226,8 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         let addressStreet = address?.street
         let addressLine2 = address?.line2
         let addressLine3 = address?.line3
-        let cityStateZip = getCityStateZip(address: address!)
-        let childrenString = getChildrenString(people: people)
+        let cityStateZip = address?.getCityStateZipString()
+        let childrenString = GlobalFunctions.shared.getChildrenString(people: people)
         
         var lineCount = 1
         var lines: [String] = [header]
@@ -225,7 +254,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         }
         if cityStateZip != "" {
             lineCount += 1
-            lines.append(cityStateZip)
+            lines.append(cityStateZip!)
         }
         if childrenString != "" {
             lineCount += 1
@@ -295,52 +324,6 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             return entry.name! + ", " + husbandFirstName + " & " + wifeFirstName
         }
 
-    }
-    
-    func getChildrenString(people: [Person]) -> String {
-        
-        var childrenArray: [Person] = []
-        for person in people {
-            if person.type == "Child" {
-                childrenArray.append(person)
-            }
-        }
-        
-        childrenArray.sort { $0.birthOrder! < $1.birthOrder! }
-        
-        var childrenString = ""
-        var i = 0
-        
-        if childrenArray.count == 2 {
-            return childrenArray[0].name! + " & " + childrenArray[1].name!
-        }
-        
-        for child in childrenArray {
-            if childrenString == "" {
-                childrenString = child.name!
-            } else if i == childrenArray.count - 1 {
-                childrenString = childrenString + ", & " + child.name!
-            } else {
-                childrenString = childrenString + ", " + child.name!
-            }
-            i = i + 1
-        }
-        
-        return childrenString
-        
-    }
-    
-    func getCityStateZip(address: Address) -> String {
-        
-        let city = address.city
-        let state = address.state
-        let zip = address.zip
-        
-        if city == "" {
-            return ""
-        }
-        return city! + ", " + state! + " " + zip!
-        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -459,14 +442,14 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     func keyboardWillShow(notification: NSNotification) {
         if (!tableViewShrunk) {
-            myTableView.frame.size.height -= getKeyboardHeight(notification: notification)
+            myTableView.frame.size.height -= (getKeyboardHeight(notification: notification) - bannerView.frame.size.height)
         }
         tableViewShrunk = true
     }
     
     func keyboardWillHide(notification: NSNotification) {
         if (tableViewShrunk) {
-            myTableView.frame.size.height += getKeyboardHeight(notification: notification)
+            myTableView.frame.size.height += (getKeyboardHeight(notification: notification) - bannerView.frame.size.height)
         }
         tableViewShrunk = false
     }
@@ -475,6 +458,47 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         let userInfo = notification.userInfo!
         let keyboardSize = userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue
         return keyboardSize.cgRectValue.height
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    func configuredMailComposeViewController(groupToShare: Group) -> MFMailComposeViewController {
+        let mailComposerVC = MFMailComposeViewController()
+        mailComposerVC.mailComposeDelegate = self
+        mailComposerVC.setSubject("\(groupToShare.name) is on Directory Hub!")
+        let body =
+            "You have been invited to join a group on Directory Hub!\n\n" +
+                
+                "Step 1: Access Directory Hub on Web, iPhone, or Android:\n\n" +
+                
+                "Web: www.directoryhub.net\n" +
+                "iPhone App: https://itunes.apple.com/us/app/directory-hub/id1287637768?mt=8\n" +
+                "Android App: https://play.google.com/store/apps/details?id=com.ajz.directoryhub\n\n" +
+                
+                "Step 2: Create your personal Account\n" +
+                "Step 3: On the My Groups Page, click \"Add Group\" (Web) or the \"+\" symbol (App)\n" +
+                "Step 4: Select \"Search Groups\"\n" +
+                "Step 5: Search for the group using any of the following 3 criteria and select it:\n\n" +
+                
+                "GROUP NAME: " + groupToShare.name + "\n" +
+                "CREATED BY: " + groupToShare.createdBy + "\n" +
+                "GROUP ID: " + groupToShare.uid + "\n\n" +
+                
+                "Step 6: Enter \(groupToShare.password) as the password\n" +
+        "Step 7: Start using the directory!"
+        mailComposerVC.setMessageBody(body, isHTML: false)
+        return mailComposerVC
+    }
+    
+    @IBAction func shareButtonPressed(_ sender: Any) {
+        if MFMailComposeViewController.canSendMail() {
+            let mvc = configuredMailComposeViewController(groupToShare: group!)
+            self.present(mvc, animated: true, completion: nil)
+        } else {
+            displayAlert(title: "Error", message: "This device cannot send mail.")
+        }
     }
     
 

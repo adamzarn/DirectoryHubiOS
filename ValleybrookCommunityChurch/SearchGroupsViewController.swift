@@ -20,6 +20,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     @IBOutlet weak var searchCriteriaSegmentedControl: UISegmentedControl!
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let defaults = UserDefaults.standard
     
     var user: User!
     var groups: [Group] = []
@@ -93,7 +94,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         searchController.isActive = false
-        
+    
         tableView.deselectRow(at: indexPath, animated: false)
         
         var selectedGroup: Group!
@@ -114,6 +115,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
                         
                     FirebaseClient.shared.joinGroup(userUid: self.user.uid, groupUid: selectedGroup.uid, groups: updatedGroups, users: updatedUsers) { (success) in
                         if let success = success {
+                            self.defaults.setValue(true, forKey: "shouldUpdateGroups")
                             if success {
                                 self.user.groups = updatedGroups
                                 let groupsVC = self.navigationController?.viewControllers[0] as! GroupsViewController
@@ -200,6 +202,9 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
                         }
                         self.groups.sort { $0.name < $1.name }
                     }
+                    for group in self.groups {
+                        print(group.name)
+                    }
                     self.myTableView.reloadData()
                 }
             } else {
@@ -255,8 +260,6 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
 
 extension SearchGroupsViewController: UISearchResultsUpdating {
     func updateSearchResults(for: UISearchController) {
-        groups.removeAll()
-        myTableView.reloadData()
         if searchController.isActive {
             switch (searchCriteriaSegmentedControl.selectedSegmentIndex) {
                 case 0: performSearch(key: "lowercasedName")

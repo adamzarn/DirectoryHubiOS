@@ -12,6 +12,7 @@ target 'ValleybrookCommunityChurch' do
     pod 'Firebase/Auth'
     pod ‘Firebase/Storage’
     pod 'AlamofireImage', '~> 3.1'
+    pod 'Google-Mobile-Ads-SDK'
 
   target 'ValleybrookCommunityChurchTests' do
     inherit! :search_paths

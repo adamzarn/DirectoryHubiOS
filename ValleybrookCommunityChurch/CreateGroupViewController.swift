@@ -8,10 +8,12 @@
 
 import UIKit
 import Firebase
+import MessageUI
 
-class CreateGroupViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+class CreateGroupViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPickerViewDelegate, UIPickerViewDataSource, MFMailComposeViewControllerDelegate {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let defaults = UserDefaults.standard
     
     @IBOutlet weak var aiv: UIActivityIndicatorView!
     
@@ -23,6 +25,7 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
     @IBOutlet weak var profilePictureImageView: UIImageView!
     @IBOutlet weak var manageAdministratorsButton: UIButton!
     @IBOutlet weak var uniqueIDTextView: UITextView!
+    @IBOutlet weak var shareBarButtonItem: UIBarButtonItem!
     @IBOutlet weak var deleteBarButtonItem: UIBarButtonItem!
     
     var statePicker: UIPickerView!
@@ -125,6 +128,8 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
             uniqueIDTextView.text = "UNIQUE ID: \(groupToEdit.uid)"
             deleteBarButtonItem.isEnabled = true
             deleteBarButtonItem.tintColor = .white
+            shareBarButtonItem.isEnabled = true
+            shareBarButtonItem.tintColor = .white
         
         } else {
             
@@ -135,7 +140,8 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
             uniqueIDTextView.text = "UNIQUE ID: NOT YET ASSIGNED"
             deleteBarButtonItem.isEnabled = false
             deleteBarButtonItem.tintColor = .clear
-            
+            shareBarButtonItem.isEnabled = false
+            shareBarButtonItem.tintColor = .clear
             
         }
         
@@ -186,6 +192,7 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
                 self.aiv.stopAnimating()
                 if let success = success, let message = message, let updatedUserGroups = updatedUserGroups {
                     if success {
+                        self.defaults.setValue(true, forKey: "shouldUpdateGroups")
                         let alert = UIAlertController(title: "Success!", message: message as String,  preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "OK", style: .default) { (_) in
                             self.user.groups = updatedUserGroups
@@ -281,7 +288,7 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
     
     @IBAction func deleteButtonPressed(_ sender: Any) {
         
-        let message = "This will delete this group from the database. Are you sure you want to continue?"
+        let message = "This will permanently delete this group from the database. Are you sure you want to continue?"
         
         if let groupToEdit = groupToEdit {
             
@@ -321,6 +328,48 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
         }
         
     }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    func configuredMailComposeViewController(groupToShare: Group) -> MFMailComposeViewController {
+        let mailComposerVC = MFMailComposeViewController()
+        mailComposerVC.mailComposeDelegate = self
+        mailComposerVC.setSubject("\(groupToShare.name) is on Directory Hub!")
+        let body =
+        "You have been invited to join a group on Directory Hub!\n\n" +
+            
+        "Step 1: Access Directory Hub on Web, iPhone, or Android:\n\n" +
+            
+        "Web: www.directoryhub.net\n" +
+        "iPhone App: https://itunes.apple.com/us/app/directory-hub/id1287637768?mt=8\n" +
+        "Android App: https://play.google.com/store/apps/details?id=com.ajz.directoryhub\n\n" +
+            
+        "Step 2: Create your personal Account\n" +
+        "Step 3: On the My Groups Page, click \"Add Group\" (Web) or the \"+\" symbol (App)\n" +
+        "Step 4: Select \"Search Groups\"\n" +
+        "Step 5: Search for the group using any of the following 3 criteria and select it:\n\n" +
+            
+            "GROUP NAME: " + groupToShare.name + "\n" +
+            "CREATED BY: " + groupToShare.createdBy + "\n" +
+            "GROUP ID: " + groupToShare.uid + "\n\n" +
+            
+        "Step 6: Enter \(groupToShare.password) as the password\n" +
+        "Step 7: Start using the directory!"
+        mailComposerVC.setMessageBody(body, isHTML: false)
+        return mailComposerVC
+    }
+    
+    @IBAction func shareButtonPressed(_ sender: Any) {
+        if MFMailComposeViewController.canSendMail() {
+            let mvc = configuredMailComposeViewController(groupToShare: groupToEdit!)
+            self.present(mvc, animated: true, completion: nil)
+        } else {
+            displayAlert(title: "Error", message: "This device cannot send mail.")
+        }
+    }
+    
 }
 
     

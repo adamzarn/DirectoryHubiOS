@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import CoreData
 import Contacts
+import GoogleMobileAds
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,8 +28,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().titleTextAttributes = textTitleOptions
         
         FirebaseApp.configure()
+        GADMobileAds.configure(withApplicationID: "ca-app-pub-4590926477342036~6914747663")
     
         return true
+        
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

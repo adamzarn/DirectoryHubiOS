@@ -11,6 +11,10 @@ import UIKit
 class ManageAdministratorsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var myTableView: UITableView!
+    let defaults = UserDefaults.standard
+    
+    @IBOutlet weak var toolbar: UIToolbar!
+    @IBOutlet weak var submitButton: UIBarButtonItem!
     
     var groupToEdit: Group?
     var list: [[Member]] = [[],[]]
@@ -18,12 +22,14 @@ class ManageAdministratorsViewController: UIViewController, UITableViewDelegate,
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        submitButton.tintColor = GlobalFunctions.shared.themeColor()
         self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()
         self.navigationController?.navigationBar.isTranslucent = false
+        toolbar.isTranslucent = false
         
         myTableView.setEditing(true, animated: true)
         
-        let admins = groupToEdit?.admins
+        var admins = groupToEdit?.admins
         let users = groupToEdit?.users
         
         let adminNames = groupToEdit?.getAdminNames()
@@ -35,6 +41,9 @@ class ManageAdministratorsViewController: UIViewController, UITableViewDelegate,
                 onlyUsers.append(user)
             }
         }
+        
+        admins!.sort { $0.name < $1.name }
+        onlyUsers.sort { $0.name < $1.name }
         
         list[0] = admins!
         list[1] = onlyUsers
@@ -58,7 +67,9 @@ class ManageAdministratorsViewController: UIViewController, UITableViewDelegate,
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return ["Administrators","Members"][section]
+        let adminsHeader = "Administrators (\(list[0].count))"
+        let membersHeader = "Members (\(list[1].count))"
+        return [adminsHeader,membersHeader][section]
     }
     
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -95,6 +106,24 @@ class ManageAdministratorsViewController: UIViewController, UITableViewDelegate,
             let destinationVC = self.navigationController?.viewControllers[0] as! CreateGroupViewController
             destinationVC.groupToEdit = self.groupToEdit
         }
+    }
+    
+    @IBAction func submitButtonPressed(_ sender: Any) {
+        FirebaseClient.shared.updateGroupRoles(groupUid: (groupToEdit?.uid)!, admins: list[0], users: list[1]) { (success) -> () in
+            if let success = success {
+                self.defaults.setValue(true, forKey: "shouldUpdateGroups")
+                self.displayAlert(title: "Success", message: "This list has been successfully updated.")
+            } else {
+                self.displayAlert(title: "Error", message: "This list has been successfully updated.")
+            }
+            
+        }
+    }
+        
+    func displayAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: false, completion: nil)
     }
     
 }

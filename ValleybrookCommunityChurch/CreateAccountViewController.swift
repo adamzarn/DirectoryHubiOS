@@ -22,16 +22,27 @@ class CreateAccountViewController: UIViewController {
     @IBOutlet weak var verifyPasswordTextField: UITextField!
     @IBOutlet weak var submitButton: UIBarButtonItem!
 
-    
     //Lifecycle methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let textFields = [firstNameTextField, lastNameTextField, emailTextField, passwordTextField, verifyPasswordTextField]
+        
+        for textField in textFields {
+            formatTextField(textField: textField!)
+        }
+    
         submitButton.tintColor = GlobalFunctions.shared.themeColor()
         self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()
         self.navigationController?.navigationBar.isTranslucent = false
         
+    }
+    
+    func formatTextField(textField: UITextField) {
+        textField.layer.borderColor = UIColor.lightGray.cgColor
+        textField.layer.borderWidth = 1.0
+        textField.layer.cornerRadius = 2.0
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -128,9 +139,7 @@ class CreateAccountViewController: UIViewController {
             }
             
         } else {
-            
             displayAlert(title: "No Internet Connectivity", message: "Establish an Internet Connection and try again.")
-            
         }
         
     }

@@ -89,7 +89,7 @@ class GlobalFunctions: NSObject {
     }
     
     func getStates() -> [String] {
-        return ["IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
+        return ["", "IL", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
                             "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
     }
     
@@ -127,7 +127,41 @@ class GlobalFunctions: NSObject {
         return twoLineTitleView
         
     }
+    
+    func membersToAnyObject(members: [Member]) -> [String : String] {
+        var membersObject = [:] as [String:String]
+        for member in members {
+            membersObject[member.uid] = member.name
+        }
+        return membersObject
+    }
+    
+    func getChildrenString(people: [Person]) -> String {
 
+        var childrenArray = people.filter { $0.type == "Child" }
+        childrenArray.sort { $0.birthOrder! < $1.birthOrder! }
+        
+        var childrenString = ""
+        var i = 0
+        
+        if childrenArray.count == 2 {
+            return childrenArray[0].name! + " & " + childrenArray[1].name!
+        }
+        
+        for child in childrenArray {
+            if childrenString == "" {
+                childrenString = child.name!
+            } else if i == childrenArray.count - 1 {
+                childrenString = childrenString + ", & " + child.name!
+            } else {
+                childrenString = childrenString + ", " + child.name!
+            }
+            i = i + 1
+        }
+        
+        return childrenString
+        
+    }
 
     static let shared = GlobalFunctions()
     private override init() {

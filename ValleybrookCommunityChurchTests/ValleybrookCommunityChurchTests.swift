@@ -7,30 +7,48 @@
 //
 
 import XCTest
+import Firebase
 @testable import ValleybrookCommunityChurch
 
 class ValleybrookCommunityChurchTests: XCTestCase {
     
+    var peopleToTest: [Person]!
+    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        peopleToTest = [
+            Person(type: "Adult", name: "John", phone: "", email: "", birthOrder: 0, uid: ""),
+            Person(type: "Child", name: "Ruby", phone: "", email: "", birthOrder: 1, uid: ""),
+            Person(type: "Child", name: "James", phone: "", email: "", birthOrder: 2, uid: "")
+        ]
     }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
+        peopleToTest = nil
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testChildrenString() {
+        let expected = "Ruby & James"
+        let actual = GlobalFunctions.shared.getChildrenString(people: peopleToTest)
+        XCTAssertEqual(actual, expected, "Children String is not what it should be.")
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testDownloadDirectory() {
+        
+        let expectation = XCTestExpectation(description: "Directory Downloaded")
+        
+        let ref = Database.database().reference()
+        ref.child("Directories").child("-KuCWVVCotiP2DHPWhGm").observeSingleEvent(of: .value, with: { snapshot in
+            XCTAssertNotNil(snapshot, "No data was downloaded")
+            expectation.fulfill()
+        })
+        wait(for: [expectation], timeout: 10.0)
+        
     }
+    
+    
     
 }

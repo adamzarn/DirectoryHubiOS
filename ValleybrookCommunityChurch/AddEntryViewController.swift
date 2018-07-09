@@ -11,6 +11,7 @@ import CoreData
 
 class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource {
     
+    let defaults = UserDefaults.standard
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
     @IBOutlet weak var toolbar: UIToolbar!
@@ -161,7 +162,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
         
             lastNameTextField.text = textFieldValues[0]
             homePhoneTextField.text = textFieldValues[1]
-            emailTextField.text = textFieldValues[2]
+            entryEmailTextField.text = textFieldValues[2]
             
             streetTextField.text = textFieldValues[3]
             line2TextField.text = textFieldValues[4]
@@ -561,6 +562,11 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             return
         }
         
+        if (homePhoneTextField.text?.length)! < 12 && (homePhoneTextField.text?.length)! > 0 {
+            displayAlert(title: "Bad Phone Number", message: "Phone Numbers must be 12 characters long.")
+            return
+        }
+        
         if people[0].count == 1 {
             if people[0][0].type == "Husband" {
                 displayAlert(title: "Missing Spouse", message: "A husband must have a wife.")
@@ -588,6 +594,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             
             if GlobalFunctions.shared.hasConnectivity() {
                 FirebaseClient.shared.addEntry(groupUid: self.group.uid, entry: self.newEntry!) { success in
+                    self.defaults.setValue(true, forKey: "shouldUpdateDirectory")
                     if let success = success {
                         if success {
                             self.displayAlertAndDismiss(title: "Success", message: "The new entry information was added to the database.")
@@ -618,13 +625,13 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             return false
         }
         
-        if (phoneTextField.text?.length)! < 12 && (phoneTextField.text?.length)! > 0 {
-            displayAlert(title: "Bad Phone Number", message: "Phone Number must be 12 characters long.")
+        if personTypeTextField.text == "Child" && birthOrderTextField.text == "" {
+            displayAlert(title: "Missing Birth Order", message: "Children must have a birth order.")
             return false
         }
         
-        if personTypeTextField.text == "Child" && birthOrderTextField.text == "" {
-            displayAlert(title: "Missing Birth Order", message: "Children must have a birth order.")
+        if (phoneTextField.text?.length)! < 12 && (phoneTextField.text?.length)! > 0 {
+            displayAlert(title: "Bad Phone Number", message: "Phone Numbers must be 12 characters long.")
             return false
         }
         

@@ -61,12 +61,6 @@ class FirebaseClient: NSObject {
     func addEntry(groupUid: String, entry: Entry, completion: @escaping (_ success: Bool?) -> ()) {
         let directoryRef = self.ref.child("Directories").child(groupUid)
         
-        let name = entry.name!
-        let phone = entry.phone!
-        let email = entry.email!
-        let address = entry.address!
-        let people = entry.people!
-        
         var newEntryRef: DatabaseReference!
         if entry.uid == "" {
             newEntryRef = directoryRef.childByAutoId()
@@ -74,45 +68,13 @@ class FirebaseClient: NSObject {
             newEntryRef = directoryRef.child(entry.uid!)
         }
         
-        newEntryRef.child("name").setValue(name) { (error, ref) -> Void in
+        newEntryRef.setValue(entry.toAnyObject()) { (error, ref) -> Void in
             if error != nil {
                 completion(false)
+            } else {
+                completion(true)
             }
         }
-
-        newEntryRef.child("phone").setValue(phone) { (error, ref) -> Void in
-            if error != nil {
-                completion(false)
-            }
-        }
-
-        newEntryRef.child("email").setValue(email) { (error, ref) -> Void in
-            if error != nil {
-                completion(false)
-            }
-        }
-        
-        let addressRef = newEntryRef.child("Address")
-        let newAddress = Address(street: address.street!, line2: address.line2!, line3: address.line3!, city: address.city!, state: address.state!, zip: address.zip!)
-        addressRef.setValue(newAddress.toAnyObject()) { (error, ref) -> Void in
-            if error != nil {
-                completion(false)
-            }
-        }
-        
-        let peopleRef = newEntryRef.child("People")
-        peopleRef.removeValue()
-        for person in people {
-            let newPersonRef = peopleRef.childByAutoId()
-            let newPerson = Person(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: person.birthOrder!, uid: "")
-            newPersonRef.setValue(newPerson.toAnyObject()) { (error, ref) -> Void in
-                if error != nil {
-                    completion(false)
-                }
-            }
-        }
-        
-        completion(true)
 
     }
     
@@ -195,11 +157,7 @@ class FirebaseClient: NSObject {
                         completion(false)
                     } else {
                         imageRef.delete() { (error) -> Void in
-                            if error != nil {
-                                completion(false)
-                            } else {
-                                completion(true)
-                            }
+                            completion(true)
                         }
                     }
                 }
@@ -385,6 +343,26 @@ class FirebaseClient: NSObject {
                 completion(false)
             } else {
                 completion(true)
+            }
+        }
+    }
+    
+    func updateGroupRoles(groupUid: String, admins: [Member], users: [Member], completion: @escaping (_ success: Bool?) -> ()) {
+        let groupRef = self.ref.child("Groups").child(groupUid)
+        let adminsRef = groupRef.child("admins")
+        let usersRef = groupRef.child("users")
+        
+        adminsRef.setValue(GlobalFunctions.shared.membersToAnyObject(members: admins)) { (error, ref) -> Void in
+            if error != nil {
+                completion(false)
+            } else {
+                usersRef.setValue(GlobalFunctions.shared.membersToAnyObject(members: users)) { (error, ref) -> Void in
+                    if error != nil {
+                        completion(false)
+                    } else {
+                        completion(true)
+                    }
+                }
             }
         }
     }

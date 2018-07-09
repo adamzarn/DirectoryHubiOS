@@ -12,16 +12,21 @@ import Contacts
 import Alamofire
 import AlamofireImage
 import Firebase
+import GoogleMobileAds
 
-class GroupsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UISearchBarDelegate, UISearchControllerDelegate, PresentingViewController {
+class GroupsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UISearchBarDelegate, UISearchControllerDelegate, PresentingViewController, GADBannerViewDelegate {
     
     @IBOutlet weak var aiv: UIActivityIndicatorView!
     @IBOutlet weak var addGroupButton: UIBarButtonItem!
     @IBOutlet weak var myTableView: UITableView!
     @IBOutlet weak var welcomeBarButtonItem: UIBarButtonItem!
     @IBOutlet weak var myToolbar: UIToolbar!
-
+    
+    var bannerView: GADBannerView!
+    @IBOutlet weak var adContainer: UIView!
+    
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let defaults = UserDefaults.standard
     
     var user: User!
     var groups: [Group] = []
@@ -56,6 +61,8 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         
         self.myTableView.rowHeight = 90.0
         
+        loadGroups()
+        
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -63,8 +70,28 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        bannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
+        bannerView.delegate = self
+        bannerView.adUnitID = "ca-app-pub-4590926477342036/5514213695"
+        //bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716" //test ad-unit id
+        bannerView.rootViewController = self
+        let request = GADRequest()
+        //request.testDevices = ["191b6aacb501d4f65eef7379f19afce6"]
+        bannerView.load(request)
+        
         subscribeToKeyboardNotifications()
-        loadGroups()
+        if defaults.bool(forKey: "shouldUpdateGroups") {
+            loadGroups()
+            defaults.setValue(false, forKey: "shouldUpdateGroups")
+        }
+    }
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        adContainer.addSubview(bannerView)
+    }
+    
+    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -75,8 +102,8 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         var groupToEdit = groups[indexPath.row]
         let createGroupNC = storyboard?.instantiateViewController(withIdentifier: "CreateGroupNavigationController") as! MyNavigationController
         let createGroupVC = createGroupNC.viewControllers[0] as! CreateGroupViewController
+
         let cell = myTableView.cellForRow(at: indexPath) as! TwoLineWithImageCell
-        
         if let image = cell.myImageView?.image {
             let imageData = UIImageJPEGRepresentation(image, 0.0)
             groupToEdit.profilePicture = imageData!
@@ -84,7 +111,6 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         
         createGroupVC.groupToEdit = groupToEdit
         createGroupVC.user = self.user
-
         self.present(createGroupNC, animated: true, completion: nil)
     }
     
@@ -105,7 +131,12 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        defaults.setValue(true, forKey: "shouldUpdateGroups")
         filteredGroups = []
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        loadGroups()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -114,11 +145,6 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         if searchController.isActive {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLineWithoutImage") as! TwoLineWithoutImageCell
             group = filteredGroups[indexPath.row]
-            if group.getAdminUids().contains(Auth.auth().currentUser!.uid) {
-                cell.accessoryType = UITableViewCellAccessoryType.detailDisclosureButton
-            } else {
-                cell.accessoryType = UITableViewCellAccessoryType.none
-            }
             cell.setUpCell(group: group)
             return cell
         } else {
@@ -244,6 +270,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     
     func loadGroups() {
         
+        defaults.setValue(false, forKey: "shouldUpdateGroups")
         self.groups = []
         self.imageFetched = []
         var deletedGroups = 0
@@ -261,9 +288,11 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         } else {
         
             for groupUid in user.groups {
+                print(groupUid)
             
                 FirebaseClient.shared.getGroup(groupUid: groupUid) { (group, error) -> () in
                     if let group = group {
+                        print(group.name)
                         self.groups.append(group)
                     } else {
                         deletedGroups += 1
@@ -283,11 +312,19 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
                         self.aiv.isHidden = true
                         self.aiv.stopAnimating()
                         
+                        var groupsThatStillExist: [String] = []
+                        for group in self.groups {
+                            groupsThatStillExist.append(group.uid)
+                        }
+                        
+                        if deletedGroups > 0 {
+                            FirebaseClient.shared.updateUserGroups(userUid: self.user.uid, groups: groupsThatStillExist, completion: { (success) -> () in
+                                print("success")
+                            })
+                        }
                     }
-                    
                 }
             }
-            
         }
     }
     
@@ -303,14 +340,14 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     
     func keyboardWillShow(notification: NSNotification) {
         if (!tableViewShrunk) {
-            myTableView.frame.size.height -= (getKeyboardHeight(notification: notification) - myToolbar.frame.size.height)
+            myTableView.frame.size.height -= (getKeyboardHeight(notification: notification) - (myToolbar.frame.size.height + adContainer.frame.size.height))
         }
         tableViewShrunk = true
     }
     
     func keyboardWillHide(notification: NSNotification) {
         if (tableViewShrunk) {
-            myTableView.frame.size.height += (getKeyboardHeight(notification: notification) - myToolbar.frame.size.height)
+            myTableView.frame.size.height += (getKeyboardHeight(notification: notification) - (myToolbar.frame.size.height + adContainer.frame.size.height))
         }
         tableViewShrunk = false
     }
