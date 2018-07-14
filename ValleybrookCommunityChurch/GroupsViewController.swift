@@ -106,8 +106,11 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
-        adContainerHeight.constant = 50
         adContainer.addSubview(bannerView)
+        self.adContainerHeight.constant = 50
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
+        }
     }
     
     func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {

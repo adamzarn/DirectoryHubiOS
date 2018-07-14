@@ -142,6 +142,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     override func viewWillAppear(_ animated: Bool) {
         
         subscribeToKeyboardNotifications()
+        searchController.searchBar.isHidden = false
         
         if defaults.bool(forKey: "shouldUpdateDirectory") {
             updateData()
@@ -161,8 +162,11 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
-        adContainerHeight.constant = 50
         adContainer.addSubview(bannerView)
+        self.adContainerHeight.constant = 50
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
+        }
     }
     
     func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {

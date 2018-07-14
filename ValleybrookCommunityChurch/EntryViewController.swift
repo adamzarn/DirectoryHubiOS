@@ -89,11 +89,11 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case EntrySection.phone.rawValue:
-            if entry?.phone != nil {
+            if let phone = entry?.phone, !phone.isEmpty {
                 return sectionTitles[section]
             }
         case EntrySection.email.rawValue:
-            if entry?.email != nil {
+            if let email = entry?.email, !email.isEmpty {
                 return sectionTitles[section]
             }
         case EntrySection.address.rawValue:
