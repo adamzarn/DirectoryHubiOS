@@ -62,7 +62,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
     var editingPerson = false
     var indexPathBeingEdited: IndexPath?
     var address: Address = Address(street: "", line2: "", line3: "", city: "", state: "", zip: "")
-    var typeOptions = ["Husband", "Wife", "Single", "Child"]
+    var typeOptions = [PersonType.husband.rawValue, PersonType.wife.rawValue, PersonType.single.rawValue, PersonType.child.rawValue]
     let birthOrderOptions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
     var birthOrders: [Int] = []
     
@@ -351,7 +351,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
         
         } else {
             let newPerson = Person(type: type, name: name, phone: phone, email: email, birthOrder: birthOrder, uid: "")
-            if type != "Child" {
+            if type != PersonType.child.rawValue {
                 people[0].insert(newPerson, at: people[0].count)
             } else {
                 people[1].insert(newPerson, at: people[1].count)
@@ -490,7 +490,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
         } else {
             birthOrderTextField.text = String(describing: birthOrderOptions[row])
         }
-        if personTypeTextField.text == "Child" {
+        if personTypeTextField.text == PersonType.child.rawValue {
             birthOrderTextField.isEnabled = true
         } else {
             birthOrderTextField.isEnabled = false
@@ -513,7 +513,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             let person = people[indexPath.section][indexPath.row]
             addPersonButtonActions()
             addPersonLabel.text = "Edit Person"
-            if person.type == "Child" {
+            if person.type == PersonType.child.rawValue {
                 birthOrderTextField.isEnabled = true
                 birthOrderTextField.text = String(describing: person.birthOrder!)
                 for i in birthOrders {
@@ -568,10 +568,10 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
         }
         
         if people[0].count == 1 {
-            if people[0][0].type == "Husband" {
+            if people[0][0].type == PersonType.husband.rawValue {
                 displayAlert(title: "Missing Spouse", message: "A husband must have a wife.")
                 return
-            } else if people[0][0].type == "Wife" {
+            } else if people[0][0].type == PersonType.wife.rawValue {
                 displayAlert(title: "Missing Spouse", message: "A wife must have a husband.")
                 return
             }
@@ -625,7 +625,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             return false
         }
         
-        if personTypeTextField.text == "Child" && birthOrderTextField.text == "" {
+        if personTypeTextField.text == PersonType.child.rawValue && birthOrderTextField.text == "" {
             displayAlert(title: "Missing Birth Order", message: "Children must have a birth order.")
             return false
         }
@@ -635,23 +635,23 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             return false
         }
         
-        if personTypeTextField.text != "Child" {
+        if personTypeTextField.text != PersonType.child.rawValue {
             if personTypes.contains(personTypeTextField.text!) {
                 displayAlert(title: "Duplicate Person Type", message: "Entries can only contain one \(personTypeTextField.text!).")
                 return false
             }
         }
         
-        if personTypeTextField.text == "Husband" || personTypeTextField.text == "Wife" {
-            if personTypes.contains("Single") {
+        if personTypeTextField.text == PersonType.husband.rawValue || personTypeTextField.text == PersonType.wife.rawValue {
+            if personTypes.contains(PersonType.single.rawValue) {
                 displayAlert(title: "Error", message: "Married couples and adult Singles cannot be in the same entry.")
                 return false
             }
             
         }
         
-        if personTypeTextField.text == "Single" {
-            if personTypes.contains("Husband") || personTypes.contains("Wife") {
+        if personTypeTextField.text == PersonType.single.rawValue {
+            if personTypes.contains(PersonType.husband.rawValue) || personTypes.contains(PersonType.wife.rawValue) {
                 displayAlert(title: "Error", message: "Married couples and adult Singles cannot be in the same entry.")
                 return false
             }
@@ -674,7 +674,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
         addPersonLabel.text = "Add Person"
         addPersonView.isHidden = false
         
-        if personTypeTextField.text != "Child" {
+        if personTypeTextField.text != PersonType.child.rawValue {
             birthOrderTextField.isEnabled = false
         }
         
@@ -713,7 +713,7 @@ class PersonCell: UITableViewCell {
     @IBOutlet weak var line3: UILabel!
     
     func setUpCell(name: String, type: String, birthOrder: Int, phone: String, email: String) {
-        if type != "Child" {
+        if type != PersonType.child.rawValue {
             self.line1.text = name + ", " + type
         } else {
             var birthOrderString = "st child"

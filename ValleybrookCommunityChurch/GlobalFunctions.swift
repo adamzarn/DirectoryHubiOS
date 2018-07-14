@@ -135,33 +135,6 @@ class GlobalFunctions: NSObject {
         }
         return membersObject
     }
-    
-    func getChildrenString(people: [Person]) -> String {
-
-        var childrenArray = people.filter { $0.type == "Child" }
-        childrenArray.sort { $0.birthOrder! < $1.birthOrder! }
-        
-        var childrenString = ""
-        var i = 0
-        
-        if childrenArray.count == 2 {
-            return childrenArray[0].name! + " & " + childrenArray[1].name!
-        }
-        
-        for child in childrenArray {
-            if childrenString == "" {
-                childrenString = child.name!
-            } else if i == childrenArray.count - 1 {
-                childrenString = childrenString + ", & " + child.name!
-            } else {
-                childrenString = childrenString + ", " + child.name!
-            }
-            i = i + 1
-        }
-        
-        return childrenString
-        
-    }
 
     static let shared = GlobalFunctions()
     private override init() {

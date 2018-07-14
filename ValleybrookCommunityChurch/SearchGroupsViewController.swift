@@ -202,9 +202,6 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
                         }
                         self.groups.sort { $0.name < $1.name }
                     }
-                    for group in self.groups {
-                        print(group.name)
-                    }
                     self.myTableView.reloadData()
                 }
             } else {

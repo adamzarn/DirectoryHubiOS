@@ -24,6 +24,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     
     var bannerView: GADBannerView!
     @IBOutlet weak var adContainer: UIView!
+    @IBOutlet weak var adContainerHeight: NSLayoutConstraint!
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
@@ -61,7 +62,23 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         
         self.myTableView.rowHeight = 90.0
         
-        loadGroups()
+        if let currentUser = Auth.auth().currentUser {
+            if GlobalFunctions.shared.hasConnectivity() {
+                set(loading: true)
+                FirebaseClient.shared.getUserData(uid: currentUser.uid) { (user, error) in
+                    if let error = error {
+                        self.displayAlert(title: "Error", message: error.localizedLowercase)
+                        self.set(loading: false)
+                    } else if let user = user {
+                        self.user = user
+                        self.loadGroups()
+                    }
+                }
+            } else {
+                displayAlert(title: "Error", message: "No Internet Connectivity")
+                set(loading: false)
+            }
+        }
         
     }
     
@@ -71,6 +88,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     
     override func viewWillAppear(_ animated: Bool) {
         
+        adContainerHeight.constant = 0
         bannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
         bannerView.delegate = self
         bannerView.adUnitID = "ca-app-pub-4590926477342036/5514213695"
@@ -88,6 +106,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        adContainerHeight.constant = 50
         adContainer.addSubview(bannerView)
     }
     
@@ -275,24 +294,18 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         self.imageFetched = []
         var deletedGroups = 0
         
-        myTableView.isHidden = true
-        aiv.isHidden = false
-        aiv.startAnimating()
+        set(loading: true)
         
         if user.groups.count == 0 {
             
-            self.myTableView.isHidden = false
-            self.aiv.isHidden = true
-            self.aiv.stopAnimating()
+            set(loading: false)
 
         } else {
         
             for groupUid in user.groups {
-                print(groupUid)
             
                 FirebaseClient.shared.getGroup(groupUid: groupUid) { (group, error) -> () in
                     if let group = group {
-                        print(group.name)
                         self.groups.append(group)
                     } else {
                         deletedGroups += 1
@@ -308,9 +321,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
                         self.groups.sort { $0.name < $1.name }
                         
                         self.myTableView.reloadData()
-                        self.myTableView.isHidden = false
-                        self.aiv.isHidden = true
-                        self.aiv.stopAnimating()
+                        self.set(loading: false)
                         
                         var groupsThatStillExist: [String] = []
                         for group in self.groups {
@@ -389,6 +400,16 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         searchController.isActive = false
         
         FirebaseClient.shared.logout(vc: self)
+    }
+    
+    func set(loading: Bool) {
+        myTableView.isHidden = loading
+        aiv.isHidden = !loading
+        if loading {
+            aiv.startAnimating()
+        } else {
+            aiv.stopAnimating()
+        }
     }
     
 }

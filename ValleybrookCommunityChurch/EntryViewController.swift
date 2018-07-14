@@ -11,6 +11,14 @@ import MessageUI
 import Contacts
 import Firebase
 
+enum EntrySection: Int {
+    case phone = 0
+    case email = 1
+    case address = 2
+    case adults = 3
+    case children = 4
+}
+
 class EntryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
     
     @IBOutlet weak var myTableView: UITableView!
@@ -19,26 +27,44 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     var group: Group!
     var entry: Entry?
-    var address: Address?
-    var people: [Person]?
-    var info: [[[String]]] = []
-    let sections = ["Home Number", "Email", "Address", "Contact Info", "Children"]
     var adults: [Person] = []
     var children: [Person] = []
+    let sectionTitles = ["Home Number", "Email", "Address", "Contact Info", "Children"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()
         self.navigationController?.navigationBar.isTranslucent = false
-    
+        
+        if let entry = entry, let people = entry.people {
+            adults = people.filter { ($0.type ?? "") != PersonType.child.rawValue }
+            adults.sort { ($0.type ?? "") < ($1.type ?? "") }
+            children = people.filter { $0.type == PersonType.child.rawValue }
+            children.sort { ($0.birthOrder ?? 0) < ($1.birthOrder ?? 0) }
+        }
+        
+        myTableView.rowHeight = UITableViewAutomaticDimension
+        myTableView.estimatedRowHeight = 60.0
+        
+        if let people = entry?.people {
+            if getEntryStatus(people: people) == "Single" {
+                var firstName = ""
+                for person in people {
+                    if person.type == "Single" {
+                        firstName = person.name ?? ""
+                    }
+                }
+                title = firstName + " " + (entry?.name ?? "")
+            } else {
+                let name = entry?.name ?? ""
+                title = "The " + name + " Family"
+            }
+        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        info = []
-        adults = []
-        children = []
-        populateTableView()
         
         if !group.getAdminUids().contains((Auth.auth().currentUser?.uid)!) {
             editEntryBarButtonItem.isEnabled = false
@@ -46,98 +72,10 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         
     }
-    
-    func populateTableView() {
-        
-        address = entry?.address
-        people = entry?.people
-        
-        if entry?.phone == "" {
-            info.append([])
-        } else {
-            info.append([[(entry?.phone!)!]])
-        }
-        
-        if entry?.email == "" {
-            info.append([])
-        } else {
-            info.append([[(entry?.email!)!]])
-        }
-        
-        let addressLines = getAddressLines(address: address!)
-        if addressLines.count == 0 {
-            info.append([])
-        } else {
-            info.append([getAddressLines(address: address!)])
-        }
-        
-        for person in people! {
-            if person.type != "Child" {
-                adults.append(person)
-            } else {
-                children.append(person)
-            }
-        }
-        
-        adults.sort { $0.type! < $1.type! }
-        children.sort { $0.birthOrder! < $1.birthOrder! }
-        
-        var allAdultLines: [[String]] = []
-        for adult in adults {
-            var adultLines: [String] = []
-            adultLines.append(adult.name!)
-            if adult.phone != "" {
-                adultLines.append(adult.phone!)
-            }
-            if adult.email != "" {
-                adultLines.append(adult.email!)
-            }
-            
-            if adultLines.count > 1 && adult.type != "Single" || adultLines.count > 0 && adult.type == "Single" {
-                allAdultLines.append(adultLines)
-            }
-        }
-        info.append(allAdultLines)
-        
-        var allChildrenLines: [[String]] = []
-        for child in children {
-            var childrenLines: [String] = []
-            childrenLines.append(child.name!)
-            if child.phone != "" {
-                childrenLines.append(child.phone!)
-            }
-            if child.email != "" {
-                childrenLines.append(child.email!)
-            }
-            allChildrenLines.append(childrenLines)
-        }
-        info.append(allChildrenLines)
-        
-        if getEntryStatus(people: people!) == "Single" {
-            
-            var firstName = ""
-            for person in people! {
-                if person.type == "Single" {
-                    firstName = person.name!
-                }
-            }
-            
-            title = firstName + " " + (entry?.name)!
-            
-        } else {
-            
-            let name = (entry?.name!)!
-            title = "The " + name + " Family"
-            
-        }
-        
-        myTableView.reloadData()
-        
-    }
 
     func getEntryStatus(people: [Person]) -> String {
         for person in people {
-            if person.type == "Single" {
+            if person.type == PersonType.single.rawValue {
                 return "Single"
             }
         }
@@ -145,196 +83,199 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return info.count
+        return 5
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if info.count > 0 {
-            if info[section].count == 0 {
-                return nil
+        switch section {
+        case EntrySection.phone.rawValue:
+            if entry?.phone != nil {
+                return sectionTitles[section]
             }
-            return sections[section]
+        case EntrySection.email.rawValue:
+            if entry?.email != nil {
+                return sectionTitles[section]
+            }
+        case EntrySection.address.rawValue:
+            if let address = entry?.address, !address.isEmpty() {
+                return sectionTitles[section]
+            }
+        case EntrySection.adults.rawValue:
+            if adults.count > 0 {
+                return sectionTitles[section]
+            }
+        case EntrySection.children.rawValue:
+            if children.count > 0 {
+                return sectionTitles[section]
+            }
+        default: return nil
         }
         return nil
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (info[section] as AnyObject).count
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let cell = self.tableView(tableView, cellForRowAt: indexPath)
-        return cell.frame.size.height
+        if let entry = entry {
+            switch section {
+                case EntrySection.phone.rawValue:
+                    if let phone = entry.phone, !phone.isEmpty { return 1 } else { return 0 }
+                case EntrySection.email.rawValue:
+                    if let email = entry.email, !email.isEmpty { return 1 } else { return 0 }
+                case EntrySection.address.rawValue:
+                    if let address = entry.address, !address.isEmpty() { return 1 } else { return 0 }
+                case EntrySection.adults.rawValue:
+                    return entry.personCount(personTypes: [PersonType.husband,
+                                                                     PersonType.wife,
+                                                                     PersonType.single])
+                case EntrySection.children.rawValue:
+                    return entry.personCount(personTypes: [PersonType.child])
+                default:
+                    return 0
+            }
+        }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if indexPath.section < 2 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "OneLineDetailCell")! as! OneLineDetailCell
-            cell.setUp(lines: info[indexPath.section][0])
-            return cell
-        } else if indexPath.section == 2 {
-            let addressLines = info[indexPath.section][0]
-            switch addressLines.count {
-            case 2:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLineDetailCell") as! TwoLineDetailCell
-                cell.setUp(lines: addressLines)
-                return cell
-            case 3:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "ThreeLineDetailCell") as! ThreeLineDetailCell
-                cell.setUp(lines: addressLines)
-                return cell
-            case 4:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "FourLineDetailCell") as! FourLineDetailCell
-                cell.setUp(lines: addressLines)
-                return cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "EntryDetailCell") as! EntryDetailCell
+        cell.removeSubviews()
+        switch indexPath.section {
+            case EntrySection.phone.rawValue:
+                cell.setUp(phone: entry?.phone)
+            case EntrySection.email.rawValue:
+                cell.setUp(email: entry?.email)
+            case EntrySection.address.rawValue:
+                cell.setUp(address: entry?.address)
+            case EntrySection.adults.rawValue:
+                cell.setUp(person: adults[indexPath.row])
+            case EntrySection.children.rawValue:
+                cell.setUp(person: children[indexPath.row])
             default:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLineDetailCell") as! TwoLineDetailCell
-                cell.line1.text = "No Address Provided"
-                cell.line2.text = ""
-                return cell
-            }
-        } else {
-            let personLines = info[indexPath.section][indexPath.row]
-            switch personLines.count {
-            case 2:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLineDetailCell") as! TwoLineDetailCell
-                cell.setUp(lines: personLines)
-                return cell
-            case 3:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "ThreeLineDetailCell") as! ThreeLineDetailCell
-                cell.setUp(lines: personLines)
-                return cell
-            default:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "OneLineDetailCell")! as! OneLineDetailCell
-                cell.line1.text = personLines[0]
-                return cell
-            }
+                fatalError("Something went horribly wrong")
         }
-    
-        
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         switch (indexPath.section) {
             
-        case 0:
+        case EntrySection.phone.rawValue:
             
             let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
             
             actionSheet.addAction(UIAlertAction(title: "Call", style: UIAlertActionStyle.default, handler: { (action) in
-                self.callNumber(phoneNumber: self.info[0][0][0])
+                if let number = self.entry?.phone {
+                    self.callNumber(phoneNumber: number)
+                }
             }))
                 
             actionSheet.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
             
             self.present(actionSheet, animated: true, completion: nil)
             
-        case 1:
+        case EntrySection.email.rawValue:
             
             let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
             
             actionSheet.addAction(UIAlertAction(title: "Email", style: UIAlertActionStyle.default, handler: { (action) in
-                let mvc = self.configuredMailComposeViewController(recipients: self.info[indexPath.section][0])
-                self.present(mvc, animated: true, completion: nil)
+                if let email = self.entry?.email {
+                    let mvc = self.configuredMailComposeViewController(recipients: [email])
+                    self.present(mvc, animated: true, completion: nil)
+                }
             }))
             
             actionSheet.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
             
             self.present(actionSheet, animated: true, completion: nil)
             
-        case 2:
+        case EntrySection.address.rawValue:
 
-            let addressArray = info[2][0]
-            let addressString = addressArray[0] + ", " + addressArray.last!
-            
-            let formattedAddressString = addressString.replacingOccurrences(of: " ", with: "+")
-            
-            let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-            
-            if (UIApplication.shared.canOpenURL(NSURL(string:"comgooglemaps://")! as URL)) {
-            
-                actionSheet.addAction(UIAlertAction(title: "Google Maps", style: UIAlertActionStyle.default, handler: { (action) in
-                    let url = NSURL(string: "comgooglemaps://?saddr=&daddr=\(formattedAddressString)&directionsmode=driving")! as URL
+            if let address = entry?.address {
+                guard let street = address.street else { return }
+                let addressString = street + ", " + address.getCityStateZipString()
+                
+                let formattedAddressString = addressString.replacingOccurrences(of: " ", with: "+")
+                
+                let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+                
+                if (UIApplication.shared.canOpenURL(NSURL(string:"comgooglemaps://")! as URL)) {
+                
+                    actionSheet.addAction(UIAlertAction(title: "Google Maps", style: UIAlertActionStyle.default, handler: { (action) in
+                        let url = NSURL(string: "comgooglemaps://?saddr=&daddr=\(formattedAddressString)&directionsmode=driving")! as URL
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    }))
+                }
+                
+                actionSheet.addAction(UIAlertAction(title: "Apple Maps", style: UIAlertActionStyle.default, handler: { (action) in
+                    let url = NSURL(string: "http://maps.apple.com/maps?saddr=&daddr=\(formattedAddressString)")! as URL
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
                 }))
+
+                actionSheet.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+                
+                self.present(actionSheet, animated: true, completion: nil)
             }
-            
-            actionSheet.addAction(UIAlertAction(title: "Apple Maps", style: UIAlertActionStyle.default, handler: { (action) in
-                let url = NSURL(string: "http://maps.apple.com/maps?saddr=&daddr=\(formattedAddressString)")! as URL
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            }))
 
-            actionSheet.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+        case EntrySection.adults.rawValue, EntrySection.children.rawValue:
             
-            self.present(actionSheet, animated: true, completion: nil)
-
-        case 3, 4:
-            
-            var peopleArray: [Person]?
-            if indexPath.section == 3 {
-                peopleArray = adults
+            var currentPeople: [Person]
+            if indexPath.section == EntrySection.adults.rawValue {
+                currentPeople = adults
             } else {
-                peopleArray = children
+                currentPeople = children
             }
             
-            var person: Person?
+            let selectedPerson = currentPeople[indexPath.row]
+            let name = selectedPerson.name ?? ""
+            let lastName = entry?.name ?? ""
+            let phone = selectedPerson.phone ?? ""
+            let email = selectedPerson.email ?? ""
             
-            for p in peopleArray! {
-                if info[indexPath.section][indexPath.row][0] == p.name {
-                    person = p
-                }
-            }
-            
-            let name = person?.name
-            let phone = person?.phone
-            let email = person?.email
-
             var actionSheet: UIAlertController?
             var onlyEmail = false
 
-            if phone! == "" && email! != "" {
+            if phone.isEmpty && !email.isEmpty {
                 onlyEmail = true
             }
             
-            actionSheet = UIAlertController(title: "\(name!) \((entry?.name!)!)", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+            actionSheet = UIAlertController(title: "\(name) \(lastName)", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
             
-            if phone != "" {
+            if !phone.isEmpty {
                 
                 actionSheet?.addAction(UIAlertAction(title: "Call", style: UIAlertActionStyle.default, handler: { (action) in
-                    self.callNumber(phoneNumber: phone!)
+                    self.callNumber(phoneNumber: phone)
                 }))
                 
                 actionSheet?.addAction(UIAlertAction(title: "Text", style: UIAlertActionStyle.default, handler: { (action) in
-                    let tvc = self.configuredMessageComposeViewController(recipients: [phone!])
+                    let tvc = self.configuredMessageComposeViewController(recipients: [phone])
                     self.present(tvc, animated: true, completion: nil)
                 }))
             }
 
             
-            if email != "" {
+            if !email.isEmpty {
                 
                 var title = "Email"
                 if onlyEmail {
-                    title = "Email \(name!)"
+                    title = "Email \(name)"
                 }
                 
                 actionSheet?.addAction(UIAlertAction(title: title, style: UIAlertActionStyle.default, handler: { (action) in
-                    let mvc = self.configuredMailComposeViewController(recipients: [email!])
+                    let mvc = self.configuredMailComposeViewController(recipients: [email])
                     self.present(mvc, animated: true, completion: nil)
                 }))
                 
             }
-                
+            
             actionSheet?.addAction(UIAlertAction(title: "Add to Contacts", style: UIAlertActionStyle.default, handler: { (action) in
                 
                 let contact = CNMutableContact()
                 
-                contact.givenName = name!
-                contact.familyName = (self.entry?.name!)!
+                contact.givenName = name
+                contact.familyName = lastName
                 
-                let email = CNLabeledValue(label: CNLabelHome, value: email! as NSString)
+                let email = CNLabeledValue(label: CNLabelHome, value: email as NSString)
                 contact.emailAddresses = [email]
                 
                 if self.entry?.phone != "" {
@@ -343,14 +284,22 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
                                        value:CNPhoneNumber(stringValue: (self.entry?.phone)!)
                         ))
                 }
-                contact.phoneNumbers.append(CNLabeledValue(label:CNLabelPhoneNumberMobile,value:CNPhoneNumber(stringValue:phone!)))
+                contact.phoneNumbers.append(CNLabeledValue(label:CNLabelPhoneNumberMobile,value:CNPhoneNumber(stringValue:phone)))
                 
-                if self.address?.street != "" {
+                if let address = self.entry?.address {
                     let homeAddress = CNMutablePostalAddress()
-                    homeAddress.street = (self.address?.street!)!
-                    homeAddress.city = (self.address?.city!)!
-                    homeAddress.state = (self.address?.state!)!
-                    homeAddress.postalCode = (self.address?.zip!)!
+                    if let street = address.street {
+                        homeAddress.street = street
+                    }
+                    if let city = address.city {
+                        homeAddress.city = city
+                    }
+                    if let state = address.state {
+                        homeAddress.state = state
+                    }
+                    if let zip = address.zip {
+                        homeAddress.postalCode = zip
+                    }
                     contact.postalAddresses = [CNLabeledValue(label:CNLabelHome, value:homeAddress)]
                 }
                 
@@ -365,18 +314,18 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
                             saveRequest.add(contact, toContainerWithIdentifier:nil)
                             try! store.execute(saveRequest)
                             
-                            self.presentNotification(title: "Success", firstName: name!, lastName: (self.entry?.name)!, message: "was successfully added to Contacts.")
+                            self.presentNotification(title: "Success", firstName: name, lastName: lastName, message: "was successfully added to Contacts.")
                             
                         } else {
                             
-                            self.presentNotification(title: "Permission Denied", firstName: name!, lastName: (self.entry?.name)!, message: "was not added to Contacts because you denied permission. You must go to Settings and allow access to Contacts to change this.")
+                            self.presentNotification(title: "Permission Denied", firstName: name, lastName: lastName, message: "was not added to Contacts because you denied permission. You must go to Settings and allow access to Contacts to change this.")
                         }
                     })
                 } else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
                     saveRequest.add(contact, toContainerWithIdentifier:nil)
                     try! store.execute(saveRequest)
                     
-                    self.presentNotification(title: "Success", firstName: name!, lastName: (self.entry?.name)!, message: "was successfully added to Contacts.")
+                    self.presentNotification(title: "Success", firstName: name, lastName: lastName, message: "was successfully added to Contacts.")
                 }
                 
             }))
@@ -416,37 +365,54 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         if (!subject) {
             body = "\(title!)\n\n"
         }
-        if info[0].count > 0 {
-            body = body + "Home Phone: " + info[0][0][0] + "\n"
+        if let phone = entry?.phone {
+            body = body + "Home Phone: " + phone + "\n"
         }
-        if info[1].count > 0 {
-            body = body + "Email: " + info[1][0][0] + "\n"
+        if let email = entry?.email {
+            body = body + "Email: " + email + "\n"
         }
-        if info[0].count > 0 || info[1].count > 0 {
+        if entry?.phone != nil || entry?.email != nil {
             body = body + "\n"
         }
-        if info[2].count > 0 {
+        if let address = entry?.address {
             body = body + "Address:" + "\n"
-            for addressLine in info[2][0] {
-                body = body + addressLine + "\n"
+            if let street = address.street {
+                body = body + street + "\n"
+            }
+            if let line2 = address.line2 {
+                body = body + line2 + "\n"
+            }
+            if let line3 = address.line3 {
+                body = body + line3 + "\n"
+            }
+            if !address.getCityStateZipString().isEmpty {
+                body = body + address.getCityStateZipString() + "\n"
             }
             body = body + "\n"
         }
-        if info[3].count > 0 {
-            for item in info[3] {
-                for detail in item {
-                    body = body + detail + "\n"
-                }
-                body = body + "\n"
+        for person in adults {
+            if let name = person.name {
+                body = body + name + "\n"
             }
+            if let phone = person.phone {
+                body = body + phone + "\n"
+            }
+            if let email = person.email {
+                body = body + email + "\n"
+            }
+            body = body + "\n"
         }
-        if info[4].count > 0 {
-            for item in info[4] {
-                for detail in item {
-                    body = body + detail + "\n"
-                }
-                body = body + "\n"
+        for person in children {
+            if let name = person.name {
+                body = body + name + "\n"
             }
+            if let phone = person.phone {
+                body = body + phone + "\n"
+            }
+            if let email = person.email {
+                body = body + email + "\n"
+            }
+            body = body + "\n"
         }
         return body
     }
@@ -499,10 +465,18 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         let actionSheet = UIAlertController(title: "Share Entry", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Text", style: UIAlertActionStyle.default, handler: { (action) in
-            self.present(self.shareEntryByText(), animated: false, completion: nil)
+            if MFMessageComposeViewController.canSendText() {
+                self.present(self.shareEntryByText(), animated: false, completion: nil)
+            } else {
+                self.displayAlert(title: "Error", message: "This device cannot send texts.")
+            }
         }))
         actionSheet.addAction(UIAlertAction(title: "Email", style: UIAlertActionStyle.default, handler: { (action) in
-            self.present(self.shareEntryByEmail(), animated: false, completion: nil)
+            if MFMailComposeViewController.canSendMail() {
+                self.present(self.shareEntryByEmail(), animated: false, completion: nil)
+            } else {
+                self.displayAlert(title: "Error", message: "This device cannot send mail.")
+            }
         }))
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
         
@@ -557,18 +531,20 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         var newPeople: [[Person]] = [[],[]]
         var newPersonTypes: [String] = []
         var newBirthOrders: [Int] = []
-        for person in self.people! {
-            let newPerson = Person(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: person.birthOrder!, uid: person.uid!)
-            if newPerson.type! != "Child" {
-                newPeople[0].append(newPerson)
-            } else {
-                newPeople[1].append(newPerson)
-            }
-            if !newPersonTypes.contains(newPerson.type!) {
-                newPersonTypes.append(newPerson.type!)
-            }
-            if !newBirthOrders.contains(newPerson.birthOrder!) {
-                newBirthOrders.append(newPerson.birthOrder!)
+        if let people = self.entry?.people {
+            for person in people {
+                let newPerson = Person(type: person.type!, name: person.name!, phone: person.phone!, email: person.email!, birthOrder: person.birthOrder!, uid: person.uid!)
+                if newPerson.type! != PersonType.child.rawValue {
+                    newPeople[0].append(newPerson)
+                } else {
+                    newPeople[1].append(newPerson)
+                }
+                if !newPersonTypes.contains(newPerson.type!) {
+                    newPersonTypes.append(newPerson.type!)
+                }
+                if !newBirthOrders.contains(newPerson.birthOrder!) {
+                    newBirthOrders.append(newPerson.birthOrder!)
+                }
             }
         }
         
@@ -579,63 +555,56 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         addEntryVC.group = self.group
         addEntryVC.entry = self.entry
         
-        addEntryVC.textFieldValues = [(self.entry?.name)!, (self.entry?.phone)!, (self.entry?.email)!, (self.address?.street)!, (self.address?.line2)!, (self.address?.line3)!, (self.address?.city)!, (self.address?.state)!, (self.address?.zip)!]
+        addEntryVC.textFieldValues = [(self.entry?.name)!, (self.entry?.phone)!, (self.entry?.email)!, (self.entry?.address?.street)!, (self.entry?.address?.line2)!, (self.entry?.address?.line3)!, (self.entry?.address?.city)!, (self.entry?.address?.state)!, (self.entry?.address?.zip)!]
         
         self.navigationController?.pushViewController(addEntryVC, animated: true)
         
     }
+    
+    func displayAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: false, completion: nil)
+    }
 
 }
 
-class OneLineDetailCell: UITableViewCell {
-   
-    @IBOutlet weak var line1: UILabel!
+class EntryDetailCell: UITableViewCell {
     
-    func setUp(lines: [String]) {
-        line1.text = lines[0]
+    @IBOutlet weak var stackView: UIStackView!
+    
+    func removeSubviews() {
+        stackView.removeAllArrangedSubviews()
     }
     
-}
-
-
-class TwoLineDetailCell: UITableViewCell {
-    
-    @IBOutlet weak var line1: UILabel!
-    @IBOutlet weak var line2: UILabel!
-    
-    func setUp(lines: [String]) {
-        line1.text = lines[0]
-        line2.text = lines[1]
+    func setUp(phone: String?) {
+        addLabel(with: phone)
     }
     
-}
-
-class ThreeLineDetailCell: UITableViewCell {
-    
-    @IBOutlet weak var line1: UILabel!
-    @IBOutlet weak var line2: UILabel!
-    @IBOutlet weak var line3: UILabel!
-    
-    func setUp(lines: [String]) {
-        line1.text = lines[0]
-        line2.text = lines[1]
-        line3.text = lines[2]
+    func setUp(email: String?) {
+        addLabel(with: email)
     }
     
-}
-
-class FourLineDetailCell: UITableViewCell {
+    func setUp(address: Address?) {
+        addLabel(with: address?.street)
+        addLabel(with: address?.line2)
+        addLabel(with: address?.line3)
+        addLabel(with: address?.getCityStateZipString())
+    }
     
-    @IBOutlet weak var line1: UILabel!
-    @IBOutlet weak var line2: UILabel!
-    @IBOutlet weak var line3: UILabel!
-    @IBOutlet weak var line4: UILabel!
+    func setUp(person: Person) {
+        addLabel(with: person.name)
+        addLabel(with: person.phone)
+        addLabel(with: person.email)
+    }
     
-    func setUp(lines: [String]) {
-        line1.text = lines[0]
-        line2.text = lines[1]
-        line3.text = lines[2]
-        line4.text = lines[3]
+    private func addLabel(with text: String?) {
+        if let text = text, !text.trimmingCharacters(in: .whitespaces).isEmpty {
+            let label = UILabel()
+            label.text = text
+            label.heightAnchor.constraint(equalToConstant: 22.0).isActive = true
+            stackView.addArrangedSubview(label)
+        }
     }
     
 }

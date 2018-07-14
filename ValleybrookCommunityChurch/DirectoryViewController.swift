@@ -24,6 +24,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     var bannerView: GADBannerView!
     @IBOutlet weak var adContainer: UIView!
+    @IBOutlet weak var adContainerHeight: NSLayoutConstraint!
     
     var group: Group!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -35,6 +36,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     var entriesWithSections: [[Entry]] = []
     var filteredEntriesWithSections: [[Entry]] = []
     var tableViewShrunk = false
+    var titleViewTouch: UITapGestureRecognizer!
     
     let screenSize = UIScreen.main.bounds
 
@@ -61,15 +63,39 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         
         self.navigationController?.navigationBar.isTranslucent = false
         
-        if !group.getAdminUids().contains((Auth.auth().currentUser?.uid)!) {
-            addEntryButton.isEnabled = false
-            addEntryButton.tintColor = UIColor.clear
+        if let uid = Auth.auth().currentUser?.uid {
+            if !group.getAdminUids().contains(uid) {
+                addEntryButton.isEnabled = false
+                addEntryButton.tintColor = UIColor.clear
+            }
         }
         
         self.navigationItem.titleView = GlobalFunctions.shared.configureTwoLineTitleView("Directory", bottomLine: group.name)
+        titleViewTouch = UITapGestureRecognizer(target: self, action: #selector(DirectoryViewController.showCounts))
+        self.navigationItem.titleView?.isUserInteractionEnabled = true
+        self.navigationItem.titleView?.addGestureRecognizer(titleViewTouch)
+        
+        myTableView.rowHeight = UITableViewAutomaticDimension
+        myTableView.estimatedRowHeight = 60.0
         
         updateData()
         
+    }
+    
+    func showCounts() {
+        if entries.count > 0 {
+            var adultCount = 0
+            var childCount = 0
+            for entry in entries {
+                adultCount += entry.personCount(personTypes: [PersonType.husband, PersonType.wife, PersonType.single])
+                childCount += entry.personCount(personTypes: [PersonType.child])
+            }
+            self.displayAlert(title: "Counts",
+                              message: "\nEntries: \(entries.count)"
+                                     + "\n\nAdults: \(adultCount)"
+                                     + "\nChildren: \(childCount)"
+                                     + "\nTotal: \(adultCount + childCount)")
+        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -122,6 +148,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             defaults.setValue(false, forKey: "shouldUpdateDirectory")
         }
         
+        adContainerHeight.constant = 0
         bannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
         bannerView.delegate = self
         bannerView.adUnitID = "ca-app-pub-4590926477342036/8203778607"
@@ -134,6 +161,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        adContainerHeight.constant = 50
         adContainer.addSubview(bannerView)
     }
     
@@ -215,115 +243,11 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         if searchController.isActive && searchController.searchBar.text != "" {
             entry = filteredEntriesWithSections[indexPath.section][indexPath.row]
         }
-        
-        let address = entry.address
-        let people = entry.people!
-        
-        let header = getHeader(entry: entry, people: people)
-        
-        let entryPhone = entry.phone
-        let entryEmail = entry.email
-        let addressStreet = address?.street
-        let addressLine2 = address?.line2
-        let addressLine3 = address?.line3
-        let cityStateZip = address?.getCityStateZipString()
-        let childrenString = GlobalFunctions.shared.getChildrenString(people: people)
-        
-        var lineCount = 1
-        var lines: [String] = [header]
-        
-        if entryPhone != "" {
-            lineCount += 1
-            lines.append(entryPhone!)
-        }
-        if entryEmail != "" {
-            lineCount += 1
-            lines.append(entryEmail!)
-        }
-        if addressLine2 != "" {
-            lineCount += 1
-            lines.append(addressLine2!)
-        }
-        if addressLine3 != "" {
-            lineCount += 1
-            lines.append(addressLine3!)
-        }
-        if addressStreet != "" {
-            lineCount += 1
-            lines.append(addressStreet!)
-        }
-        if cityStateZip != "" {
-            lineCount += 1
-            lines.append(cityStateZip!)
-        }
-        if childrenString != "" {
-            lineCount += 1
-            lines.append(childrenString)
-        }
-        
-        switch lineCount {
-        case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "OneLine") as! OneLineCell
-            cell.setUpCell(lines: lines)
-            return cell
-        case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLine") as! TwoLineCell
-            cell.setUpCell(lines: lines)
-            return cell
-        case 3:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ThreeLine") as! ThreeLineCell
-            cell.setUpCell(lines: lines)
-            return cell
-        case 4:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "FourLine") as! FourLineCell
-            cell.setUpCell(lines: lines)
-            return cell
-        case 5:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "FiveLine") as! FiveLineCell
-            cell.setUpCell(lines: lines)
-            return cell
-        case 6:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "SixLine") as! SixLineCell
-            cell.setUpCell(lines: lines)
-            return cell
-        case 7:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "SevenLine") as! SevenLineCell
-            cell.setUpCell(lines: lines)
-            return cell
-        default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "OneLine") as! OneLineCell
-            cell.header.text = header
-            return cell
-        }
-        
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let cell = self.tableView(tableView, cellForRowAt: indexPath)
-        return cell.frame.size.height
-    }
-    
-    func getHeader(entry: Entry, people: [Person]) -> String {
-        
-        var husbandFirstName = ""
-        var wifeFirstName = ""
-        var singleFirstName = ""
-        
-        for person in people {
-            if person.type == "Single" {
-                singleFirstName = person.name!
-            } else if person.type == "Husband" {
-                husbandFirstName = person.name!
-            } else if person.type == "Wife" {
-                wifeFirstName = person.name!
-            }
-        }
-        if singleFirstName != "" {
-            return entry.name! + ", " + singleFirstName
-        } else {
-            return entry.name! + ", " + husbandFirstName + " & " + wifeFirstName
-        }
 
+        let cell = tableView.dequeueReusableCell(withIdentifier: "EntryCell") as! EntryCell
+        cell.setUp(entry: entry)
+        return cell
+        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -504,121 +428,37 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
 
 }
 
-class OneLineCell: UITableViewCell {
+class EntryCell: UITableViewCell {
     
-    @IBOutlet weak var header: UILabel!
+    @IBOutlet weak var stackView: UIStackView!
     
-    func setUpCell(lines: [String]) {
-        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
-    }
-    
-}
+    func setUp(entry: Entry) {
+        
+        stackView.removeAllArrangedSubviews()
+        
+        let headerLabel = UILabel()
+        headerLabel.attributedText = GlobalFunctions.shared.bold(string: entry.getHeader())
+        headerLabel.heightAnchor.constraint(equalToConstant: 34.0).isActive = true
+        stackView.addArrangedSubview(headerLabel)
+        
+        addLabel(with: entry.phone)
+        addLabel(with: entry.email)
+        addLabel(with: entry.address?.street)
+        addLabel(with: entry.address?.line2)
+        addLabel(with: entry.address?.line3)
+        addLabel(with: entry.address?.getCityStateZipString())
+        addLabel(with: entry.getChildrenString())
 
-class TwoLineCell: UITableViewCell {
-    
-    @IBOutlet weak var header: UILabel!
-    @IBOutlet weak var line2: UILabel!
-    
-    func setUpCell(lines: [String]) {
-        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
-        line2.text = lines[1]
     }
     
-    func setUpCell(group: Group) {
-        header.attributedText = GlobalFunctions.shared.bold(string: group.name)
-        let location = "\(group.city) \(group.state)"
-        line2.attributedText = GlobalFunctions.shared.italics(string: location)
-    }
-    
-}
-
-class ThreeLineCell: UITableViewCell {
-    
-    @IBOutlet weak var header: UILabel!
-    @IBOutlet weak var line2: UILabel!
-    @IBOutlet weak var line3: UILabel!
-    
-    func setUpCell(lines: [String]) {
-        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
-        line2.text = lines[1]
-        line3.text = lines[2]
-    }
-    
-}
-
-class FourLineCell: UITableViewCell {
-    
-    @IBOutlet weak var header: UILabel!
-    @IBOutlet weak var line2: UILabel!
-    @IBOutlet weak var line3: UILabel!
-    @IBOutlet weak var line4: UILabel!
-    
-    func setUpCell(lines: [String]) {
-        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
-        line2.text = lines[1]
-        line3.text = lines[2]
-        line4.text = lines[3]
-    }
-    
-}
-
-class FiveLineCell: UITableViewCell {
-    
-    @IBOutlet weak var header: UILabel!
-    @IBOutlet weak var line2: UILabel!
-    @IBOutlet weak var line3: UILabel!
-    @IBOutlet weak var line4: UILabel!
-    @IBOutlet weak var line5: UILabel!
-    
-    func setUpCell(lines: [String]) {
-        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
-        line2.text = lines[1]
-        line3.text = lines[2]
-        line4.text = lines[3]
-        line5.text = lines[4]
-    }
-    
-    
-}
-
-class SixLineCell: UITableViewCell {
-    
-    @IBOutlet weak var header: UILabel!
-    @IBOutlet weak var line2: UILabel!
-    @IBOutlet weak var line3: UILabel!
-    @IBOutlet weak var line4: UILabel!
-    @IBOutlet weak var line5: UILabel!
-    @IBOutlet weak var line6: UILabel!
-    
-    func setUpCell(lines: [String]) {
-        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
-        line2.text = lines[1]
-        line3.text = lines[2]
-        line4.text = lines[3]
-        line5.text = lines[4]
-        line6.text = lines[5]
-    }
-    
-}
-
-class SevenLineCell: UITableViewCell {
-    
-    @IBOutlet weak var header: UILabel!
-    @IBOutlet weak var line2: UILabel!
-    @IBOutlet weak var line3: UILabel!
-    @IBOutlet weak var line4: UILabel!
-    @IBOutlet weak var line5: UILabel!
-    @IBOutlet weak var line6: UILabel!
-    @IBOutlet weak var line7: UILabel!
-    
-    func setUpCell(lines: [String]) {
-        header.attributedText = GlobalFunctions.shared.bold(string: lines[0])
-        line2.text = lines[1]
-        line3.text = lines[2]
-        line4.text = lines[3]
-        line5.text = lines[4]
-        line6.text = lines[5]
-        line7.text = lines[6]
+    private func addLabel(with text: String?) {
+        
+        if let text = text, !text.trimmingCharacters(in: .whitespaces).isEmpty {
+            let label = UILabel()
+            label.text = text
+            label.heightAnchor.constraint(equalToConstant: 22.0).isActive = true
+            stackView.addArrangedSubview(label)
+        }
     }
     
 }
@@ -626,7 +466,7 @@ class SevenLineCell: UITableViewCell {
 extension String {
     
     var length: Int {
-        return self.characters.count
+        return self.count
     }
     
     subscript (i: Int) -> String {
@@ -657,3 +497,19 @@ extension DirectoryViewController: UISearchResultsUpdating {
     }
 }
 
+extension UIStackView {
+    
+    func removeAllArrangedSubviews() {
+        
+        let removedSubviews = arrangedSubviews.reduce([]) { (allSubviews, subview) -> [UIView] in
+            self.removeArrangedSubview(subview)
+            return allSubviews + [subview]
+        }
+        
+        // Deactivate all constraints
+        NSLayoutConstraint.deactivate(removedSubviews.flatMap({ $0.constraints }))
+        
+        // Remove the views from self
+        removedSubviews.forEach({ $0.removeFromSuperview() })
+    }
+}
