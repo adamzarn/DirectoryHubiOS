@@ -43,6 +43,67 @@ class Entry {
         return count
     }
     
+    func getHeader() -> String {
+        
+        var husbandFirstName = ""
+        var wifeFirstName = ""
+        var singleFirstName = ""
+        
+        if let people = self.people {
+            for person in people {
+                if person.type == PersonType.single.rawValue {
+                    if let name = person.name {
+                        singleFirstName = name
+                    }
+                } else if person.type == PersonType.husband.rawValue {
+                    if let name = person.name {
+                        husbandFirstName = name
+                    }
+                } else if person.type == PersonType.wife.rawValue {
+                    if let name = person.name {
+                        wifeFirstName = name
+                    }
+                }
+            }
+        }
+        
+        if !singleFirstName.isEmpty {
+            return (self.name ?? "") + ", " + singleFirstName
+        } else {
+            return (self.name ?? "") + ", " + husbandFirstName + " & " + wifeFirstName
+        }
+        
+    }
+    
+    func getChildrenString() -> String? {
+        
+        guard let people = self.people else { return nil }
+        
+        var childrenArray = people.filter { $0.type == PersonType.child.rawValue }
+        childrenArray.sort { $0.birthOrder! < $1.birthOrder! }
+        
+        var childrenString = ""
+        var i = 0
+        
+        if childrenArray.count == 2 {
+            return childrenArray[0].name! + " & " + childrenArray[1].name!
+        }
+        
+        for child in childrenArray {
+            if childrenString == "" {
+                childrenString = child.name!
+            } else if i == childrenArray.count - 1 {
+                childrenString = childrenString + ", & " + child.name!
+            } else {
+                childrenString = childrenString + ", " + child.name!
+            }
+            i = i + 1
+        }
+        
+        return childrenString
+        
+    }
+    
     func toAnyObject() -> [String : AnyObject] {
         return ["name": name as AnyObject,
                 "phone": phone as AnyObject,
@@ -82,6 +143,28 @@ struct Address {
         }
         return city! + ", " + state! + " " + zip!
         
+    }
+    
+    func isEmpty() -> Bool {
+        if let street = street, !street.isEmpty {
+            return false
+        }
+        if let line2 = line2, !line2.isEmpty {
+            return false
+        }
+        if let line3 = line3, !line3.isEmpty {
+            return false
+        }
+        if let city = city, !city.isEmpty {
+            return false
+        }
+        if let state = state, !state.isEmpty {
+            return false
+        }
+        if let zip = zip, !zip.isEmpty {
+            return false
+        }
+        return true
     }
     
 }

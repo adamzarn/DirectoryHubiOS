@@ -19,8 +19,8 @@ class ValleybrookCommunityChurchTests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         peopleToTest = [
             Person(type: "Adult", name: "John", phone: "", email: "", birthOrder: 0, uid: ""),
-            Person(type: "Child", name: "Ruby", phone: "", email: "", birthOrder: 1, uid: ""),
-            Person(type: "Child", name: "James", phone: "", email: "", birthOrder: 2, uid: "")
+            Person(type: PersonType.child.rawValue, name: "Ruby", phone: "", email: "", birthOrder: 1, uid: ""),
+            Person(type: PersonType.child.rawValue, name: "James", phone: "", email: "", birthOrder: 2, uid: "")
         ]
     }
     
@@ -28,12 +28,6 @@ class ValleybrookCommunityChurchTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
         peopleToTest = nil
-    }
-    
-    func testChildrenString() {
-        let expected = "Ruby & James"
-        let actual = GlobalFunctions.shared.getChildrenString(people: peopleToTest)
-        XCTAssertEqual(actual, expected, "Children String is not what it should be.")
     }
     
     func testDownloadDirectory() {

@@ -24,6 +24,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     
     var bannerView: GADBannerView!
     @IBOutlet weak var adContainer: UIView!
+    @IBOutlet weak var adContainerHeight: NSLayoutConstraint!
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
@@ -87,6 +88,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     
     override func viewWillAppear(_ animated: Bool) {
         
+        adContainerHeight.constant = 0
         bannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
         bannerView.delegate = self
         bannerView.adUnitID = "ca-app-pub-4590926477342036/5514213695"
@@ -104,6 +106,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        adContainerHeight.constant = 50
         adContainer.addSubview(bannerView)
     }
     
