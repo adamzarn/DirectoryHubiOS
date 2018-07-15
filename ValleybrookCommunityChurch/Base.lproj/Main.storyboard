@@ -38,12 +38,12 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="A51-Hc-hfC">
-                                                    <rect key="frame" x="22" y="6" width="331" height="149.5"/>
+                                                    <rect key="frame" x="22" y="4" width="331" height="151.5"/>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="bottom" secondItem="A51-Hc-hfC" secondAttribute="bottom" constant="12" id="3cF-Ov-DZS"/>
-                                                <constraint firstItem="A51-Hc-hfC" firstAttribute="top" secondItem="K0S-I4-eNU" secondAttribute="top" constant="6" id="JLA-dZ-Nbb"/>
+                                                <constraint firstItem="A51-Hc-hfC" firstAttribute="top" secondItem="K0S-I4-eNU" secondAttribute="top" constant="4" id="JLA-dZ-Nbb"/>
                                                 <constraint firstAttribute="trailing" secondItem="A51-Hc-hfC" secondAttribute="trailing" constant="22" id="Zqv-km-6I3"/>
                                                 <constraint firstItem="A51-Hc-hfC" firstAttribute="leading" secondItem="K0S-I4-eNU" secondAttribute="leading" constant="22" id="qxW-zS-eyI"/>
                                             </constraints>
