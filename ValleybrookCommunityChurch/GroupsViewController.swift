@@ -31,7 +31,6 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     
     var user: User!
     var groups: [Group] = []
-    var imageFetched: [Bool] = []
     var filteredGroups: [Group] = []
     let screenSize = UIScreen.main.bounds
     var tableViewShrunk = false
@@ -80,14 +79,6 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
             }
         }
         
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        return true
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        
         adContainerHeight.constant = 0
         bannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
         bannerView.delegate = self
@@ -97,6 +88,14 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         let request = GADRequest()
         //request.testDevices = ["191b6aacb501d4f65eef7379f19afce6"]
         bannerView.load(request)
+        
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        return true
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         
         subscribeToKeyboardNotifications()
         if defaults.bool(forKey: "shouldUpdateGroups") {
@@ -179,25 +178,9 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
             }
             
             cell.setUpCell(group: group)
-            cell.myImageView.image = nil
-            
-            if !imageFetched[indexPath.row] {
-                let imageRef = Storage.storage().reference(withPath: "/\(group.uid).jpg")
-                imageRef.getMetadata { (metadata, error) -> () in
-                    if let metadata = metadata {
-                        let downloadUrl = metadata.downloadURL()
-                        Alamofire.request(downloadUrl!, method: .get).responseImage { response in
-                                guard let image = response.result.value else {
-                                    return
-                                }
-                            cell.myImageView.image = image
-                        }
-                    }
-                }
-                imageFetched[indexPath.row] = true
-            } else {
-                cell.myImageView.image = UIImage(data: group.profilePicture)
-            }
+
+            cell.myImageView.loadImage(from: group.uid)
+
             return cell
         }
         
@@ -294,7 +277,6 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         
         defaults.setValue(false, forKey: "shouldUpdateGroups")
         self.groups = []
-        self.imageFetched = []
         var deletedGroups = 0
         
         set(loading: true)
@@ -316,10 +298,6 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
                     }
                     
                     if self.groups.count == self.user.groups.count - deletedGroups {
-                        
-                        for _ in self.groups {
-                            self.imageFetched.append(false)
-                        }
                         
                         self.groups.sort { $0.name < $1.name }
                         
@@ -425,7 +403,7 @@ class TwoLineWithoutImageCell: UITableViewCell {
     
     func setUpCell(group: Group) {
         header.attributedText = GlobalFunctions.shared.bold(string: group.name)
-        let location = "\(group.city), \(group.state)"
+        let location = "\(group.city.trimmingCharacters(in: .whitespaces)), \(group.state)"
         line2.attributedText = GlobalFunctions.shared.italics(string: location)
         
         if Auth.auth().currentUser?.uid == group.createdByUid {
@@ -448,15 +426,15 @@ class TwoLineWithImageCell: UITableViewCell {
     func setUpCell(group: Group) {
         
         header.attributedText = GlobalFunctions.shared.bold(string: group.name)
-        let location = "\(group.city), \(group.state)"
+        let location = "\(group.city.trimmingCharacters(in: .whitespaces)), \(group.state)"
         line2.attributedText = GlobalFunctions.shared.italics(string: location)
         if Auth.auth().currentUser?.uid == group.createdByUid {
             createdByLabel.text = "Created by You"
         } else {
             createdByLabel.text = "Created by \(group.createdBy)"
         }
-        let w = myImageView.frame.size.width
-        myImageView.layer.cornerRadius = w/2
+        let width = myImageView.frame.size.width
+        myImageView.layer.cornerRadius = width/2
         myImageView.layer.masksToBounds = true
         
     }

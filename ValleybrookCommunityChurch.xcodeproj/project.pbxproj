@@ -23,6 +23,7 @@
 		DB1EC3871EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3861EE6E00100998032 /* ValleybrookCommunityChurchUITests.swift */; };
 		DB1EC3951EE6E01600998032 /* FirebaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EC3941EE6E01600998032 /* FirebaseClient.swift */; };
 		DB1EC3971EE6E0E100998032 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */; };
+		DB38044E20FAD600009DD0C4 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB38044D20FAD600009DD0C4 /* ImageDownloader.swift */; };
 		DB6C807A1EF4784300AE7AA6 /* AddEntryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6C80791EF4784300AE7AA6 /* AddEntryViewController.swift */; };
 		DBEC819A1F68D31800F10CF8 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEC81991F68D31800F10CF8 /* LoginViewController.swift */; };
 		DBEC819C1F68D40700F10CF8 /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEC819B1F68D40700F10CF8 /* CreateAccountViewController.swift */; };
@@ -78,6 +79,7 @@
 		DB1EC3881EE6E00100998032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB1EC3941EE6E01600998032 /* FirebaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseClient.swift; sourceTree = "<group>"; };
 		DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		DB38044D20FAD600009DD0C4 /* ImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		DB6C80791EF4784300AE7AA6 /* AddEntryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AddEntryViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		DBEC81991F68D31800F10CF8 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		DBEC819B1F68D40700F10CF8 /* CreateAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = CreateAccountViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -185,6 +187,7 @@
 				DB1EC3961EE6E0E100998032 /* GoogleService-Info.plist */,
 				DB0943F51EE6E4CC002426AB /* CustomObjects.swift */,
 				DB0EEAE41EEB18BD002AB793 /* GlobalFunctions.swift */,
+				DB38044D20FAD600009DD0C4 /* ImageDownloader.swift */,
 			);
 			path = ValleybrookCommunityChurch;
 			sourceTree = "<group>";
@@ -494,6 +497,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBEC819E1F69C74000F10CF8 /* GroupsViewController.swift in Sources */,
+				DB38044E20FAD600009DD0C4 /* ImageDownloader.swift in Sources */,
 				DB0EEAE31EEB179A002AB793 /* Reachability.swift in Sources */,
 				DB6C807A1EF4784300AE7AA6 /* AddEntryViewController.swift in Sources */,
 				DB0EEAE51EEB18BD002AB793 /* GlobalFunctions.swift in Sources */,

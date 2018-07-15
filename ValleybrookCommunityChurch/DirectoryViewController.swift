@@ -80,6 +80,16 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         
         updateData()
         
+        adContainerHeight.constant = 0
+        bannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
+        bannerView.delegate = self
+        bannerView.adUnitID = "ca-app-pub-4590926477342036/8203778607"
+        //bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716" //test ad-unit id
+        bannerView.rootViewController = self
+        let request = GADRequest()
+        //request.testDevices = ["191b6aacb501d4f65eef7379f19afce6"]
+        bannerView.load(request)
+        
     }
     
     func showCounts() {
@@ -148,16 +158,6 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             updateData()
             defaults.setValue(false, forKey: "shouldUpdateDirectory")
         }
-        
-        adContainerHeight.constant = 0
-        bannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
-        bannerView.delegate = self
-        bannerView.adUnitID = "ca-app-pub-4590926477342036/8203778607"
-        //bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716" //test ad-unit id
-        bannerView.rootViewController = self
-        let request = GADRequest()
-        //request.testDevices = ["191b6aacb501d4f65eef7379f19afce6"]
-        bannerView.load(request)
         
     }
     

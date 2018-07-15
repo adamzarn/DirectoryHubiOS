@@ -13,6 +13,17 @@ import Alamofire
 import AlamofireImage
 import Firebase
 
+enum SearchKey: String {
+    case name = "lowercasedName"
+    case createdBy = "lowercasedCreatedBy"
+}
+
+enum SearchCriteria: Int {
+    case name = 0
+    case createdBy = 1
+    case uniqueID = 2
+}
+
 class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UISearchBarDelegate, UISearchControllerDelegate {
     
     @IBOutlet weak var aiv: UIActivityIndicatorView!
@@ -74,20 +85,9 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         group = groups[indexPath.row]
 
         cell.setUpCell(group: group)
-        cell.myImageView.image = nil
         
-        let imageRef = Storage.storage().reference(withPath: "/\(group.uid).jpg")
-        imageRef.getMetadata { (metadata, error) -> () in
-            if let metadata = metadata {
-                let downloadUrl = metadata.downloadURL()
-                    Alamofire.request(downloadUrl!, method: .get).responseImage { response in
-                        guard let image = response.result.value else {
-                            return
-                        }
-                    cell.myImageView.image = image
-                }
-            }
-        }
+        cell.myImageView.loadImage(from: group.uid)
+        
         return cell
     }
     
@@ -193,14 +193,18 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
             let query = searchController.searchBar.text!.lowercased()
             if query != "" {
                 FirebaseClient.shared.queryGroups(query: query, searchKey: key) { (groups, error) -> () in
-                    self.groups = []
                     if let groups = groups {
+                        self.groups = []
                         for group in groups {
                             if !self.user.groups.contains(group.uid) {
                                 self.groups.append(group)
                             }
                         }
-                        self.groups.sort { $0.name < $1.name }
+                        if key == SearchKey.name.rawValue {
+                            self.groups.sort { $0.name < $1.name }
+                        } else {
+                            self.groups.sort { $0.createdBy < $1.createdBy }
+                        }
                     }
                     self.myTableView.reloadData()
                 }
@@ -217,8 +221,8 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
             let groupUid = searchController.searchBar.text!
             if groupUid != "" {
                 FirebaseClient.shared.getGroup(groupUid: groupUid) { (group, error) -> () in
-                    self.groups = []
                     if let group = group {
+                        self.groups = []
                         if !self.user.groups.contains(group.uid) {
                             self.groups = [group]
                         }
@@ -235,20 +239,25 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         }
     }
     
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        groups = []
+        myTableView.reloadData()
+    }
+    
     @IBAction func searchCriteriaChanged(_ sender: Any) {
         switch (searchCriteriaSegmentedControl.selectedSegmentIndex) {
-            case 0:
+            case SearchCriteria.name.rawValue:
                 searchController.searchBar.placeholder = "Enter a group name..."
-                performSearch(key: "lowercasedName")
-            case 1:
+                performSearch(key: SearchKey.name.rawValue)
+            case SearchCriteria.createdBy.rawValue:
                 searchController.searchBar.placeholder = "Enter a group creator's name..."
-                performSearch(key: "lowercasedCreatedBy")
-            case 2:
+                performSearch(key: SearchKey.createdBy.rawValue)
+            case SearchCriteria.uniqueID.rawValue:
                 searchController.searchBar.placeholder = "Enter a group Unique ID..."
                 performSearch()
             default:
                 searchController.searchBar.placeholder = "Enter a group name..."
-                performSearch(key: "lowercasedName")
+                performSearch(key: SearchKey.name.rawValue)
         }
 
     }
@@ -257,11 +266,12 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
 
 extension SearchGroupsViewController: UISearchResultsUpdating {
     func updateSearchResults(for: UISearchController) {
+        self.groups = []
         if searchController.isActive {
             switch (searchCriteriaSegmentedControl.selectedSegmentIndex) {
-                case 0: performSearch(key: "lowercasedName")
-                case 1: performSearch(key: "lowercasedCreatedBy")
-                case 2: performSearch()
+                case SearchCriteria.name.rawValue: performSearch(key: SearchKey.name.rawValue)
+                case SearchCriteria.createdBy.rawValue: performSearch(key: SearchKey.createdBy.rawValue)
+                case SearchCriteria.uniqueID.rawValue: performSearch()
                 default: ()
             }
         }
