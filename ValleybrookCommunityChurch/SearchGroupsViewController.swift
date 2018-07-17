@@ -80,9 +80,8 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        var group: Group!
+        let group = groups[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLineWithImage") as! TwoLineWithImageCell
-        group = groups[indexPath.row]
 
         cell.setUpCell(group: group)
         
@@ -97,8 +96,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     
         tableView.deselectRow(at: indexPath, animated: false)
         
-        var selectedGroup: Group!
-        selectedGroup = groups[indexPath.row]
+        let selectedGroup = groups[indexPath.row]
         
         let alertController = UIAlertController(title: "Password Required", message: "Enter the password to join the group \"\(selectedGroup.name)\"", preferredStyle: .alert)
             
@@ -248,15 +246,19 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         switch (searchCriteriaSegmentedControl.selectedSegmentIndex) {
             case SearchCriteria.name.rawValue:
                 searchController.searchBar.placeholder = "Enter a group name..."
+                groups = []
                 performSearch(key: SearchKey.name.rawValue)
             case SearchCriteria.createdBy.rawValue:
                 searchController.searchBar.placeholder = "Enter a group creator's name..."
+                groups = []
                 performSearch(key: SearchKey.createdBy.rawValue)
             case SearchCriteria.uniqueID.rawValue:
                 searchController.searchBar.placeholder = "Enter a group Unique ID..."
+                groups = []
                 performSearch()
             default:
                 searchController.searchBar.placeholder = "Enter a group name..."
+                groups = []
                 performSearch(key: SearchKey.name.rawValue)
         }
 
@@ -266,7 +268,6 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
 
 extension SearchGroupsViewController: UISearchResultsUpdating {
     func updateSearchResults(for: UISearchController) {
-        self.groups = []
         if searchController.isActive {
             switch (searchCriteriaSegmentedControl.selectedSegmentIndex) {
                 case SearchCriteria.name.rawValue: performSearch(key: SearchKey.name.rawValue)

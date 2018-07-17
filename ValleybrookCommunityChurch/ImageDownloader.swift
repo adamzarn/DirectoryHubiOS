@@ -17,6 +17,7 @@ var imageCache: [String: UIImage] = [:]
 extension UIImageView {
     
     func loadImage(from groupUID: String) {
+        self.image = nil
         if let image = imageCache[groupUID] {
             self.image = image
         } else {
