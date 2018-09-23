@@ -75,6 +75,18 @@ class Entry {
         
     }
     
+    func getFirstNames() -> [String] {
+        var firstNames: [String] = []
+        if let people = people {
+            for person in people {
+                if let name = person.name {
+                    firstNames.append(name)
+                }
+            }
+        }
+        return firstNames
+    }
+    
     func getChildrenString() -> String? {
         
         guard let people = self.people else { return nil }
@@ -330,6 +342,6 @@ class MyNavigationController: UINavigationController, UIViewControllerTransition
         
         self.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()
         self.navigationBar.tintColor = UIColor.white
-        self.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        self.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
     }
 }

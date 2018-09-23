@@ -13,6 +13,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
     
     let defaults = UserDefaults.standard
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var delegate: EditEntryDelegate?
     
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var peopleTableView: UITableView!
@@ -498,7 +499,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
         }
     }
     
-    func dismissKeyboard() {
+    @objc func dismissKeyboard() {
         currentTextField?.resignFirstResponder()
     }
     
@@ -597,6 +598,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
                     self.defaults.setValue(true, forKey: "shouldUpdateDirectory")
                     if let success = success {
                         if success {
+                            self.delegate?.updateEditedEntry(entry: self.newEntry)
                             self.displayAlertAndDismiss(title: "Success", message: "The new entry information was added to the database.")
                         } else {
                             self.displayAlert(title: "Failure", message: "The new entry information was not added to the database.")

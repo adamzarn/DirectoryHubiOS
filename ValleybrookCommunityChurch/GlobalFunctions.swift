@@ -22,8 +22,8 @@ class GlobalFunctions: NSObject {
     }
     
     func getFormattedString(string1: String, string2: String) -> NSMutableAttributedString {
-        let attrs1 = [NSFontAttributeName : UIFont.italicSystemFont(ofSize: 17), NSForegroundColorAttributeName : UIColor.lightGray]
-        let attrs2 = [NSForegroundColorAttributeName : UIColor.black]
+        let attrs1 = [NSAttributedStringKey.font : UIFont.italicSystemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : UIColor.lightGray]
+        let attrs2 = [NSAttributedStringKey.foregroundColor : UIColor.black]
         let attributedString1 = NSMutableAttributedString(string:string1, attributes:attrs1)
         let attributedString2 = NSMutableAttributedString(string:string2, attributes:attrs2)
         attributedString1.append(attributedString2)
@@ -31,13 +31,13 @@ class GlobalFunctions: NSObject {
     }
     
     func bold(string: String) -> NSMutableAttributedString {
-        let attrs = [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 17)]
+        let attrs = [NSAttributedStringKey.font : UIFont.boldSystemFont(ofSize: 17)]
         let attributedString = NSMutableAttributedString(string: string, attributes:attrs)
         return attributedString
     }
     
     func italics(string: String) -> NSMutableAttributedString {
-        let attrs = [NSFontAttributeName : UIFont.italicSystemFont(ofSize: 17)]
+        let attrs = [NSAttributedStringKey.font : UIFont.italicSystemFont(ofSize: 17)]
         let attributedString = NSMutableAttributedString(string: string, attributes:attrs)
         return attributedString
     }

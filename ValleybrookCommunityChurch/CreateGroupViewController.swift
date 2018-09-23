@@ -77,7 +77,7 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
         aiv.stopAnimating()
     }
     
-    func dismissKeyboard() {
+    @objc func dismissKeyboard() {
         currentTextField?.resignFirstResponder()
     }
     

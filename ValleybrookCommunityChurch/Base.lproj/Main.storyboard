@@ -102,7 +102,7 @@
                         <outlet property="addEntryButton" destination="d83-FE-vXB" id="n4W-Aa-Y58"/>
                         <outlet property="aiv" destination="dAh-lp-ZqV" id="fcu-5b-Ha5"/>
                         <outlet property="myTableView" destination="fHs-vc-9Fp" id="d71-e6-EtC"/>
-                        <segue destination="tMR-Ri-Zzx" kind="show" id="SuU-eq-lsc"/>
+                        <segue destination="tMR-Ri-Zzx" kind="show" identifier="toEntry" id="SuU-eq-lsc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -652,7 +652,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RxT-Z9-zye" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1345" y="937"/>
+            <point key="canvasLocation" x="1345" y="791"/>
         </scene>
         <!--Title-->
         <scene sceneID="dDH-XD-Hgs">
@@ -800,7 +800,7 @@
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6pq-vR-HLv">
-                                                    <rect key="frame" x="100" y="59" width="42" height="20.5"/>
+                                                    <rect key="frame" x="100" y="59" width="255" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -815,8 +815,10 @@
                                                 <constraint firstItem="6pq-vR-HLv" firstAttribute="leading" secondItem="WWb-SP-BEd" secondAttribute="leading" id="hyh-zs-AJD"/>
                                                 <constraint firstItem="WWb-SP-BEd" firstAttribute="leading" secondItem="606-0y-ZRg" secondAttribute="trailing" constant="20" id="iKS-kA-Zdx"/>
                                                 <constraint firstItem="606-0y-ZRg" firstAttribute="centerY" secondItem="4Ph-Xf-Y0H" secondAttribute="centerY" id="icE-O1-FHE"/>
+                                                <constraint firstItem="6pq-vR-HLv" firstAttribute="leading" secondItem="606-0y-ZRg" secondAttribute="trailing" constant="20" id="l0Z-7R-eDs"/>
                                                 <constraint firstItem="606-0y-ZRg" firstAttribute="leading" secondItem="4Ph-Xf-Y0H" secondAttribute="leading" constant="20" id="l46-tk-wzq"/>
                                                 <constraint firstItem="t4T-ko-cWj" firstAttribute="top" secondItem="4Ph-Xf-Y0H" secondAttribute="topMargin" id="vqu-3f-NG2"/>
+                                                <constraint firstAttribute="trailing" secondItem="6pq-vR-HLv" secondAttribute="trailing" constant="20" id="zYO-qt-NDk"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
@@ -866,7 +868,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="u3u-L1-i3U" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="544.79999999999995" y="-797.45127436281871"/>
+            <point key="canvasLocation" x="1345" y="-739"/>
         </scene>
         <!--My Groups-->
         <scene sceneID="i6w-Ec-aOI">
@@ -1050,8 +1052,8 @@
                         <outlet property="myTableView" destination="WUy-Jb-CD0" id="j9v-oF-L2W"/>
                         <outlet property="myToolbar" destination="wCb-Jo-LYt" id="m4I-a1-Z8e"/>
                         <outlet property="welcomeBarButtonItem" destination="ZYE-WV-L53" id="LOZ-ww-0G7"/>
-                        <segue destination="BYZ-38-t0r" kind="show" id="C9H-bs-8XO"/>
-                        <segue destination="gBQ-22-iSz" kind="show" id="uBK-Gq-5fW"/>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="toDirectory" id="C9H-bs-8XO"/>
+                        <segue destination="gBQ-22-iSz" kind="show" identifier="toSearchGroups" id="uBK-Gq-5fW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MkE-NK-Aij" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1361,7 +1363,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nUQ-t6-3aG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-239" y="788"/>
+            <point key="canvasLocation" x="-239" y="641"/>
         </scene>
         <!--Manage Administrators-->
         <scene sceneID="myI-YK-S29">
@@ -1635,12 +1637,12 @@
                         <outlet property="stateTextField" destination="z94-0k-MjL" id="aXC-OF-RTl"/>
                         <outlet property="submitButton" destination="LJb-Zj-laf" id="fIM-sS-9ll"/>
                         <outlet property="uniqueIDTextView" destination="umQ-J9-2qg" id="zQG-27-5dn"/>
-                        <segue destination="eMC-lB-8RN" kind="show" id="azE-ta-z3k"/>
+                        <segue destination="eMC-lB-8RN" kind="show" identifier="toManageAdministrators" id="azE-ta-z3k"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Svq-Uo-aBt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="544.79999999999995" y="787.55622188905556"/>
+            <point key="canvasLocation" x="-239" y="1330"/>
         </scene>
         <!--My Navigation Controller-->
         <scene sceneID="4SE-ti-gYA">
@@ -1658,7 +1660,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Td-Gc-286" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-927.20000000000005" y="787.55622188905556"/>
+            <point key="canvasLocation" x="-927" y="641"/>
         </scene>
         <!--Manage Administrators-->
         <scene sceneID="ujj-WS-ZfH">
@@ -1734,7 +1736,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JQO-Eh-S31" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-239.19999999999999" y="1477.5112443778112"/>
+            <point key="canvasLocation" x="545" y="1330"/>
         </scene>
         <!--My Navigation Controller-->
         <scene sceneID="lJv-Ko-rfa">
@@ -1752,7 +1754,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="71C-Wr-OGO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="545" y="1479"/>
+            <point key="canvasLocation" x="-927" y="1330"/>
         </scene>
     </scenes>
     <resources>

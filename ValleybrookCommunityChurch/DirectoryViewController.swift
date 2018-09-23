@@ -59,7 +59,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         searchController.definesPresentationContext = false
         searchController.hidesNavigationBarDuringPresentation = false
         myTableView.tableHeaderView = searchController.searchBar
-        searchController.searchBar.placeholder = "Search by Last Name..."
+        searchController.searchBar.placeholder = "Search..."
         
         self.navigationController?.navigationBar.isTranslucent = false
         
@@ -92,7 +92,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         
     }
     
-    func showCounts() {
+    @objc func showCounts() {
         if entries.count > 0 {
             var adultCount = 0
             var childCount = 0
@@ -174,6 +174,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     override func viewWillDisappear(_ animated: Bool) {
         searchController.isActive = false
+        searchController.searchBar.isHidden = true
         unsubscribeFromKeyboardNotifications()
     }
 
@@ -256,7 +257,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if searchController.isActive {
+        if searchController.isActive && searchController.searchBar.text != "" {
             searchController.searchBar.isHidden = true
             searchController.searchBar.resignFirstResponder()
             let evc = storyboard?.instantiateViewController(withIdentifier: "EntryViewController") as! EntryViewController
@@ -341,8 +342,19 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     func filterContentForSearchText(searchText: String, scope: String = "All") {
         
         filteredEntries = entries.filter { entry in
-            return (entry.name?.lowercased().contains(searchText.lowercased()))!
+            let firstNames = entry.getFirstNames()
+            for firstName in firstNames {
+                if isContained(searchText, in: firstName) {
+                    return true
+                }
+            }
+            let containsName = isContained(searchText, in: entry.name)
+            let containsPhone = isContained(searchText, in: entry.phone)
+            let containsStreet = isContained(searchText, in: entry.address?.street)
+            let containsCity = isContained(searchText, in: entry.address?.city)
+            return containsName || containsPhone || containsStreet || containsCity
         }
+        
         filteredEntriesWithSections = []
         for i in 0...25 {
             var tempArray: [Entry] = []
@@ -358,6 +370,13 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
 
     }
     
+    private func isContained(_ searchText: String, in text: String?) -> Bool {
+        if let text = text {
+            return text.lowercased().contains(searchText.lowercased())
+        }
+        return false
+    }
+    
     func subscribeToKeyboardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(DirectoryViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow,object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(DirectoryViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide,object: nil)
@@ -368,14 +387,14 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         NotificationCenter.default.removeObserver(self,name: NSNotification.Name.UIKeyboardWillHide,object: nil)
     }
     
-    func keyboardWillShow(notification: NSNotification) {
+    @objc func keyboardWillShow(notification: NSNotification) {
         if (!tableViewShrunk) {
             myTableView.frame.size.height -= (getKeyboardHeight(notification: notification) - bannerView.frame.size.height)
         }
         tableViewShrunk = true
     }
     
-    func keyboardWillHide(notification: NSNotification) {
+    @objc func keyboardWillHide(notification: NSNotification) {
         if (tableViewShrunk) {
             myTableView.frame.size.height += (getKeyboardHeight(notification: notification) - bannerView.frame.size.height)
         }
@@ -422,6 +441,9 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     
     @IBAction func shareButtonPressed(_ sender: Any) {
         if MFMailComposeViewController.canSendMail() {
+            if searchController.isActive {
+                searchController.isActive = false
+            }
             let mvc = configuredMailComposeViewController(groupToShare: group!)
             self.present(mvc, animated: true, completion: nil)
         } else {
@@ -490,7 +512,7 @@ extension String {
                                             upper: min(length, max(0, r.upperBound))))
         let start = index(startIndex, offsetBy: range.lowerBound)
         let end = index(start, offsetBy: range.upperBound - range.lowerBound)
-        return self[Range(start ..< end)]
+        return String(self[Range(start ..< end)])
     }
     
 }

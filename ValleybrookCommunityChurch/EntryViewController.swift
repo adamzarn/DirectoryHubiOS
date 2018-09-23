@@ -19,7 +19,11 @@ enum EntrySection: Int {
     case children = 4
 }
 
-class EntryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
+protocol EditEntryDelegate {
+    func updateEditedEntry(entry: Entry?)
+}
+
+class EntryViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate, EditEntryDelegate {
     
     @IBOutlet weak var myTableView: UITableView!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -47,11 +51,16 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         myTableView.rowHeight = UITableViewAutomaticDimension
         myTableView.estimatedRowHeight = 60.0
         
+        setTitle()
+        
+    }
+    
+    private func setTitle() {
         if let people = entry?.people {
-            if getEntryStatus(people: people) == "Single" {
+            if getEntryStatus(people: people) == PersonType.single.rawValue {
                 var firstName = ""
                 for person in people {
-                    if person.type == "Single" {
+                    if person.type == PersonType.single.rawValue {
                         firstName = person.name ?? ""
                     }
                 }
@@ -61,7 +70,6 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
                 title = "The " + name + " Family"
             }
         }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -556,6 +564,7 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         addEntryVC.entry = self.entry
         
         addEntryVC.textFieldValues = [(self.entry?.name)!, (self.entry?.phone)!, (self.entry?.email)!, (self.entry?.address?.street)!, (self.entry?.address?.line2)!, (self.entry?.address?.line3)!, (self.entry?.address?.city)!, (self.entry?.address?.state)!, (self.entry?.address?.zip)!]
+        addEntryVC.delegate = self
         
         self.navigationController?.pushViewController(addEntryVC, animated: true)
         
@@ -567,6 +576,14 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.present(alert, animated: false, completion: nil)
     }
 
+    func updateEditedEntry(entry: Entry?) {
+        if let entry = entry {
+            self.entry = entry
+            setTitle()
+            self.myTableView.reloadData()
+        }
+    }
+    
 }
 
 class EntryDetailCell: UITableViewCell {

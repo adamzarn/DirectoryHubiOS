@@ -166,14 +166,14 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         NotificationCenter.default.removeObserver(self,name: NSNotification.Name.UIKeyboardWillHide,object: nil)
     }
     
-    func keyboardWillShow(notification: NSNotification) {
+    @objc func keyboardWillShow(notification: NSNotification) {
         if (!tableViewShrunk) {
             myTableView.frame.size.height -= getKeyboardHeight(notification: notification)
         }
         tableViewShrunk = true
     }
     
-    func keyboardWillHide(notification: NSNotification) {
+    @objc func keyboardWillHide(notification: NSNotification) {
         if (tableViewShrunk) {
             myTableView.frame.size.height += getKeyboardHeight(notification: notification)
         }

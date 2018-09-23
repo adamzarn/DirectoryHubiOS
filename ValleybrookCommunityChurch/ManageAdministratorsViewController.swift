@@ -110,7 +110,7 @@ class ManageAdministratorsViewController: UIViewController, UITableViewDelegate,
     
     @IBAction func submitButtonPressed(_ sender: Any) {
         FirebaseClient.shared.updateGroupRoles(groupUid: (groupToEdit?.uid)!, admins: list[0], users: list[1]) { (success) -> () in
-            if let success = success {
+            if let _ = success {
                 self.defaults.setValue(true, forKey: "shouldUpdateGroups")
                 self.displayAlert(title: "Success", message: "This list has been successfully updated.")
             } else {
