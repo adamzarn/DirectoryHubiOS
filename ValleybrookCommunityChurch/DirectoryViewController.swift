@@ -440,10 +440,8 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     @IBAction func shareButtonPressed(_ sender: Any) {
+        searchController.isActive = false
         if MFMailComposeViewController.canSendMail() {
-            if searchController.isActive {
-                searchController.isActive = false
-            }
             let mvc = configuredMailComposeViewController(groupToShare: group!)
             self.present(mvc, animated: true, completion: nil)
         } else {

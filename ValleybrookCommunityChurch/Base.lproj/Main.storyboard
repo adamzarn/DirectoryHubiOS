@@ -1007,9 +1007,9 @@
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wCb-Jo-LYt">
                                 <rect key="frame" x="0.0" y="573" width="375" height="44"/>
                                 <items>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="ILP-CJ-5s3"/>
                                     <barButtonItem title="Welcome!" id="ZYE-WV-L53"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="fIh-Sc-xmk"/>
+                                    <barButtonItem title="Item" id="uEq-MH-gAf"/>
                                 </items>
                             </toolbar>
                         </subviews>
@@ -1051,6 +1051,7 @@
                         <outlet property="aiv" destination="iIb-4H-zcI" id="QOI-o4-Ztd"/>
                         <outlet property="myTableView" destination="WUy-Jb-CD0" id="j9v-oF-L2W"/>
                         <outlet property="myToolbar" destination="wCb-Jo-LYt" id="m4I-a1-Z8e"/>
+                        <outlet property="versionBarButtonItem" destination="uEq-MH-gAf" id="U32-A2-tlG"/>
                         <outlet property="welcomeBarButtonItem" destination="ZYE-WV-L53" id="LOZ-ww-0G7"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="toDirectory" id="C9H-bs-8XO"/>
                         <segue destination="gBQ-22-iSz" kind="show" identifier="toSearchGroups" id="uBK-Gq-5fW"/>

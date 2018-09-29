@@ -41,17 +41,11 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()
         self.navigationController?.navigationBar.isTranslucent = false
         
-        if let entry = entry, let people = entry.people {
-            adults = people.filter { ($0.type ?? "") != PersonType.child.rawValue }
-            adults.sort { ($0.type ?? "") < ($1.type ?? "") }
-            children = people.filter { $0.type == PersonType.child.rawValue }
-            children.sort { ($0.birthOrder ?? 0) < ($1.birthOrder ?? 0) }
-        }
-        
         myTableView.rowHeight = UITableViewAutomaticDimension
         myTableView.estimatedRowHeight = 60.0
         
         setTitle()
+        setPeople()
         
     }
     
@@ -69,6 +63,15 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
                 let name = entry?.name ?? ""
                 title = "The " + name + " Family"
             }
+        }
+    }
+    
+    private func setPeople() {
+        if let entry = entry, let people = entry.people {
+            adults = people.filter { ($0.type ?? "") != PersonType.child.rawValue }
+            adults.sort { ($0.type ?? "") < ($1.type ?? "") }
+            children = people.filter { $0.type == PersonType.child.rawValue }
+            children.sort { ($0.birthOrder ?? 0) < ($1.birthOrder ?? 0) }
         }
     }
     
@@ -580,6 +583,7 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         if let entry = entry {
             self.entry = entry
             setTitle()
+            setPeople()
             self.myTableView.reloadData()
         }
     }

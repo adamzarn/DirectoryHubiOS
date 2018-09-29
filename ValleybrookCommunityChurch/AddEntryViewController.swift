@@ -745,7 +745,13 @@ class AddressCell: UITableViewCell {
         self.line1.attributedText = GlobalFunctions.shared.getFormattedString(string1: "Street: ", string2: address.street!)
         self.line2.attributedText = GlobalFunctions.shared.getFormattedString(string1:"Line 2: ", string2: address.line2!)
         self.line3.attributedText = GlobalFunctions.shared.getFormattedString(string1:"Line 3: ", string2: address.line3!)
-        self.line4.attributedText = GlobalFunctions.shared.getFormattedString(string1:"City, State, Zip: ", string2: address.city! + ", " + address.state! + " " + address.zip!)
+        var addressString: String
+        if address.city!.isEmpty {
+            addressString = address.state! + " " + address.zip!
+        } else {
+            addressString = address.city! + ", " + address.state! + " " + address.zip!
+        }
+        self.line4.attributedText = GlobalFunctions.shared.getFormattedString(string1:"City, State, Zip: ", string2: addressString)
         
     }
     

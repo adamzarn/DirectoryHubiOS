@@ -22,10 +22,9 @@ extension UIImageView {
             self.image = image
         } else {
             let imageRef = Storage.storage().reference(withPath: "/\(groupUID).jpg")
-            imageRef.getMetadata { (metadata, error) -> () in
-                if let metadata = metadata {
-                    let downloadUrl = metadata.downloadURL()
-                    Alamofire.request(downloadUrl!, method: .get).responseImage { response in
+            imageRef.downloadURL(completion: { (downloadUrl, error) in
+                if let downloadUrl = downloadUrl {
+                    Alamofire.request(downloadUrl, method: .get).responseImage { response in
                         guard let image = response.result.value else {
                             return
                         }
@@ -33,7 +32,7 @@ extension UIImageView {
                         self.image = image
                     }
                 }
-            }
+            })
         }
     }
     

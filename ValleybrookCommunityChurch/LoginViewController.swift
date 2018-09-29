@@ -63,8 +63,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-        Auth.auth().signIn(withEmail: emailTextField.text!, password: passwordTextField.text!) { (user, error) in
-            if let user = user {
+        Auth.auth().signIn(withEmail: emailTextField.text!, password: passwordTextField.text!) { (result, error) in
+            if let result = result {
+                let user = result.user
                 self.defaults.set(self.emailTextField.text! as String, forKey: "lastEmail")
                 self.defaults.set(self.passwordTextField.text! as String, forKey: "lastPassword")
                 if GlobalFunctions.shared.hasConnectivity() {

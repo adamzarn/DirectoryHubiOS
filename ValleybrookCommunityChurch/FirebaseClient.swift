@@ -25,7 +25,7 @@ class FirebaseClient: NSObject {
         if group.uid == "" {
             successMessage = "Your group was successfully created."
             groupsRef = self.ref.child("Groups").childByAutoId()
-            updatedUserGroups.append(groupsRef.key)
+            updatedUserGroups.append(groupsRef.key!)
         } else {
             successMessage = "Your group was successfully edited."
             groupsRef = self.ref.child("Groups").child(group.uid)

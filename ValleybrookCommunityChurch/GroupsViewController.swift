@@ -20,6 +20,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet weak var addGroupButton: UIBarButtonItem!
     @IBOutlet weak var myTableView: UITableView!
     @IBOutlet weak var welcomeBarButtonItem: UIBarButtonItem!
+    @IBOutlet weak var versionBarButtonItem: UIBarButtonItem!
     @IBOutlet weak var myToolbar: UIToolbar!
     
     var bannerView: GADBannerView!
@@ -53,7 +54,10 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         
         let displayName = Auth.auth().currentUser?.value(forKey: "displayName") as? String
         welcomeBarButtonItem.title = "Welcome \(displayName!)!"
+        let versionNumber = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as? String
+        versionBarButtonItem.title = "v\(versionNumber!)"
         welcomeBarButtonItem.tintColor = GlobalFunctions.shared.themeColor()
+        versionBarButtonItem.tintColor = GlobalFunctions.shared.themeColor()
         myTableView.tintColor = GlobalFunctions.shared.themeColor()
         
         self.navigationController?.navigationBar.barTintColor = GlobalFunctions.shared.themeColor()

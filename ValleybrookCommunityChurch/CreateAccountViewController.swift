@@ -105,8 +105,9 @@ class CreateAccountViewController: UIViewController {
         
         if GlobalFunctions.shared.hasConnectivity() {
             
-            Auth.auth().createUser(withEmail: email!, password: password!) { (user, error) in
-                if let user = user {
+            Auth.auth().createUser(withEmail: email!, password: password!) { (result, error) in
+                if let result = result {
+                    let user = result.user
                     let changeRequest = user.createProfileChangeRequest()
                     changeRequest.displayName = displayName
                     changeRequest.commitChanges { error in
