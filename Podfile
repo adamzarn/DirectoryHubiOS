@@ -10,7 +10,7 @@ target 'ValleybrookCommunityChurch' do
     pod 'Firebase/Core'
     pod 'Firebase/Database'
     pod 'Firebase/Auth'
-    pod ‘Firebase/Storage’
+    pod 'Firebase/Storage'
     pod 'AlamofireImage', '~> 3.1'
     pod 'Google-Mobile-Ads-SDK'
 

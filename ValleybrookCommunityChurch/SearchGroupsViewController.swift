@@ -59,6 +59,10 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         
         self.myTableView.rowHeight = 90.0
         
+        if #available(iOS 15, *) {
+            myTableView.sectionHeaderTopPadding = 0
+        }
+        
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -94,7 +98,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
         
         searchController.isActive = false
     
-        tableView.deselectRow(at: indexPath, animated: false)
+        tableView.deselectRow(at: indexPath, animated: true)
         
         let selectedGroup = groups[indexPath.row]
         
@@ -129,7 +133,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
                     
                     let alert = UIAlertController(title: "Incorrect Password", message: "Please try again.", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                        self.present(alert, animated: false, completion: nil)
+                        self.present(alert, animated: true, completion: nil)
                     
                 }
             }
@@ -153,7 +157,7 @@ class SearchGroupsViewController: UIViewController, UITableViewDataSource, UITab
     func displayAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func subscribeToKeyboardNotifications() {

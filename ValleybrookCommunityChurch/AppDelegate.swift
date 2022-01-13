@@ -12,6 +12,20 @@ import CoreData
 import Contacts
 import GoogleMobileAds
 
+extension UINavigationController {
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = GlobalFunctions.shared.themeColor()
+        appearance.titleTextAttributes = [
+            NSAttributedStringKey.foregroundColor : UIColor.white
+        ]
+        navigationBar.standardAppearance = appearance
+        navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
@@ -22,13 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        let textTitleOptions: [NSAttributedStringKey : Any] = [
-            NSAttributedStringKey.foregroundColor : UIColor.white
-        ]
-        UINavigationBar.appearance().titleTextAttributes = textTitleOptions
-        
         FirebaseApp.configure()
-        GADMobileAds.configure(withApplicationID: "ca-app-pub-4590926477342036~6914747663")
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
         
         if let _ = Auth.auth().currentUser {
             let myNC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DirectoryNavigationController") as! MyNavigationController

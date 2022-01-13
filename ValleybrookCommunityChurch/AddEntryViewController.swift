@@ -409,7 +409,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
     func displayAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func displayAlertAndDismiss(title: String, message: String) {
@@ -421,32 +421,32 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             }
             self.navigationController?.popViewController(animated: true)
         }))
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
 
         if textField == stateTextField {
             if textField.text != "" {
-                statePicker.selectRow(GlobalFunctions.shared.getStates().index(of: textField.text!)!, inComponent: 0, animated: false)
+                statePicker.selectRow(GlobalFunctions.shared.getStates().index(of: textField.text!)!, inComponent: 0, animated: true)
             } else {
-                statePicker.selectRow(0, inComponent: 0, animated: false)
+                statePicker.selectRow(0, inComponent: 0, animated: true)
                 textField.text = GlobalFunctions.shared.getStates()[0]
             }
         }
         if textField == personTypeTextField {
             if textField.text != "" {
-                typePicker.selectRow(typeOptions.index(of: textField.text!)!, inComponent: 0, animated: false)
+                typePicker.selectRow(typeOptions.index(of: textField.text!)!, inComponent: 0, animated: true)
             } else {
-                typePicker.selectRow(0, inComponent: 0, animated: false)
+                typePicker.selectRow(0, inComponent: 0, animated: true)
                 textField.text = typeOptions[0]
             }
         }
         if textField == birthOrderTextField {
             if textField.text != "" {
-                birthOrderPicker.selectRow(birthOrderOptions.index(of: Int(textField.text!)!)!, inComponent: 0, animated: false)
+                birthOrderPicker.selectRow(birthOrderOptions.index(of: Int(textField.text!)!)!, inComponent: 0, animated: true)
             } else {
-                birthOrderPicker.selectRow(0, inComponent: 0, animated: false)
+                birthOrderPicker.selectRow(0, inComponent: 0, animated: true)
                 textField.text = String(describing: birthOrderOptions[0])
             }
         }
@@ -537,7 +537,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
             editAddressActions()
         }
         
-        tableView.deselectRow(at: indexPath, animated: false)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func removeFromPersonTypes(text: String) {
@@ -611,7 +611,7 @@ class AddEntryViewController: UIViewController, UITextFieldDelegate, UITableView
         }))
 
         
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
         
     }
     

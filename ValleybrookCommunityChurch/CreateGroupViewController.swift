@@ -152,7 +152,7 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
         self.aiv.stopAnimating()
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     //Text Field Delegate methods
@@ -199,7 +199,7 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
                             self.delegate?.user = self.user
                             self.dismiss(animated: true, completion: nil)
                         })
-                        self.present(alert, animated: false, completion: nil)
+                        self.present(alert, animated: true, completion: nil)
                     } else {
                         self.displayAlert(title: "Error", message: "We were unable to complete your request. Please try again.")
                     }
@@ -276,9 +276,9 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
         
         if textField == stateTextField {
             if textField.text != "" {
-                statePicker.selectRow(GlobalFunctions.shared.getStates().index(of: textField.text!)!, inComponent: 0, animated: false)
+                statePicker.selectRow(GlobalFunctions.shared.getStates().index(of: textField.text!)!, inComponent: 0, animated: true)
             } else {
-                statePicker.selectRow(0, inComponent: 0, animated: false)
+                statePicker.selectRow(0, inComponent: 0, animated: true)
                 textField.text = GlobalFunctions.shared.getStates()[0]
             }
         }
@@ -308,7 +308,7 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
                                 self.dismiss(animated: true, completion: nil)
                             })
                             successfulDelete.addAction(ok)
-                            self.present(successfulDelete, animated: false, completion: nil)
+                            self.present(successfulDelete, animated: true, completion: nil)
                         } else {
                             self.displayAlert(title: "Error", message: "There was a problem removing \(groupToEdit.name) from the database. Please try again.")
                         }
@@ -323,7 +323,7 @@ class CreateGroupViewController: UIViewController, UIImagePickerControllerDelega
             alert.addAction(yes)
             alert.addAction(cancel)
             
-            self.present(alert, animated: false, completion: nil)
+            self.present(alert, animated: true, completion: nil)
 
         }
         

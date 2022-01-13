@@ -61,6 +61,10 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         myTableView.tableHeaderView = searchController.searchBar
         searchController.searchBar.placeholder = "Search..."
         
+        if #available(iOS 15, *) {
+            myTableView.sectionHeaderTopPadding = 0
+        }
+        
         self.navigationController?.navigationBar.isTranslucent = false
         
         if let uid = Auth.auth().currentUser?.uid {
@@ -169,7 +173,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
-    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
+    func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -196,7 +200,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         
         myTableView.reloadData()
         myTableView.isHidden = false
-        myTableView.setContentOffset(CGPoint(x:0,y:searchController.searchBar.frame.size.height), animated: false)
+        myTableView.setContentOffset(CGPoint(x:0,y:searchController.searchBar.frame.size.height), animated: true)
         aiv.stopAnimating()
         aiv.isHidden = true
 
@@ -271,7 +275,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
             evc.entry = entriesWithSections[indexPath.section][indexPath.row]
             evc.group = self.group
             self.navigationController?.pushViewController(evc, animated: true)
-            tableView.deselectRow(at: indexPath, animated: false)
+            tableView.deselectRow(at: indexPath, animated: true)
         }
         
     }
@@ -311,7 +315,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
                             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
                                 self.updateData()
                             }))
-                            self.present(alert, animated: false, completion: nil)
+                            self.present(alert, animated: true, completion: nil)
                         } else {
                             self.displayAlert(title: "Error", message: "We were unable to remove the entry from the database.")
                         }
@@ -328,7 +332,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
         alert.addAction(yes)
         alert.addAction(cancel)
 
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
             
         }
     }
@@ -336,7 +340,7 @@ class DirectoryViewController: UIViewController, UITableViewDataSource, UITableV
     func displayAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func filterContentForSearchText(searchText: String, scope: String = "All") {
@@ -493,26 +497,25 @@ extension String {
         return self.count
     }
     
-    subscript (i: Int) -> String {
-        return self[Range(i ..< i + 1)]
+    subscript(i: Int) -> String {
+        return self[Range(i..<i + 1)]
     }
     
     func substring(from: Int) -> String {
-        return self[Range(min(from, length) ..< length)]
+        return self[Range(min(from, length)..<length)]
     }
     
     func substring(to: Int) -> String {
-        return self[Range(0 ..< max(0, to))]
+        return self[Range(0..<max(0, to))]
     }
-    
-    subscript (r: Range<Int>) -> String {
+
+    subscript(r: Range<Int>) -> String {
         let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
                                             upper: min(length, max(0, r.upperBound))))
         let start = index(startIndex, offsetBy: range.lowerBound)
         let end = index(start, offsetBy: range.upperBound - range.lowerBound)
-        return String(self[Range(start ..< end)])
+        return String(self[start..<end])
     }
-    
 }
 
 extension DirectoryViewController: UISearchResultsUpdating {

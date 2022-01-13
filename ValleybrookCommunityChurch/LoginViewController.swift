@@ -49,7 +49,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         let canc = storyboard?.instantiateViewController(withIdentifier: "CreateAccountNavigationController") as! MyNavigationController
         
-        self.present(canc, animated: false, completion: nil)
+        self.present(canc, animated: true, completion: nil)
         
     }
     
@@ -73,6 +73,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         let myNC = self.storyboard?.instantiateViewController(withIdentifier: "DirectoryNavigationController") as! MyNavigationController
                         let groupsVC = myNC.topViewController as! GroupsViewController
                         groupsVC.user = user
+                        myNC.modalPresentationStyle = .fullScreen
                         self.present(myNC, animated: true, completion: nil)
                     }
                 } else {
@@ -99,17 +100,17 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         if let errorMessage = error?.localizedDescription {
                             secondAlert.title = "Email Not Sent"
                             secondAlert.message = errorMessage
-                            self.present(secondAlert, animated: false, completion: nil)
+                            self.present(secondAlert, animated: true, completion: nil)
                         } else {
                             secondAlert.title = "Email Sent"
                             secondAlert.message = "Come back here when you've reset your password."
-                            self.present(secondAlert, animated: false, completion: nil)
+                            self.present(secondAlert, animated: true, completion: nil)
                         }
                     }
                 } else {
                     secondAlert.title = "No Email"
                     secondAlert.message = "You must provide an email address."
-                    self.present(secondAlert, animated: false, completion: nil)
+                    self.present(secondAlert, animated: true, completion: nil)
                 }
             }
         }
@@ -147,7 +148,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         loggingInLabel.isHidden = true
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     //Adjusting keyboard methods

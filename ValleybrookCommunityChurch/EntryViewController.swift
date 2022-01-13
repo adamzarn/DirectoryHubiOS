@@ -43,6 +43,9 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         myTableView.rowHeight = UITableViewAutomaticDimension
         myTableView.estimatedRowHeight = 60.0
+        if #available(iOS 15, *) {
+            myTableView.sectionHeaderTopPadding = 0
+        }
         
         setTitle()
         setPeople()
@@ -350,14 +353,14 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
             
         }
 
-        tableView.deselectRow(at: indexPath, animated: false)
+        tableView.deselectRow(at: indexPath, animated: true)
         
     }
     
     func presentNotification(title: String, firstName: String, lastName: String, message: String) {
         let notification = UIAlertController(title: title, message: "\(firstName) \(lastName) \(message)", preferredStyle: .alert)
         notification.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(notification, animated: false, completion: nil)
+        self.present(notification, animated: true, completion: nil)
     }
     
     func callNumber(phoneNumber: String) {
@@ -477,14 +480,14 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
         let actionSheet = UIAlertController(title: "Share Entry", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Text", style: UIAlertActionStyle.default, handler: { (action) in
             if MFMessageComposeViewController.canSendText() {
-                self.present(self.shareEntryByText(), animated: false, completion: nil)
+                self.present(self.shareEntryByText(), animated: true, completion: nil)
             } else {
                 self.displayAlert(title: "Error", message: "This device cannot send texts.")
             }
         }))
         actionSheet.addAction(UIAlertAction(title: "Email", style: UIAlertActionStyle.default, handler: { (action) in
             if MFMailComposeViewController.canSendMail() {
-                self.present(self.shareEntryByEmail(), animated: false, completion: nil)
+                self.present(self.shareEntryByEmail(), animated: true, completion: nil)
             } else {
                 self.displayAlert(title: "Error", message: "This device cannot send mail.")
             }
@@ -576,7 +579,7 @@ class EntryViewController: UIViewController, UITableViewDataSource, UITableViewD
     func displayAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
 
     func updateEditedEntry(entry: Entry?) {

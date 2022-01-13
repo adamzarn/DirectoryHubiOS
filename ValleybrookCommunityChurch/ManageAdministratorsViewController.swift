@@ -29,6 +29,10 @@ class ManageAdministratorsViewController: UIViewController, UITableViewDelegate,
         
         myTableView.setEditing(true, animated: true)
         
+        if #available(iOS 15, *) {
+            myTableView.sectionHeaderTopPadding = 0
+        }
+        
         var admins = groupToEdit?.admins
         let users = groupToEdit?.users
         
@@ -123,7 +127,7 @@ class ManageAdministratorsViewController: UIViewController, UITableViewDelegate,
     func displayAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
 }

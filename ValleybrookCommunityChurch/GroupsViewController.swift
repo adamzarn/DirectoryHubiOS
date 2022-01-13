@@ -50,6 +50,10 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         myTableView.tableHeaderView = searchController.searchBar
         searchController.searchBar.placeholder = "Search your groups..."
         
+        if #available(iOS 15, *) {
+            myTableView.sectionHeaderTopPadding = 0
+        }
+        
         self.navigationController?.navigationBar.isTranslucent = false
         
         let displayName = Auth.auth().currentUser?.value(forKey: "displayName") as? String
@@ -116,7 +120,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
+    func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -175,7 +179,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TwoLineWithImage") as! TwoLineWithImageCell
             group = groups[indexPath.row]
-            if group.getAdminUids().contains(Auth.auth().currentUser!.uid) {
+            if let currentUserUid = Auth.auth().currentUser?.uid, group.getAdminUids().contains(currentUserUid) {
                 cell.accessoryType = UITableViewCellAccessoryType.detailDisclosureButton
             } else {
                 cell.accessoryType = UITableViewCellAccessoryType.none
@@ -192,7 +196,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        tableView.deselectRow(at: indexPath, animated: false)
+        tableView.deselectRow(at: indexPath, animated: true)
         
         var selectedGroup: Group!
         if searchController.isActive {
@@ -256,7 +260,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
             alert.addAction(yes)
             alert.addAction(cancel)
             
-            self.present(alert, animated: false, completion: nil)
+            self.present(alert, animated: true, completion: nil)
 
         }
     }
@@ -264,7 +268,7 @@ class GroupsViewController: UIViewController, UITableViewDataSource, UITableView
     func displayAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: false, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func filterContentForSearchText(searchText: String, scope: String = "All") {

@@ -371,6 +371,7 @@ class FirebaseClient: NSObject {
         do {
             try Auth.auth().signOut()
             let loginVC = vc.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            loginVC.modalPresentationStyle = .fullScreen
             vc.present(loginVC, animated: true, completion: nil)
         } catch let signOutError as NSError {
             print("Error signing out: \(signOutError)")
